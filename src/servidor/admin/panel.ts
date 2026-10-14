@@ -1,4 +1,5 @@
 import { and, asc, count, desc, eq, inArray, or, sql } from "drizzle-orm";
+import { clavePeque } from "@/dominio/inscripcion/duplicados";
 import {
   diagnosticar,
   repartir,
@@ -116,41 +117,46 @@ export async function posiblesDuplicados(
   db: BaseDatos,
   edicionId: string,
 ): Promise<PosibleDuplicado[]> {
-  const normal = (c: typeof t.peque.nombre | typeof t.peque.apellido) =>
-    sql`lower(regexp_replace(translate(${c}, 'ÁÀÄÂáàäâÉÈËÊéèëêÍÌÏÎíìïîÓÒÖÔóòöôÚÙÜÛúùüûÑñÇç', 'AAAAaaaaEEEEeeeeIIIIiiiiOOOOooooUUUUuuuuNnCc'), '\\s+', ' ', 'g'))`;
-  const grupos = await db
+  // Mismo nombre + primer apellido + clase (ver `clavePeque`): da igual si escriben uno o los dos.
+  const peques = await db
     .select({
-      clave: sql<string>`${normal(t.peque.nombre)} || '|' || ${normal(t.peque.apellido)} || '|' || ${t.peque.claseId}`,
-      ids: sql<string[]>`array_agg(distinct ${t.peque.inscripcionId})`,
-      peque: sql<string>`min(${t.peque.nombre} || ' ' || ${t.peque.apellido})`,
-      clase: sql<string>`min(${t.clase.nombre})`,
-    })
-    .from(t.peque)
-    .innerJoin(t.inscripcion, eq(t.inscripcion.id, t.peque.inscripcionId))
-    .innerJoin(t.clase, eq(t.clase.id, t.peque.claseId))
-    .where(eq(t.inscripcion.edicionId, edicionId))
-    .groupBy(sql`1`)
-    .having(sql`count(distinct ${t.peque.inscripcionId}) > 1`);
-  if (grupos.length === 0) return [];
-  const ids = [...new Set(grupos.flatMap((g) => g.ids))];
-  const ins = await db
-    .select({
-      id: t.inscripcion.id,
+      inscripcionId: t.peque.inscripcionId,
+      nombre: t.peque.nombre,
+      apellido: t.peque.apellido,
+      claseId: t.peque.claseId,
+      clase: t.clase.nombre,
       nombreAdulto: t.inscripcion.nombreAdulto,
       email: t.inscripcion.email,
       creadoEn: t.inscripcion.creadoEn,
     })
-    .from(t.inscripcion)
-    .where(inArray(t.inscripcion.id, ids));
-  const porId = new Map(ins.map((i) => [i.id, i]));
-  return grupos.map((g) => ({
-    clave: g.clave,
-    peque: g.peque,
-    clase: g.clase,
-    inscripciones: g.ids
-      .map((id) => porId.get(id)!)
-      .sort((a, b) => a.creadoEn.getTime() - b.creadoEn.getTime()),
-  }));
+    .from(t.peque)
+    .innerJoin(t.inscripcion, eq(t.inscripcion.id, t.peque.inscripcionId))
+    .innerJoin(t.clase, eq(t.clase.id, t.peque.claseId))
+    .where(eq(t.inscripcion.edicionId, edicionId));
+  const grupos = new Map<string, typeof peques>();
+  for (const p of peques) {
+    const clave = clavePeque({ nombre: p.nombre, apellido: p.apellido, clase: p.claseId });
+    grupos.set(clave, [...(grupos.get(clave) ?? []), p]);
+  }
+  return [...grupos.entries()]
+    .map(([clave, ps]) => {
+      const porInscripcion = new Map(ps.map((p) => [p.inscripcionId, p]));
+      return { clave, ps, porInscripcion };
+    })
+    .filter((g) => g.porInscripcion.size > 1)
+    .map(({ clave, ps, porInscripcion }) => ({
+      clave,
+      peque: `${ps[0].nombre} ${ps[0].apellido}`,
+      clase: ps[0].clase,
+      inscripciones: [...porInscripcion.values()]
+        .map((p) => ({
+          id: p.inscripcionId,
+          nombreAdulto: p.nombreAdulto,
+          email: p.email,
+          creadoEn: p.creadoEn,
+        }))
+        .sort((a, b) => a.creadoEn.getTime() - b.creadoEn.getTime()),
+    }));
 }
 
 /** Inscripciones cuyo email ha fallado o rebotado: hay que avisarlas por WhatsApp. */

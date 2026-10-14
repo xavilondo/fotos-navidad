@@ -23,9 +23,21 @@ describe("panel de control", () => {
     );
     const r = await resumen(db, ed.id);
     expect(r).toMatchObject({ inscripciones: 2, peques: 3, sinFavoritas: 1, huecosLibres: 120 });
+    // Un tercer progenitor escribe los dos apellidos: sigue siendo el mismo peque.
+    await crearInscripcion(
+      db,
+      {
+        ...INSCRIPCION_VALIDA,
+        email: "tercera@example.com",
+        favoritas: [],
+        imposibles: [],
+        peques: [{ nombre: "Lucía", apellido: "García López", clase: "osos" }],
+      },
+      CTX,
+    );
     const dup = await posiblesDuplicados(db, ed.id);
     expect(dup).toHaveLength(1);
-    expect(dup[0].inscripciones).toHaveLength(2);
+    expect(dup[0].inscripciones).toHaveLength(3);
     const d = await demanda(db, ed.id);
     expect(d.find((x) => x.codigo === "lun-1700")).toMatchObject({
       primeras: 1,

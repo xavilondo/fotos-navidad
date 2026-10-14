@@ -1,5 +1,6 @@
 import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import type { EstadoEdicion } from "@/dominio/edicion/estado";
+import { clavePeque } from "@/dominio/inscripcion/duplicados";
 import { normalizarEmail } from "@/dominio/inscripcion/email";
 import { erroresPorCampo, type Seccion } from "@/dominio/inscripcion/esquema";
 import { registrarAuditoria } from "@/servidor/auditoria/registrar";
@@ -426,12 +427,7 @@ export async function reintentarEmails(db: BaseDatos, admin: Admin, ids: string[
 }
 
 const claveDePeque = (p: { nombre: string; apellido: string; claseId: string }) =>
-  `${p.nombre} ${p.apellido}`
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim() + `|${p.claseId}`;
+  clavePeque({ nombre: p.nombre, apellido: p.apellido, clase: p.claseId });
 
 /**
  * Fusiona un duplicado (antes del cierre): la inscripción `conservar` se queda con sus datos y
