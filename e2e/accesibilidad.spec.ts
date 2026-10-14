@@ -30,9 +30,7 @@ test.describe("accesibilidad", () => {
     await page.getByRole("button", { name: "Siguiente" }).click();
     await sinInfracciones(page);
     await page.getByRole("textbox", { name: "Nombre del peque 1", exact: true }).fill("Ana");
-    await page
-      .getByRole("textbox", { name: "Primer apellido del peque 1", exact: true })
-      .fill("Prueba");
+    await page.getByRole("textbox", { name: "Apellidos del peque 1", exact: true }).fill("Prueba");
     await page.getByRole("radio", { name: "Osos" }).click();
     await page.getByRole("button", { name: "Siguiente" }).click();
     await page.getByRole("radio", { name: /Sí, somos socios/ }).click();

@@ -39,7 +39,7 @@ export async function filasAgenda(db: BaseDatos, edicionId: string): Promise<Fil
     const suyos = peques.filter((p) => p.inscripcionId === f.id);
     return {
       inicio: f.inicio,
-      apellido: suyos[0]?.apellido.trim().split(/\s+/)[0] ?? "",
+      apellido: suyos[0]?.apellido.trim().replace(/\s+/g, " ") ?? "",
       peques: suyos.map((p) => ({ nombre: p.nombre, clase: p.clase })),
       hermanos: f.hermanos,
       lotes: f.lotes,

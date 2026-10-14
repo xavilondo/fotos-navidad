@@ -55,7 +55,7 @@ test.describe("inscripción", () => {
     await expect(page.getByText("Falta el nombre")).toBeVisible();
     await expect(page.getByText("Elegid su clase")).toBeVisible();
     await page.getByRole("textbox", { name: "Nombre del peque 1" }).fill("Leo");
-    await page.getByRole("textbox", { name: "Primer apellido del peque 1" }).fill("Pérez");
+    await page.getByRole("textbox", { name: "Apellidos del peque 1" }).fill("Pérez");
     await page.getByRole("radio", { name: "Tigres" }).click();
     await page.getByRole("button", { name: "Siguiente" }).click();
     await page.getByRole("button", { name: "Siguiente" }).click();
@@ -73,7 +73,7 @@ test.describe("inscripción", () => {
   test("el borrador sobrevive a recargar y la portada ofrece seguir", async ({ page }) => {
     await page.goto("/inscripcion");
     await page.getByRole("textbox", { name: "Nombre del peque 1" }).fill("Nora");
-    await page.getByRole("textbox", { name: "Primer apellido del peque 1" }).fill("Borrador");
+    await page.getByRole("textbox", { name: "Apellidos del peque 1" }).fill("Borrador");
     await page.getByRole("radio", { name: "Delfines" }).click();
     await page.getByRole("button", { name: "Siguiente" }).click();
     await expect(page.getByRole("heading", { name: "¿Cuántos lotes queréis?" })).toBeVisible();

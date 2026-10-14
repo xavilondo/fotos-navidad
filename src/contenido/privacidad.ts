@@ -40,7 +40,7 @@ export const PRIVACIDAD: Record<
         titulo: "Qué datos pedimos",
         parrafos: ["Solo los que hacen falta para la sesión de fotos, y nada más:"],
         lista: [
-          "De cada peque: nombre, primer apellido y clase.",
+          "De cada peque: nombre, apellidos y clase.",
           "Cuántos hermanos o hermanas que no van a la escuela salen en las fotos: solo el número, " +
             "sin nombres.",
           "Si sois socios del AFA este curso (lo declaráis vosotros), cuántos lotes queréis y si " +
@@ -235,7 +235,7 @@ export const PRIVACIDAD: Record<
         parrafos: [
           "Los peques de la escuela tienen de 0 a 3 años, así que todo lo decide el adulto que hace " +
             "la inscripción, como madre, padre o tutor/a.",
-          "De ellos pedimos lo mínimo: nombre, primer apellido y clase; de los hermanos que no van a " +
+          "De ellos pedimos lo mínimo: nombre, apellidos y clase; de los hermanos que no van a " +
             "la escuela, solo cuántos son. Sus nombres no salen en los emails ni en ninguna página " +
             "pública: solo los ven el AFA y el fotógrafo.",
           "Este texto trata de la inscripción. Las fotos de la sesión no pasan por esta web.",
@@ -273,7 +273,7 @@ export const PRIVACIDAD: Record<
         titulo: "Quines dades demanem",
         parrafos: ["Només les que calen per a la sessió de fotos, i res més:"],
         lista: [
-          "De cada xiquet o xiqueta: nom, primer cognom i classe.",
+          "De cada xiquet o xiqueta: nom, cognoms i classe.",
           "Quants germans o germanes que no van a l'escola ixen en les fotos: només el número, " +
             "sense noms.",
           "Si sou socis de l'AFA aquest curs (ho declareu vosaltres), quants lots voleu i si afegiu " +
@@ -471,7 +471,7 @@ export const PRIVACIDAD: Record<
         parrafos: [
           "Els xiquets i xiquetes de l'escola tenen de 0 a 3 anys, així que tot ho decidix la " +
             "persona adulta que fa la inscripció, com a mare, pare o tutor/a.",
-          "D'ells en demanem el mínim: nom, primer cognom i classe; dels germans que no van a " +
+          "D'ells en demanem el mínim: nom, cognoms i classe; dels germans que no van a " +
             "l'escola, només quants són. Els seus noms no ixen en els correus ni en cap pàgina " +
             "pública: només els veuen l'AFA i el fotògraf.",
           "Aquest text tracta de la inscripció. Les fotos de la sessió no passen per aquesta web.",

@@ -10,7 +10,7 @@ import { partirEnLineas, textoSeguro } from "./texto-pdf";
 export type FilaAgenda = {
   /** Inicio del hueco (UTC). */
   inicio: Date;
-  /** Primer apellido del primer peque: es como el fotógrafo llama a la familia. */
+  /** Apellidos del primer peque: es como el fotógrafo llama a la familia. */
   apellido: string;
   /** `clase` es el nombre de la clase («Osos»). */
   peques: { nombre: string; clase: string }[];

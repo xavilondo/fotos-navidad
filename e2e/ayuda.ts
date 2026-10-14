@@ -33,7 +33,7 @@ const T = {
   es: {
     apuntarnos: "Apuntarnos",
     nombre: "Nombre del peque 1",
-    apellido: "Primer apellido del peque 1",
+    apellido: "Apellidos del peque 1",
     siguiente: "Siguiente",
     socios: "Sí, somos socios",
     loteMas: "Un lote más",
@@ -52,7 +52,7 @@ const T = {
   va: {
     apuntarnos: "Apuntar-nos",
     nombre: "Nom del xiquet o xiqueta 1",
-    apellido: "Primer cognom del xiquet o xiqueta 1",
+    apellido: "Cognoms del xiquet o xiqueta 1",
     siguiente: "Següent",
     socios: "Sí, som socis",
     loteMas: "Un lot més",
