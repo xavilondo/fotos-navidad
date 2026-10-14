@@ -3,7 +3,7 @@ import { z } from "zod";
 
 /** Máximo de favoritas y de horas imposibles por inscripción. */
 export const MAX_FAVORITAS = 6;
-export const MAX_IMPOSIBLES = 6;
+export const MAX_IMPOSIBLES = 10;
 
 /**
  * La lista canónica (§5.2 del spec): lo único que entra en el sorteo. Sin nombres ni emails,

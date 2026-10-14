@@ -60,7 +60,7 @@ El comando rechaza una lista que no esté en su forma canónica (por ejemplo, in
 ```
 
 - `franjas` va en **orden cronológico**. `huecos` cuenta solo los huecos **libres** (no bloqueados). Una franja puede tener 0 huecos libres: sigue en la lista (las familias pueden haberla marcado), pero no se puede asignar.
-- `inscripciones` va **ordenada por `id`**. Cada una tiene hasta 6 `favoritas` **en su orden** (1ª, 2ª…) y hasta 6 `imposibles`, **ordenadas**. Una franja no puede ser favorita e imposible a la vez, ni repetirse.
+- `inscripciones` va **ordenada por `id`**. Cada una tiene hasta 6 `favoritas` **en su orden** (1ª, 2ª…) y hasta 10 `imposibles`, **ordenadas**. Una franja no puede ser favorita e imposible a la vez, ni repetirse.
 - «Ordenar» es comparar cadenas por unidades de código UTF-16 (el orden por defecto de JavaScript). Para ids y códigos en ASCII, como los nuestros, es el orden de bytes y coincide con el `sorted()` de Python.
 - No hay nombres, emails ni nada personal: solo un id aleatorio y las preferencias.
 

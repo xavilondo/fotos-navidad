@@ -67,3 +67,6 @@ next-env.d.ts
 
 # material del AFA con fotos de peques: nunca al repositorio público
 /dossier/
+
+# simulaciones con la instantánea de inscripciones actuales: solo local
+/.scratch/fotos-navidad/simulacion-local/

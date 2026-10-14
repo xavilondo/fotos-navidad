@@ -39,6 +39,19 @@ describe("jsonCanonico", () => {
 });
 
 describe("construirListaCanonica", () => {
+  it("admite diez imposibles distintos y rechaza once", () => {
+    const franjas = Array.from({ length: 11 }, (_, i) => ({ codigo: `franja-${i}`, huecos: 6 }));
+    const construir = (n: number) =>
+      construirListaCanonica({
+        edicion: "navidad-2026",
+        franjas,
+        inscripciones: [
+          { id: "a", favoritas: [], imposibles: franjas.slice(0, n).map((f) => f.codigo) },
+        ],
+      });
+    expect(validarListaCanonica(construir(10)).inscripciones[0].imposibles).toHaveLength(10);
+    expect(() => construir(11)).toThrow(ListaInvalida);
+  });
   it("ordena las inscripciones por id y las imposibles, sin tocar favoritas ni franjas", () => {
     const lista = construirListaCanonica(
       entrada([
