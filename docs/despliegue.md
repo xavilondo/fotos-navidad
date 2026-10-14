@@ -21,12 +21,18 @@
 - Acceso al panel comprobado con `xavi`: cero inscripciones, 120 huecos libres y edición antes de abrir. El acceso anónimo a `/admin` redirige al formulario de entrada.
 - Clave API temporal de Neon creada con alcance exclusivo a este proyecto, revocada tras la comprobación y eliminada del archivo local temporal.
 
+## Apertura temporal para pruebas
+
+Por petición del usuario el 14-10-2026, la inscripción se ha abierto adelantando `abreEn` en la base de datos a `2026-10-14T00:00` (Europe/Madrid). Se conserva la apertura original `2026-10-26T09:00` en [apertura-original.json](../.scratch/fotos-navidad/apertura-original.json) y en el archivo de configuración de 2026. El cierre sigue siendo el 27-10 a las 21:00.
+
+El usuario ha autorizado temporalmente las claves públicas de prueba de Turnstile. `NEXT_PUBLIC_TURNSTILE_SITE_KEY` y `TURNSTILE_SECRET_KEY` están configuradas en Production con los valores de prueba de `.env.example`: dejan pasar la comprobación antibot. Durante este ensayo solo deben introducirse datos ficticios. Antes de admitir familias reales hay que sustituir ambas claves por las del widget definitivo y restaurar la apertura prevista si corresponde. El correo continúa sin proveedor y permanece en cola.
+
 ## Pendiente
 
 - Corte automático del gasto Neon: **no aplicado**. El presupuesto autorizado es hasta 10 USD/mes. Se intentaron cuotas de 60 CU-h/mes y límites de datos con una clave exclusiva del proyecto. Neon respondió HTTP 404 con `action restricted; reason:"organization is managed by Vercel"`. Los ajustes del recurso y de la instalación en Vercel tampoco ofrecen cuotas por proyecto. La clave temporal fue revocada; no se solicitaron permisos más amplios. La reducción a 0,25 CU y la suspensión por inactividad no constituyen un límite mensual: si el cómputo permaneciera activo todo un mes de 31 días, serían 19,72 USD solo de cómputo antes de impuestos. Para garantizar un corte hace falta un proveedor o una cuenta Neon que permita fijar cuotas; seguimiento en [la incidencia 17](../.scratch/fotos-navidad/issues/17-limite-de-gasto-neon.md).
 - Vistas previas: deben usar una base independiente de producción. No se ha concedido acceso de Preview a la base real.
 - Correo aplazado por el usuario. La app usa actualmente Resend; si se elige una cuenta propia, el envío necesitará SMTP (IMAP solo recibe) y adaptar el proveedor. No se ha configurado la cuenta de Mundo Pétreo.
-- Turnstile pendiente; sin su secreto, la app rechaza las inscripciones en producción. No se han usado claves de prueba.
+- Turnstile definitivo pendiente: mientras se ensaya se usan claves públicas de prueba, con autorización expresa del usuario.
 - Dominio todavía por decidir: podría ser un subdominio de la escuela. Se mantiene la URL de Vercel. Faltan email de contacto y NIF del AFA para privacidad.
 
 ## Validación local
