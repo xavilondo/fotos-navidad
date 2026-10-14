@@ -31,7 +31,7 @@ export default definirEdicion({
   precios: { loteSocia: 22, loteNoSocia: 30, archivoDigitalPorLote: 5 },
   limites: {
     favoritas: 6,
-    imposibles: 6,
+    imposibles: 10,
     lotesMin: 1,
     lotesMax: 5,
     hermanosMax: 6,

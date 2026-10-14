@@ -55,7 +55,7 @@ En 2026 no hay configurador visual: la edición se define en `config/ediciones/n
   minutosHueco: 5, minutosFranja: 30, huecosBloqueados: [],          // p. ej. '2026-11-02T17:30'
   clases: ['patitos','gatitos','ardillas','osos','delfines','tigres','elefantes','pinguinos'], // orden del dossier
   precios: { loteSocia: 22, loteNoSocia: 30, archivoDigitalPorLote: 5 },
-  limites: { favoritas: 6, imposibles: 6, lotesMin: 1, lotesMax: 5, hermanosMax: 6, observaciones: 300 },
+  limites: { favoritas: 6, imposibles: 10, lotesMin: 1, lotesMax: 5, hermanosMax: 6, observaciones: 300 },
   versionPrivacidad: '2026-10-v1',
 }
 ```
@@ -112,7 +112,7 @@ Ver [Selector de horarios en móvil](issues/01-selector-de-horarios-en-movil.md)
 - Rejilla de dos columnas (lunes y martes) con las 10 franjas de cada día.
 - En **Favoritas**, tocar añade la franja **por orden**: una pegatina amarilla con el número se «pega» encima. Volver a tocarla la quita y las demás se renumeran con un rebote.
 - En **No podemos**, tocar tacha la franja (rayado rosa + ✕). Si la franja era favorita, deja de serlo.
-- Límites: 6 favoritas y 6 imposibles, con aviso y sacudida al pasarse.
+- Límites: 6 favoritas y 10 imposibles, con aviso y sacudida al pasarse.
 - Debajo, **«Vuestro orden»**: 6 puestos con ▲, ▼ y ✕, que se reordenan con animación de layout, y la frase en Caveat «cuantas más favoritas marquéis, más os protege el reparto».
 - Sin favoritas, el CTA es «Seguir sin favoritas».
 - Accesible por teclado y lector de pantalla: cada celda es un botón con `aria-label` («Lunes 2 15:00: favorita número 2»), con anuncios en una región viva.

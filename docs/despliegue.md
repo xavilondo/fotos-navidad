@@ -29,6 +29,8 @@ El usuario ha autorizado temporalmente las claves públicas de prueba de Turnsti
 
 Prueba de los cinco pasos completada en la web: alta ficticia de `Prueba Codex`, email `prueba-codex@example.com`, peque `Peque de prueba Codex`, clase Patitos, un lote y una favorita. La inscripción queda identificada como ficticia en las observaciones para su limpieza posterior. La pantalla confirma el alta; su texto de email enviado no implica entrega, ya que el correo todavía no está configurado.
 
+El 14-10-2026, por petición del usuario, el límite de franjas imposibles pasa de 6 a 10 tanto en la configuración fuente como en la edición activa. Cambio puntual registrado en la auditoría como `edicion.limite_imposibles_actualizado`, actor `admin:afa`. Se conservan las inscripciones existentes y el bloqueo general de configuración después de abrir. La validación compartida admite 10 imposibles y rechaza 11.
+
 ## Pendiente
 
 - Corte automático del gasto Neon: **no aplicado**. El presupuesto autorizado es hasta 10 USD/mes. Se intentaron cuotas de 60 CU-h/mes y límites de datos con una clave exclusiva del proyecto. Neon respondió HTTP 404 con `action restricted; reason:"organization is managed by Vercel"`. Los ajustes del recurso y de la instalación en Vercel tampoco ofrecen cuotas por proyecto. La clave temporal fue revocada; no se solicitaron permisos más amplios. La reducción a 0,25 CU y la suspensión por inactividad no constituyen un límite mensual: si el cómputo permaneciera activo todo un mes de 31 días, serían 19,72 USD solo de cómputo antes de impuestos. Para garantizar un corte hace falta un proveedor o una cuenta Neon que permita fijar cuotas; seguimiento en [la incidencia 17](../.scratch/fotos-navidad/issues/17-limite-de-gasto-neon.md).

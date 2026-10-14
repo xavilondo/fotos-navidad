@@ -21,7 +21,7 @@ Hay que cerrar:
 
 Acordado con el usuario el 13-10-2026 en tres rondas de grilling. Decisión de fondo en [ADR 0001](../../../docs/adr/0001-mejor-reparto-en-vez-de-turnos-al-azar.md).
 
-**Preferencias** (iguales en las dos opciones del selector): hasta 6 favoritas ordenadas, hasta 6 imposibles y el resto «nos va bien». Las favoritas **no son obligatorias**.
+**Preferencias** (iguales en las dos opciones del selector): hasta 6 favoritas ordenadas, hasta 10 imposibles y el resto «nos va bien». Las favoritas **no son obligatorias**.
 
 **Reparto:**
 - Se calcula el **mejor reparto posible (leximin)** sobre niveles de satisfacción. Primero se minimiza cuántas familias caen en el peor nivel, luego en el siguiente, etc. Si existe un reparto en el que todas tienen una favorita, sale ese.
@@ -62,3 +62,4 @@ Acordado con el usuario el 13-10-2026 en tres rondas de grilling. Decisión de f
   - Q42: Vercel Pro mientras haya datos personales. Q43: segunda casilla opcional para la compensación.
   - Q44: diagnóstico en el panel (solo admin), en vivo durante la inscripción y antes del sorteo: mejor reparto posible ahora y si existe uno en el que todas tienen una favorita.
 - **13-10-2026 · grilling, ronda 3**: Q45, Q46 y Q47 según la recomendación.
+- **14-10-2026**: por petición del usuario, el máximo de imposibles pasa de 6 a 10. Aplicado también a la edición de producción ya abierta mediante un cambio puntual auditado, conservando las inscripciones existentes. Validación compartida del formulario y servidor: admite 10 y rechaza 11.
