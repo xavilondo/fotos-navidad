@@ -38,6 +38,8 @@ test.describe("accesibilidad", () => {
     await page.getByRole("radio", { name: /Sí, somos socios/ }).click();
     await sinInfracciones(page);
     await page.getByRole("button", { name: "Siguiente" }).click();
+    await sinInfracciones(page); // con la guía abierta
+    await page.getByRole("button", { name: "Entendido" }).click();
     await page.getByRole("button", { name: /^Lunes 2 17:00/ }).click();
     await sinInfracciones(page);
     await page.getByRole("button", { name: "Siguiente" }).click();

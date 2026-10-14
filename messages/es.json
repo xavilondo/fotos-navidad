@@ -178,7 +178,7 @@
       "modoFavoritas": "♥ Favoritas",
       "modoImposibles": "✕ No podemos",
       "ayudaFavoritas": "Tocad las horas <b>por orden de preferencia</b>: la primera que toquéis será vuestra 1ª. Hasta {max}.",
-      "ayudaImposibles": "Tocad las horas en las que <b>no podéis venir de ninguna manera</b> ({n} de {max}).",
+      "ayudaImposibles": "Tachad solo las horas en las que <b>no podéis venir de ninguna manera</b> ({n} de {max}). Las demás no hace falta tocarlas.",
       "celda": "{dia} {hora}: {estado}",
       "estadoFavorita": "favorita número {n}",
       "estadoImposible": "no podéis",
@@ -191,13 +191,23 @@
       "bajar": "Bajar {franja}",
       "quitar": "Quitar {franja}",
       "protege": "cuantas más favoritas marquéis, más os protege el reparto",
-      "limiteFavoritas": "Ya tenéis {max} favoritas. Quitad una para elegir otra.",
-      "limiteImposibles": "Como mucho {max} horas imposibles. Quitad una para tachar otra.",
+      "limiteFavoritas": "Ya tenéis {max} favoritas. Para elegir otra, tocad una de las que tenéis y se quitará.",
+      "limiteImposibles": "Como mucho {max} horas imposibles: tachad solo las que de verdad no podéis. Para tachar otra, tocad una tachada y se quitará.",
       "anuncioFavorita": "{franja}: favorita número {n}",
       "anuncioQuitada": "{franja}: ya no es favorita",
       "anuncioImposible": "{franja}: no podéis",
       "anuncioPosible": "{franja}: os va bien",
-      "anuncioOrden": "{franja}: ahora es la {n}ª"
+      "anuncioOrden": "{franja}: ahora es la {n}ª",
+      "comoFunciona": "¿Cómo funciona?",
+      "guia": {
+        "titulo": "Cómo elegir vuestras horas",
+        "intro": "Cuatro pasos. No hace falta tocar todas las horas.",
+        "paso1": "<b>Tocad vuestras horas favoritas, por orden.</b> La primera que toquéis será vuestra 1ª, la siguiente la 2ª… Hasta {max}.",
+        "paso2": "<b>¿Hay horas a las que no podéis venir de ninguna manera?</b> Pulsad «✕ No podemos» y tachadlas. Como mucho {maxImp}: solo las imposibles de verdad.",
+        "paso3": "<b>El resto de horas os van bien.</b> No hace falta marcarlas.",
+        "paso4": "<b>¿Os habéis equivocado?</b> Tocad la hora otra vez y se quita. El orden de las favoritas se cambia con ▲ ▼. Y hasta el {cierre} podéis cambiarlo todo desde vuestro enlace.",
+        "entendido": "Entendido"
+      }
     },
     "datos": {
       "nombre": "Vuestro nombre",

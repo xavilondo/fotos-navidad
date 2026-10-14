@@ -46,6 +46,8 @@ const T = {
     consentimiento: /He leído la información/,
     enviar: "Enviar inscripción",
     hecho: "¡Ya estáis apuntados!",
+    guia: "Cómo elegir vuestras horas",
+    entendido: "Entendido",
   },
   va: {
     apuntarnos: "Apuntar-nos",
@@ -63,6 +65,8 @@ const T = {
     consentimiento: /He llegit la informació/,
     enviar: "Enviar la inscripció",
     hecho: "Ja esteu apuntats!",
+    guia: "Com triar les vostres hores",
+    entendido: "Entesos",
   },
 };
 
@@ -85,7 +89,9 @@ export async function inscribirse(page: Page, { email, idioma = "es" }: Opciones
   await expect(page.getByText("54 €")).toBeVisible();
   await page.getByRole("button", { name: t.siguiente }).click();
 
-  // 3 · Horario: dos favoritas y una imposible
+  // 3 · Horario: la guía sale sola la primera vez; luego dos favoritas y una imposible
+  await expect(page.getByRole("dialog", { name: t.guia })).toBeVisible();
+  await page.getByRole("button", { name: t.entendido }).click();
   await page.getByRole("button", { name: new RegExp(`^${t.lunes} 17:00`) }).click();
   await page.getByRole("button", { name: new RegExp(`^${t.martes} 17:30`) }).click();
   await page.getByRole("radio", { name: t.noPodemos }).click();

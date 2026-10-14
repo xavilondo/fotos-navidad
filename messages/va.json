@@ -178,7 +178,7 @@
       "modoFavoritas": "♥ Preferides",
       "modoImposibles": "✕ No podem",
       "ayudaFavoritas": "Toqueu les hores <b>per ordre de preferència</b>: la primera que toqueu serà la vostra 1a. Fins a {max}.",
-      "ayudaImposibles": "Toqueu les hores en què <b>no podeu vindre de cap manera</b> ({n} de {max}).",
+      "ayudaImposibles": "Ratlleu només les hores en què <b>no podeu vindre de cap manera</b> ({n} de {max}). Les altres no cal tocar-les.",
       "celda": "{dia} {hora}: {estado}",
       "estadoFavorita": "preferida número {n}",
       "estadoImposible": "no podeu",
@@ -191,13 +191,23 @@
       "bajar": "Baixar {franja}",
       "quitar": "Llevar {franja}",
       "protege": "com més preferides marqueu, més us protegix el repartiment",
-      "limiteFavoritas": "Ja teniu {max} preferides. Lleveu-ne una per a triar-ne una altra.",
-      "limiteImposibles": "Com a molt {max} hores impossibles. Lleveu-ne una per a ratllar-ne una altra.",
+      "limiteFavoritas": "Ja teniu {max} preferides. Per a triar-ne una altra, toqueu-ne una de les que teniu i es llevarà.",
+      "limiteImposibles": "Com a molt {max} hores impossibles: ratlleu només les que de veritat no podeu. Per a ratllar-ne una altra, toqueu-ne una de ratllada i es llevarà.",
       "anuncioFavorita": "{franja}: preferida número {n}",
       "anuncioQuitada": "{franja}: ja no és preferida",
       "anuncioImposible": "{franja}: no podeu",
       "anuncioPosible": "{franja}: us va bé",
-      "anuncioOrden": "{franja}: ara és la {n}a"
+      "anuncioOrden": "{franja}: ara és la {n}a",
+      "comoFunciona": "Com funciona?",
+      "guia": {
+        "titulo": "Com triar les vostres hores",
+        "intro": "Quatre passos. No cal tocar totes les hores.",
+        "paso1": "<b>Toqueu les vostres hores preferides, per ordre.</b> La primera que toqueu serà la vostra 1a, la següent la 2a… Fins a {max}.",
+        "paso2": "<b>Hi ha hores a què no podeu vindre de cap manera?</b> Premeu «✕ No podem» i ratlleu-les. Com a molt {maxImp}: només les impossibles de veritat.",
+        "paso3": "<b>La resta d'hores us van bé.</b> No cal marcar-les.",
+        "paso4": "<b>Us heu equivocat?</b> Toqueu l'hora una altra vegada i es lleva. L'ordre de les preferides es canvia amb ▲ ▼. I fins al {cierre} podeu canviar-ho tot des del vostre enllaç.",
+        "entendido": "Entesos"
+      }
     },
     "datos": {
       "nombre": "El vostre nom",

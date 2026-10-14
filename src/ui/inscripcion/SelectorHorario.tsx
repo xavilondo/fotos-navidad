@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Tarjeta } from "@/ui/marca/Tarjeta";
 import { MensajeError } from "@/ui/formulario/Campo";
 import { useEtiquetaFranja, useTextoError, type PropsPaso } from "./comun";
+import { GuiaHorario } from "./GuiaHorario";
 
 type Modo = "favoritas" | "imposibles";
 
@@ -33,7 +34,8 @@ export function SelectorHorario({
   errores,
   datos,
   onAviso,
-}: PropsPaso & { onAviso: (t: string) => void }) {
+  explicarAlEntrar = false,
+}: PropsPaso & { onAviso: (t: string) => void; explicarAlEntrar?: boolean }) {
   const t = useTranslations("inscripcion.horario");
   const error = useTextoError();
   const etiqueta = useEtiquetaFranja(datos);
@@ -158,7 +160,16 @@ export function SelectorHorario({
         ))}
       </div>
 
-      <p className="mx-0.5 mt-2.5 mb-3 min-h-[38px] text-[13.5px] leading-[1.4] text-muted-ink">
+      <div className="-mb-1 flex justify-end">
+        <GuiaHorario
+          slug={datos.slug}
+          abrirSola={explicarAlEntrar}
+          maxFav={maxFav}
+          maxImp={maxImp}
+          cierre={datos.textos.cierre}
+        />
+      </div>
+      <p className="mx-0.5 mt-1 mb-3 min-h-[38px] text-[13.5px] leading-[1.4] text-muted-ink">
         {modo === "favoritas"
           ? t.rich("ayudaFavoritas", { b: (c) => <b className="text-ink">{c}</b>, max: maxFav })
           : t.rich("ayudaImposibles", {

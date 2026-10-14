@@ -34,7 +34,7 @@ export function Hoja({ abierta, onCerrar, titulo, descripcion, children }: Props
               aria-describedby={descripcion ? undefined : undefined}
             >
               <m.div
-                className="fixed inset-x-0 bottom-0 z-50 mx-auto max-w-[480px] rounded-t-[28px] bg-paper px-5 pt-[22px] pb-[calc(24px+env(safe-area-inset-bottom))] shadow-pegatina-l outline-none"
+                className="fixed inset-x-0 bottom-0 z-50 mx-auto max-h-[92dvh] max-w-[480px] overflow-y-auto rounded-t-[28px] bg-paper px-5 pt-[22px] pb-[calc(24px+env(safe-area-inset-bottom))] shadow-pegatina-l outline-none"
                 initial={{ y: "100%" }}
                 animate={{ y: 0 }}
                 exit={{ y: "100%" }}

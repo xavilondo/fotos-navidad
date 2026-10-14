@@ -62,6 +62,7 @@ test.describe("inscripción", () => {
     await expect(page.getByText("Decidnos si sois socios del AFA")).toBeVisible();
     await page.getByRole("radio", { name: /No/ }).click();
     await page.getByRole("button", { name: "Siguiente" }).click();
+    await page.getByRole("button", { name: "Entendido" }).click();
     await expect(page.getByRole("button", { name: "Seguir sin favoritas" })).toBeVisible();
     await page.getByRole("button", { name: "Seguir sin favoritas" }).click();
     await page.getByRole("textbox", { name: "Email" }).fill("leo@gmial.com");

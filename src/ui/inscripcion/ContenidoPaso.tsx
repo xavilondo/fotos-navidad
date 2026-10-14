@@ -27,7 +27,7 @@ export function ContenidoPaso({
     case 2:
       return <PasoLotes {...props} />;
     case 3:
-      return <SelectorHorario {...props} onAviso={onAviso} />;
+      return <SelectorHorario {...props} onAviso={onAviso} explicarAlEntrar={!editando} />;
     case 4:
       return <PasoDatos {...props} editando={editando} />;
     case 5:

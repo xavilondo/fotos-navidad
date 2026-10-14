@@ -22,6 +22,7 @@ test.describe("panel de administración", () => {
 
     await page.getByRole("link", { name: "Inscripciones" }).click();
     await page.getByRole("link", { name: "+ Alta manual" }).click();
+    await page.getByRole("button", { name: "Entendido" }).click();
     await page.getByRole("textbox", { name: "Nombre del peque 1", exact: true }).fill("Manuel");
     await page
       .getByRole("textbox", { name: "Primer apellido del peque 1", exact: true })
