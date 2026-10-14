@@ -170,7 +170,7 @@ export function generarFamiliasHorarios(opciones: {
       nombreAdulto: `SIM ${numero} · ${perfil}`,
       peques: Array.from({ length: nPeques }, (_, j) => ({
         nombre: nombres[(i + j) % nombres.length],
-        apellido: `Simulación ${numero}`,
+        apellido: `Simulación${numero}`,
         clase: clases[(i + j) % clases.length],
       })),
       socia: azar() < 0.7,

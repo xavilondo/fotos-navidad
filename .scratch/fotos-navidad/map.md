@@ -25,6 +25,8 @@ Un spec en `.scratch/fotos-navidad/spec.md` para que Claude Code construya la ap
 
 ## Decisions so far
 
+- [Simulación de familias por horarios](issues/18-simulacion-de-familias-por-horarios.md): el 14-10-2026 se cargan 107 ficticias, conservando 3 previas, para dejar 10 huecos sobrantes. Semilla `20261014`, restricciones laborales y extraescolares, simulación web y local verificadas sin publicar el sorteo. Supuestos y resultados en [simulacion-horarios.md](../../docs/simulacion-horarios.md).
+
 <!-- one line per closed ticket -->
 
 - [Proveedores y límites de la plataforma](issues/03-proveedores-y-limites-de-la-plataforma.md): Vercel Hobby (fra1), Neon Free (Frankfurt), Resend Free (UE), Turnstile y dominio `.es`. La apertura y la caducidad se calculan en cada petición, porque el cron de Hobby es diario e impreciso. El límite que manda son los 100 emails diarios de Resend. **Revisado:** Vercel Pro mientras haya datos personales (ver Requisitos RGPD) y Resend Pro en la campaña (ver Presupuesto de emails).

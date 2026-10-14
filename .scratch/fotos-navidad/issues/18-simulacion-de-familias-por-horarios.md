@@ -1,7 +1,7 @@
 # Simulación de familias por horarios
 
 Type: task
-Status: ready-for-agent
+Status: ready-for-human
 Map: [map.md](../map.md)
 
 ## Request
@@ -18,3 +18,4 @@ El 14-10-2026 el usuario pide cargar de una vez inscripciones ficticias que mode
 ## Comments
 
 - **14-10-2026**: plan comprobado con 3 inscripciones previas: 107 ficticias nuevas, 110 en total, 10 huecos sobrantes. Pruebas del modelo y módulo de reparto: 55 correctas.
+- **14-10-2026**: carga y comprobación completas en producción de pruebas, auditadas con `admin:afa`. Simulación web y CLI coinciden: 71 primeras favoritas, 21 segundas, 6 terceras, 6 «nos va bien», 6 sin favoritas y 0 imposibles. Sin asignaciones publicadas ni emails de la tanda. Primer apellido ficticio único; cero duplicados. Segunda ejecución idempotente: 0 inserciones. Listo para revisión del usuario en el panel.

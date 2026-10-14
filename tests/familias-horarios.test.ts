@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import navidad from "@config/ediciones/navidad-2026";
 import { construirListaCanonica, repartir } from "@/dominio/reparto";
+import { clavePeque } from "@/dominio/inscripcion/duplicados";
 import { generarFamiliasHorarios, PERFILES } from "../scripts/fixtures/familias-horarios";
 
 const franjas = navidad.dias.flatMap((d) =>
@@ -30,6 +31,8 @@ describe("Familias sintéticas por horarios", () => {
     expect(new Set(familias.map((f) => f.id)).size).toBe(107);
     expect(new Set(familias.map((f) => f.email)).size).toBe(107);
     expect(familias.every((f) => f.email.endsWith("@example.com"))).toBe(true);
+    const claves = familias.flatMap((f) => f.peques.map((p) => clavePeque(p)));
+    expect(new Set(claves).size).toBe(claves.length);
   });
   it("incluye todos los perfiles, actividades y diez imposibles sin inventar disponibilidad", () => {
     const familias = generarFamiliasHorarios(opciones);
