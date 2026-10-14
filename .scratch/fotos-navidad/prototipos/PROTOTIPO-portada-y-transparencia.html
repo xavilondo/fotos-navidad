@@ -1,0 +1,324 @@
+<!doctype html>
+<!--
+  PROTOTIPO DESECHABLE · no es código de producción.
+  Ticket: ../issues/12-portada-y-pagina-de-transparencia.md
+  Pregunta: ¿cómo se explica en el móvil, con la dirección Álbum, que no importa apuntarse la primera y que el
+  sorteo es justo y comprobable?
+  - Portada en sus 5 estados: antes de abrir, abierta, cerrada (huella publicada), publicada y terminada.
+  - Página de transparencia con dos maneras de explicar el reparto, cambiables con ?variant=A|B:
+      A · Cuatro pasos   — la secuencia huella → ONCE → mejor reparto → el azar desempata.
+      B · Un ejemplo     — tres familias y tres huecos, paso a paso, comparando turnos con el mejor reparto.
+  Barra del prototipo: Portada / Transparencia, estado del calendario y variante de la explicación.
+  Todos los números son de ejemplo.
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PROTOTIPO · Portada y transparencia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Fraunces:opsz,wght@9..144,400..700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#26301a; --olive:#3b4d15; --olive-d:#263309; --green:#2e9a3a; --green-d:#1f6e28;
+  --cream:#fff8ec; --paper:#fffdf8; --muted:#646b55; --burg:#7d1a34;
+  --sp:#a9de7f; --sp-s:#eaf8de; --su:#ffd36b; --su-s:#fff2cc; --au-s:#fde6d6; --wi-s:#e1f2f8; --wi-d:#2f86a6; --pk:#f5a8bd; --pk-s:#fde6ec;
+  --stk:0 5px 0 -1px rgba(52,66,18,.11), 0 0 0 1.5px rgba(52,66,18,.05);
+  --stk-l:0 9px 0 -3px rgba(52,66,18,.09), 0 0 0 2px rgba(52,66,18,.05);
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:#d8d1bb;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;color:inherit}
+:focus-visible{outline:3px solid #e39b00;outline-offset:2px}
+b{font-weight:800}
+.caveat{font-family:Caveat,cursive;font-weight:700}
+h1,h2,h3{font-family:Fraunces,serif;font-variation-settings:"SOFT" 0,"WONK" 0;color:var(--olive)}
+.stage{min-height:100dvh;display:grid;place-items:center;padding:24px 0 96px}
+.device{position:relative;width:390px;height:min(844px,calc(100dvh - 130px));border-radius:46px;overflow:hidden;background:var(--cream);box-shadow:0 0 0 10px #1f2614,0 30px 60px -20px rgba(31,38,20,.55)}
+.device::after{content:"";position:absolute;inset:0;pointer-events:none;background:url(../../../dossier/assets/grain.png);opacity:.2;mix-blend-mode:multiply;z-index:30}
+.phone{height:100%;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+.phone::-webkit-scrollbar{display:none}
+#app{min-height:100%;display:flex;flex-direction:column}
+.toast{position:absolute;left:16px;right:16px;bottom:100px;z-index:45;background:var(--ink);color:var(--paper);border-radius:16px;padding:12px 14px;font-size:14px;font-weight:800;opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .2s,transform .3s}
+.toast.show{opacity:1;transform:none}
+@media (max-width:520px){.stage{padding:0;display:block}.device{width:100%;height:100dvh;border-radius:0;box-shadow:none}.toast{bottom:150px}}
+main{padding:14px 20px 12px;flex:1}
+.cta-bar{position:sticky;bottom:0;z-index:10;padding:20px 20px calc(16px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--cream) 70%,rgba(255,248,236,0))}
+@media (max-width:520px){.cta-bar{padding-bottom:78px}}
+.cta{width:100%;height:58px;border:0;border-radius:999px;background:var(--olive);color:var(--paper);font:700 19px Fraunces,serif;box-shadow:0 6px 0 var(--olive-d)}
+.cta:active{transform:translateY(5px);box-shadow:0 1px 0 var(--olive-d)}
+.cta:disabled{background:#cbc8b5;box-shadow:0 6px 0 #a9a58e;color:#f6f3ea}
+.link{border:0;background:none;color:var(--green);font:800 14.5px Nunito;text-decoration:underline;text-underline-offset:3px;padding:8px 0}
+.card{position:relative;background:var(--paper);border-radius:28px;padding:18px;box-shadow:var(--stk-l);margin-top:18px}
+.tape{position:absolute;width:76px;height:24px;top:-11px;left:26px;background:rgba(255,211,107,.7);transform:rotate(-7deg);clip-path:polygon(3% 0,97% 4%,100% 50%,96% 100%,2% 96%,0 50%)}
+.tape.r{left:auto;right:22px;transform:rotate(6deg);background:rgba(169,222,127,.7)}
+.die{filter:drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff) drop-shadow(0 5px 0 rgba(52,66,18,.16))}
+.pill{display:inline-flex;align-items:center;gap:6px;font:800 12px Nunito;letter-spacing:.04em;text-transform:uppercase;background:var(--green);color:#fff;padding:5px 10px;border-radius:999px}
+.pill i{width:7px;height:7px;border-radius:50%;background:#fff;animation:blink 1.6s infinite}
+.pill.wait{background:var(--wi-d)}.pill.closed{background:var(--olive)}.pill.done{background:var(--burg)}
+@keyframes blink{50%{opacity:.25}}
+.top{display:flex;align-items:center;gap:10px}
+.top img{width:46px;height:46px}
+.top span{font:800 13px Nunito;color:var(--muted);letter-spacing:.02em}
+.hero{position:relative;margin:14px 0 0;padding:26px 0 18px;min-height:228px}
+.hero .kick{font-size:30px;color:var(--green);transform:rotate(-4deg);display:inline-block;margin-left:4px}
+.hero h1{font-size:50px;line-height:.92;letter-spacing:-.02em;margin-top:2px;position:relative;z-index:2}
+.hero h1 em{font-style:normal;display:inline-block;background:var(--su);padding:0 10px 4px;border-radius:14px;transform:rotate(-3deg);box-shadow:var(--stk)}
+.hero .st{position:absolute;width:var(--w,70px);rotate:var(--r);z-index:1}
+.dates{rotate:-1.2deg}
+.dates big{display:block;font:700 22px/1.05 Fraunces;color:var(--olive);margin-bottom:6px}
+.dates p{font-size:15px;line-height:1.35}
+.state{rotate:.8deg}
+.state.g{background:var(--sp-s)}.state.b{background:var(--wi-s)}.state.y{background:var(--su-s)}.state.p{background:var(--pk-s)}
+.count{font:700 32px/1 Fraunces;color:var(--olive);margin:10px 0 8px;font-variant-numeric:tabular-nums}
+.count small{font:800 13px Nunito;color:var(--muted)}
+.state p{font-size:14.5px;line-height:1.45;margin-top:6px}
+.state .note{position:absolute;right:16px;bottom:-16px;font-size:24px;color:var(--burg);rotate:-6deg}
+.hash{display:flex;align-items:center;gap:8px;background:var(--paper);border-radius:14px;padding:8px 10px;margin-top:10px;font:600 13px ui-monospace,Menlo,monospace;word-break:break-all}
+.hash button{flex:none;border:0;border-radius:999px;background:var(--olive);color:#fff;font:800 12px Nunito;padding:6px 10px}
+.howlink{display:block;margin:20px auto 0;text-align:center}
+.lost{display:block;margin:2px auto 0;text-align:center;color:var(--muted)}
+.mstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.mstats div{background:var(--paper);border-radius:16px;padding:10px 6px;text-align:center;box-shadow:var(--stk)}
+.mstats b{display:block;font:700 26px/1 Fraunces;color:var(--olive)}
+.mstats span{font-size:11.5px;font-weight:800;color:var(--muted)}
+
+/* transparencia */
+.fbar{display:flex;align-items:center;gap:12px;height:44px}
+.back{width:40px;height:40px;flex:none;border-radius:50%;border:0;display:grid;place-items:center;background:var(--paper);box-shadow:var(--stk);color:var(--olive)}
+h1.q{font-size:32px;line-height:1.02;margin-top:14px}
+.aside{font-size:22px;color:var(--green);rotate:-2deg;display:inline-block;margin:4px 0 4px}
+.sec h2{font-size:21px;margin-bottom:8px}
+.sec p{font-size:15.5px;line-height:1.5;margin-top:6px}
+.steps4{list-style:none;padding:0;display:grid;gap:14px;margin-top:6px}
+.steps4 li{position:relative;display:grid;grid-template-columns:46px 1fr;gap:12px;background:var(--cream);border-radius:20px;padding:14px 14px 14px 12px;rotate:var(--r)}
+.steps4 .n{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font:700 22px Fraunces;background:var(--su);box-shadow:0 4px 0 -1px rgba(52,66,18,.2)}
+.steps4 small{display:block;font:800 12px Nunito;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.steps4 b{display:block;font:700 17px/1.2 Fraunces;color:var(--olive);margin:2px 0 4px}
+.steps4 p{font-size:14.5px;line-height:1.45;margin:0}
+.levels{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:4px;font-size:14px;font-weight:700}
+.levels li{display:flex;gap:8px;align-items:center}
+.levels i{flex:none;width:22px;height:22px;border-radius:7px;display:grid;place-items:center;font:700 12px Fraunces;font-style:normal;background:var(--paper);box-shadow:var(--stk)}
+
+/* ejemplo (B) */
+.ex-fams{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.fam{background:var(--cream);border-radius:18px;padding:8px 6px;text-align:center;font-size:12px;line-height:1.35;font-weight:700}
+.fam img{height:46px;display:block;margin:0 auto 2px}
+.fam b{display:block;font:700 15px Fraunces;color:var(--olive)}
+.fam .pref{display:block;color:var(--muted)}
+.fam .pref.x{color:var(--burg);text-decoration:line-through}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.hslot{position:relative;height:118px;border-radius:18px;border:2px dashed #d6d2bd;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:6px}
+.hslot .t{position:absolute;top:6px;left:0;right:0;text-align:center;font:700 17px Fraunces;color:var(--olive)}
+.hslot img{height:54px}
+.hslot .lv{font-size:11.5px;font-weight:800;border-radius:999px;padding:2px 8px;margin-top:4px;background:var(--sp-s);color:var(--green-d)}
+.hslot .lv.bad{background:var(--pk-s);color:var(--burg)}
+.opts{display:grid;gap:8px;margin-top:12px}
+.opt{display:flex;align-items:center;gap:8px;background:var(--cream);border-radius:16px;padding:8px 10px;font-size:13px;font-weight:700;border:2px solid transparent}
+.opt.win{border-color:var(--green);background:var(--sp-s)}
+.opt img{height:30px}
+.opt .ar{color:var(--muted);font-weight:800}
+.exnav{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
+.exnav .dots{display:flex;gap:6px}
+.exnav .dots i{width:8px;height:8px;border-radius:50%;background:#ddd8c3}
+.exnav .dots i.on{background:var(--green)}
+.exnav button{border:0;border-radius:999px;background:var(--olive);color:#fff;font:800 14px Nunito;padding:10px 16px}
+.exnav button:disabled{opacity:.35}
+
+/* cifras */
+.hero-n{font:700 44px/1 Fraunces;color:var(--olive)}
+.hero-n small{font:800 15px Nunito;color:var(--muted)}
+.bars{display:grid;gap:7px;margin-top:14px}
+.bar{display:grid;grid-template-columns:78px 1fr 34px;gap:8px;align-items:center;font-size:13px;font-weight:800}
+.bar .lb{color:var(--muted)}
+.bar .tr{height:16px;position:relative}
+.bar .fl{position:absolute;left:0;top:0;bottom:0;background:var(--green);border-radius:0 4px 4px 0;min-width:2px}
+.bar .v{text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.bar:hover .fl{background:var(--green-d)}
+.verify{font-size:14px;line-height:1.5}
+.verify dt{font:800 12px Nunito;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:10px}
+.verify dd{margin:2px 0 0;font:600 13.5px ui-monospace,Menlo,monospace;word-break:break-all}
+.dl{display:block;width:100%;margin-top:14px;border:2.5px dashed #cfcab2;border-radius:18px;background:none;padding:12px;font:800 14.5px Nunito;color:var(--olive)}
+.ph{color:var(--muted);font-style:italic}
+
+/* barra del prototipo */
+.proto-bar{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:100;display:flex;align-items:center;gap:4px;background:#111;color:#fff;border-radius:999px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.35);font:600 12.5px ui-monospace,Menlo,monospace;white-space:nowrap}
+.proto-bar button,.proto-bar select{height:34px;border-radius:999px;border:0;background:#2b2b2b;color:#fff;font:600 12.5px ui-monospace,Menlo,monospace;padding:0 11px}
+.proto-bar button.on{background:#c9f7a8;color:#111}
+.proto-bar .tag{background:#ff5a1f;color:#111;border-radius:999px;padding:4px 8px;font-size:10.5px;font-weight:800;letter-spacing:.05em}
+@media (max-width:520px){.proto-bar .tag{display:none}.proto-bar button,.proto-bar select{padding:0 8px}}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}.pill i{animation:none}}
+</style>
+</head>
+<body>
+<div class="stage"><div class="device"><div class="phone" id="phone"><div id="app"></div></div><div class="toast" id="toast" role="status" aria-live="polite"></div></div></div>
+<nav class="proto-bar" aria-label="Controles del prototipo">
+  <span class="tag">PROTOTIPO</span>
+  <button data-screen="portada">Portada</button>
+  <button data-screen="transparencia" title="Página de transparencia">Sorteo</button>
+  <select id="estado" aria-label="Momento del calendario">
+    <option value="antes">Antes de abrir</option><option value="abierta">Abierta</option><option value="cerrada">Cerrada</option><option value="publicada">Publicada</option><option value="terminada">Terminada</option>
+  </select>
+  <button data-variant="A" title="Explicación en cuatro pasos">A</button>
+  <button data-variant="B" title="Explicación con un ejemplo">B</button>
+</nav>
+
+<script>
+const ASSETS = '../../../dossier/assets/';
+const HASH = '3f9a1c07e2b4d85a6c19f0e37b2d4a8e51c6f09d2a7b3e48c1d5f60a9e2b7c21';
+const ONCE = '48213';
+const STATS = [['1ª favorita', 86], ['2ª', 18], ['3ª', 7], ['4ª', 3], ['5ª', 2], ['6ª', 1], ['Nos va bien', 2], ['Imposible', 0]];
+const TOTAL = STATS.reduce((a, [, n]) => a + n, 0), WITH_FAV = STATS.slice(0, 6).reduce((a, [, n]) => a + n, 0);
+// En cada estado, el «ahora» simulado y el instante al que apunta la cuenta atrás.
+const CLOCK = {
+  antes: { now: '2026-10-23T18:00:00+02:00', to: '2026-10-26T09:00:00+01:00' },
+  abierta: { now: '2026-10-26T10:12:00+01:00', to: '2026-10-27T21:00:00+01:00' },
+  cerrada: { now: '2026-10-27T22:40:00+01:00', to: null },
+  publicada: { now: '2026-10-29T12:00:00+01:00', to: '2026-11-01T20:00:00+01:00' },
+  terminada: { now: '2026-11-01T21:00:00+01:00', to: null },
+};
+const qs = new URLSearchParams(location.search);
+let S = { screen: qs.get('screen') === 'transparencia' ? 'transparencia' : 'portada', estado: CLOCK[qs.get('estado')] ? qs.get('estado') : 'abierta', variant: qs.get('variant') === 'B' ? 'B' : 'A', ex: 0 };
+const T0 = Date.now();
+const app = document.getElementById('app'), phone = document.getElementById('phone'), toastEl = document.getElementById('toast');
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const BOUNCY = CSS.supports('animation-timing-function', 'linear(0, 1)') ? 'linear(0, 0.007, 0.029 2.2%, 0.118 4.7%, 0.625 14.4%, 0.826 19%, 0.902, 0.962, 1.008 26.1%, 1.041 28.7%, 1.064 32.1%, 1.07 33.6%, 1.073 35.1%, 1.07 37.5%, 1.045 43.6%, 1.012 52.3%, 0.998 59%, 0.991 65.2%, 0.996 80%, 1)' : 'cubic-bezier(.34,1.56,.64,1)';
+function anim(el, kf, o = {}) { if (!el?.animate) return; if (RM) { if (!kf.some(k => 'opacity' in k)) return; return el.animate(kf.map(k => ({ opacity: k.opacity ?? 1 })), { duration: 160, fill: 'backwards' }); } return el.animate(kf, { duration: 540, easing: BOUNCY, fill: 'backwards', ...o }); }
+let tT; function toast(m) { toastEl.textContent = m; toastEl.classList.add('show'); clearTimeout(tT); tT = setTimeout(() => toastEl.classList.remove('show'), 2600); }
+const pad = n => String(n).padStart(2, '0');
+function left() { const c = CLOCK[S.estado]; if (!c.to) return null; const s = Math.max(0, Math.floor((new Date(c.to) - (new Date(c.now).getTime() + Date.now() - T0)) / 1000)); return { d: Math.floor(s / 86400), h: Math.floor(s % 86400 / 3600), m: Math.floor(s % 3600 / 60), s: s % 60 }; }
+const cd = t => t ? `${t.d} <small>d</small> ${t.h} <small>h</small> ${pad(t.m)} <small>min</small> ${pad(t.s)} <small>s</small>` : '';
+const backI = '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
+const short = h => `${h.slice(0, 8)}…${h.slice(-8)}`;
+
+/* ===================== portada ===================== */
+function stateCard() {
+  const e = S.estado;
+  if (e === 'antes') return `<div class="card state b" data-in><span class="tape r"></span><span class="pill wait"><i></i>Abre el lunes 26 a las 9:00</span>
+    <div class="count" data-cd>${cd(left())}</div>
+    <p>Tendréis <b>hasta el martes 27 a las 21:00</b>. No hace falta estar a las 9:00 en punto: da igual cuándo os apuntéis.</p></div>`;
+  if (e === 'abierta') return `<div class="card state g" data-in><span class="tape r"></span><span class="pill"><i></i>Inscripción abierta</span>
+    <div class="count" data-cd>${cd(left())}</div>
+    <p>No hace falta correr: el <b>miércoles 28</b> sorteamos las horas y <b>hay hueco para todas las familias</b>.</p><span class="note caveat">¡prometido!</span></div>`;
+  if (e === 'cerrada') return `<div class="card state y" data-in><span class="tape r"></span><span class="pill closed">Inscripción cerrada</span>
+    <p><b>119 familias apuntadas.</b> Esta es la huella de la lista: a partir de ahora, si alguien la tocara, la huella cambiaría.</p>
+    <div class="hash"><span>${short(HASH)}</span><button data-act="copy">Copiar</button></div>
+    <p>Mañana, <b>miércoles 28</b>, sorteamos con el número de la ONCE de esta noche (21:25) y os escribimos con vuestra hora.</p></div>`;
+  if (e === 'publicada') return `<div class="card state g" data-in><span class="tape r"></span><span class="pill">Horas publicadas</span>
+    <p><b>Mirad vuestro email:</b> ahí tenéis vuestra hora y el enlace para verla. Podéis pasaros a una hora libre o cancelar hasta el domingo 1 a las 20:00.</p>
+    <div class="mstats"><div><b>${STATS[0][1]}</b><span>con su 1ª</span></div><div><b>${WITH_FAV - STATS[0][1]}</b><span>con otra favorita</span></div><div><b>${STATS[7][1]}</b><span>en una imposible</span></div></div></div>`;
+  return `<div class="card state p" data-in><span class="tape r"></span><span class="pill done">Agenda cerrada</span>
+    <p class="caveat" style="font-size:30px;color:var(--burg);margin-top:8px">¡Nos vemos el lunes 2 y el martes 3!</p>
+    <p>Llegad 5 minutos antes de vuestra hora. Si no la encontráis, pedid de nuevo vuestro enlace.</p></div>`;
+}
+function portada() {
+  const e = S.estado;
+  const cta = { antes: ['Abre el lunes 26 a las 9:00', true], abierta: ['Apuntarnos', false], cerrada: ['Ver nuestra inscripción', false], publicada: ['Ver nuestra hora', false], terminada: ['Ver nuestra hora', false] }[e];
+  return `<main>
+    <div class="top" data-in><img src="${ASSETS}logo-circle.png" alt="AFA CEI Las Palmeras"><span>AFA CEI LAS PALMERAS</span></div>
+    <div class="hero">
+      <span class="kick caveat" data-in>¡Llega la Navidad!</span>
+      <h1 data-in>Fotos de<br>Navidad <em>2026</em></h1>
+      <img class="st die" data-in="st" src="${ASSETS}an-pinguinos.png" alt="" style="--w:62px;--r:12deg;right:6px;top:0">
+      <img class="st die" data-in="st" src="${ASSETS}an-patitos.png" alt="" style="--w:50px;--r:-10deg;right:84px;top:-14px">
+      <img class="st die" data-in="st" src="${ASSETS}an-osos.png" alt="" style="--w:64px;--r:8deg;right:16px;bottom:-6px">
+      <img class="st die" data-in="st" src="${ASSETS}an-tigres.png" alt="" style="--w:56px;--r:-8deg;right:92px;bottom:-12px">
+    </div>
+    <div class="card dates" data-in><span class="tape"></span><big>Lunes 2 y martes 3 de noviembre</big><p>De 15:00 a 20:00, en la escuela. Cinco minutos por familia, con todos vuestros peques.</p></div>
+    ${stateCard()}
+    <button class="link howlink" data-act="how">¿Cómo repartimos las horas?</button>
+    ${e !== 'antes' ? '<button class="link lost" data-act="lost">¿Habéis perdido vuestro enlace?</button>' : ''}
+  </main>
+  <footer class="cta-bar"><button class="cta" data-act="cta" ${cta[1] ? 'disabled' : ''}>${cta[0]}</button></footer>`;
+}
+
+/* ===================== transparencia ===================== */
+function explainA() {
+  const st = [
+    ['Martes 27 · 21:00', 'Cerramos y publicamos la huella', 'La huella es como una foto de la lista de inscripciones: si alguien cambiara una sola coma, la huella sería otra. La publicamos aquí y en el WhatsApp del AFA.'],
+    ['Martes 27 · 21:25', 'Sale el número de la ONCE', 'Usamos el número del Cupón Diario de esa noche. Nadie lo conoce antes, tampoco el AFA.'],
+    ['Miércoles 28', 'Buscamos el mejor reparto', 'El ordenador mira las respuestas de todas las familias a la vez y busca el reparto que deja mejor a la familia que peor queda:'],
+    ['Miércoles 28', 'La suerte solo desempata', 'Casi siempre hay varios repartos igual de buenos. Entre ellos elige el número de la ONCE, y también qué 5 minutos os tocan dentro de la media hora.'],
+  ];
+  return `<ol class="steps4">${st.map(([w, t, p], i) => `<li data-in style="--r:${[-1, .8, -.6, 1][i]}deg"><span class="n">${i + 1}</span><div><small>${w}</small><b>${t}</b><p>${p}</p>
+    ${i === 2 ? `<ul class="levels"><li><i>1</i>que nadie vaya a una hora imposible,</li><li><i>2</i>que nadie se quede sin una favorita,</li><li><i>3</i>que el menor número de familias acabe en su 6ª, luego en su 5ª…</li></ul>` : ''}</div></li>`).join('')}</ol>`;
+}
+/* Ejemplo: 3 familias, 3 huecos. Patitos: 1ª 17:00, 2ª 16:00. Osos: solo 1ª 17:00. Tigres: 1ª 17:00, 2ª 18:00, imposible 16:00. */
+const FAM = { P: { n: 'Patitos', img: 'an-patitos.png' }, O: { n: 'Osos', img: 'an-osos.png' }, T: { n: 'Tigres', img: 'an-tigres.png' } };
+const LV = { P: { '17:00': '1ª', '16:00': '2ª', '18:00': 'nos va bien' }, O: { '17:00': '1ª', '16:00': 'nos va bien', '18:00': 'nos va bien' }, T: { '17:00': '1ª', '18:00': '2ª', '16:00': '¡imposible!' } };
+const EX = [
+  { t: 'Tres familias, tres huecos', p: 'Las tres quieren las 17:00. Los Tigres, además, no pueden a las 16:00.', a: {} },
+  { t: 'Si fuera por turnos…', p: 'Con turnos al azar, imaginad que les toca este orden: Tigres, Osos y Patitos. Los Tigres se llevan las 17:00, los Osos cogen las 16:00 y a los Patitos solo les quedan las 18:00, que no estaba entre sus favoritas.', a: { '17:00': 'T', '16:00': 'O', '18:00': 'P' } },
+  { t: 'Buscando el mejor reparto', p: 'El reparto busca que nadie se quede sin favorita si se puede evitar. Aquí hay tres repartos igual de buenos: nadie va a una imposible y nadie baja de su 2ª opción.', opts: true },
+  { t: 'La suerte solo desempata', p: 'Entre esos tres, el número de la ONCE elige uno. Así, los Patitos ya no se quedan sin favorita por tener mala suerte en el turno.', a: { '16:00': 'P', '17:00': 'O', '18:00': 'T' } },
+];
+const OPTS = [{ '17:00': 'P', '16:00': 'O', '18:00': 'T' }, { '16:00': 'P', '17:00': 'O', '18:00': 'T' }, { '16:00': 'P', '18:00': 'O', '17:00': 'T' }];
+function explainB() {
+  const f = EX[S.ex];
+  const slots = ['16:00', '17:00', '18:00'].map(h => { const k = f.a?.[h]; const lv = k && LV[k][h]; return `<div class="hslot"><span class="t">${h}</span>${k ? `<img class="die" data-flip="${k}" src="${ASSETS}${FAM[k].img}" alt="${FAM[k].n}"><span class="lv ${lv === 'nos va bien' || lv?.startsWith('¡') ? 'bad' : ''}">${FAM[k].n}: ${lv}</span>` : ''}</div>`; }).join('');
+  const opts = f.opts ? `<div class="opts">${OPTS.map((o, i) => `<div class="opt ${S.ex === 3 && i === 1 ? 'win' : ''}" data-in>${['16:00', '17:00', '18:00'].map(h => `<img class="die" src="${ASSETS}${FAM[o[h]].img}" alt="${FAM[o[h]].n} a las ${h}"><span class="ar">${h}</span>`).join(' ')}</div>`).join('')}</div>` : '';
+  return `<div class="ex-fams">${Object.entries(FAM).map(([k, x]) => `<div class="fam"><img class="die" src="${ASSETS}${x.img}" alt=""><b>${x.n}</b>${Object.entries(LV[k]).filter(([, v]) => v !== 'nos va bien').map(([h, v]) => `<span class="pref ${v.startsWith('¡') ? 'x' : ''}">${v.startsWith('¡') ? h : `${v} ${h}`}</span>`).join('')}</div>`).join('')}</div>
+    <h3 style="font-size:18px;margin-top:16px">${S.ex + 1}. ${f.t}</h3><p>${f.p}</p>
+    ${f.opts ? opts : `<div class="slots">${slots}</div>`}
+    <div class="exnav"><button data-act="exPrev" ${S.ex === 0 ? 'disabled' : ''}>‹ Atrás</button><span class="dots">${EX.map((_, i) => `<i class="${i === S.ex ? 'on' : ''}"></i>`).join('')}</span><button data-act="exNext" ${S.ex === EX.length - 1 ? 'disabled' : ''}>Siguiente ›</button></div>`;
+}
+function numbers() {
+  if (!['publicada', 'terminada'].includes(S.estado)) return `<p class="ph">Aquí veréis las cifras de 2026 en cuanto publiquemos las horas, el miércoles 28.</p>`;
+  const max = Math.max(...STATS.map(([, n]) => n));
+  return `<div class="hero-n">${WITH_FAV} <small>de ${TOTAL} familias tienen una de sus favoritas</small></div>
+    <div class="bars" role="table" aria-label="Familias según la preferencia que les ha tocado">${STATS.map(([l, n]) => `<div class="bar" role="row" title="${l}: ${n} familia${n === 1 ? '' : 's'}"><span class="lb" role="rowheader">${l}</span><span class="tr"><span class="fl" data-w="${n / max * 100}" style="width:${n / max * 100}%"></span></span><span class="v" role="cell">${n}</span></div>`).join('')}</div>`;
+}
+function verify() {
+  const pre = S.estado === 'antes' || S.estado === 'abierta';
+  return `<dl class="verify">
+    <dt>Huella de la lista (martes 27, 21:00)</dt><dd>${pre ? '<span class="ph">se publica al cerrar</span>' : HASH}</dd>
+    <dt>Número de la ONCE (martes 27, 21:25)</dt><dd>${['publicada', 'terminada'].includes(S.estado) ? ONCE : '<span class="ph">aún no ha salido</span>'}</dd>
+    <dt>Versión del reparto</dt><dd>reparto-v1.0</dd></dl>
+    ${['publicada', 'terminada'].includes(S.estado) ? '<div class="dl" style="border-style:solid;border-color:var(--green);color:var(--green-d);text-align:center">✓ Comprobado por la persona verificadora del AFA el miércoles 28</div><button class="link" data-act="code" style="display:block;margin:6px auto 0">Ver el programa del reparto</button>' : ''}`;
+}
+function transparencia() {
+  return `<main>
+    <div class="fbar"><button class="back" data-act="home" aria-label="Volver a la portada">${backI}</button></div>
+    <h1 class="q" data-in>Cómo repartimos las horas</h1>
+    <span class="aside caveat" data-in>sin trampa ni cartón</span>
+    <div class="card sec" data-in><span class="tape"></span><h2>Da igual cuándo os apuntéis</h2><p>Las horas no se reparten por orden de llegada. Apuntarse el lunes a las 9:00 o el martes a las 20:59 da <b>exactamente igual</b>, y hay hueco para todas las familias.</p></div>
+    <div class="card sec" data-in><span class="tape r"></span><h2>${S.variant === 'A' ? 'Cuatro pasos' : 'Un ejemplo con tres familias'}</h2>${S.variant === 'A' ? explainA() : explainB()}</div>
+    <div class="card sec" data-in><h2>Las cifras de este año</h2>${numbers()}</div>
+    <div class="card sec" data-in><span class="tape"></span><h2>Comprobadlo vosotros</h2><p>El programa es público. Una persona de la junta que no gestiona la app recibe los datos sin nombres, repite el reparto con la huella y el número de la ONCE, y comprueba que sale exactamente el mismo.</p>${verify()}</div>
+    <p style="text-align:center;font-size:13px;color:var(--muted);margin:18px 0 6px">Nunca publicamos qué familia tiene cada hora.</p>
+  </main>`;
+}
+
+/* ===================== render ===================== */
+function render({ enter = true } = {}) {
+  const before = new Map(); app.querySelectorAll('[data-flip]').forEach(e => before.set(e.dataset.flip, e.getBoundingClientRect()));
+  app.innerHTML = S.screen === 'portada' ? portada() : transparencia();
+  if (enter) [...app.querySelectorAll('[data-in]')].slice(0, 10).forEach((el, i) => { const st = el.dataset.in === 'st'; anim(el, [{ opacity: 0, transform: `scale(${st ? 1.5 : 1.1}) rotate(${st ? -14 : -3}deg) translateY(${st ? -30 : -6}px)` }, { opacity: 1, transform: 'none' }], { duration: st ? 640 : 520, delay: 55 * i }); });
+  app.querySelectorAll('[data-flip]').forEach(e => { const a = before.get(e.dataset.flip), b = e.getBoundingClientRect(); if (a) anim(e, [{ transform: `translate(${a.left - b.left}px,${a.top - b.top}px)` }, { transform: 'none' }], { duration: 620 }); else anim(e, [{ opacity: 0, transform: 'scale(1.4) rotate(-14deg) translateY(-20px)' }, { opacity: 1, transform: 'none' }], { duration: 600 }); });
+  if (enter) app.querySelectorAll('.fl').forEach((f, i) => anim(f, [{ transform: 'scaleX(0)', transformOrigin: 'left' }, { transform: 'scaleX(1)', transformOrigin: 'left' }], { duration: 700, delay: 300 + 50 * i, easing: 'cubic-bezier(.2,.7,.2,1)' }));
+  document.querySelectorAll('[data-screen]').forEach(b => b.classList.toggle('on', b.dataset.screen === S.screen));
+  document.querySelectorAll('[data-variant]').forEach(b => { b.classList.toggle('on', b.dataset.variant === S.variant); b.style.display = S.screen === 'transparencia' ? '' : 'none'; });
+  document.getElementById('estado').value = S.estado;
+  history.replaceState(null, '', `?screen=${S.screen}&estado=${S.estado}&variant=${S.variant}`);
+}
+setInterval(() => { const el = app.querySelector('[data-cd]'); if (el) el.innerHTML = cd(left()); }, 1000);
+const go = o => { Object.assign(S, o); phone.scrollTop = 0; render(); };
+const ACT = {
+  how: () => go({ screen: 'transparencia' }), home: () => go({ screen: 'portada' }),
+  copy: () => { try { navigator.clipboard?.writeText(HASH); } catch {} toast('Huella copiada.'); },
+  lost: () => toast('Aquí se pediría un enlace nuevo (ver el prototipo del flujo de inscripción).'),
+  cta: () => toast({ abierta: 'Aquí empieza la inscripción (ver el prototipo del flujo).', cerrada: 'Con vuestro enlace veis la inscripción en solo lectura.', publicada: 'Con vuestro enlace veis vuestra hora.', terminada: 'Con vuestro enlace veis vuestra hora.' }[S.estado] || ''),
+  code: () => toast('Aquí se abriría el código del reparto (repositorio público).'),
+  exNext: () => { S.ex = Math.min(EX.length - 1, S.ex + 1); render({ enter: false }); },
+  exPrev: () => { S.ex = Math.max(0, S.ex - 1); render({ enter: false }); },
+};
+app.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b && !b.disabled) ACT[b.dataset.act]?.(b); });
+document.querySelectorAll('[data-screen]').forEach(b => b.onclick = () => go({ screen: b.dataset.screen }));
+document.querySelectorAll('[data-variant]').forEach(b => b.onclick = () => go({ variant: b.dataset.variant, ex: 0 }));
+document.getElementById('estado').onchange = e => go({ estado: e.target.value });
+render();
+</script>
+</body>
+</html>

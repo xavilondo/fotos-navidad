@@ -1,0 +1,198 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/*
+ * Dirección Álbum: paleta del dossier (`dossier/dossier.html`, ver
+ * `.scratch/fotos-navidad/research/marca-dossier.md`), papel crema con grano, sombras de pegatina
+ * duras, cinta adhesiva y animales troquelados. Solo tema claro.
+ */
+:root {
+  color-scheme: light;
+
+  /* Paleta del dossier */
+  --ink: #26301a;
+  --olive: #3b4d15;
+  --olive-d: #263309;
+  --green: #2e9a3a;
+  --green-d: #1f6e28; /* verde para texto pequeño: el --green no llega a 4,5:1 sobre crema */
+  --leaf: #7cbf3a;
+  --cream: #fff8ec;
+  --paper: #fffdf8;
+  --muted: #646b55;
+  --line: #2b3518;
+  --burg: #7d1a34;
+  --focus: #26301a; /* contorno de foco: tinta, más de 3:1 sobre crema y papel */
+
+  /* Familias de estación: base / suave / intensa */
+  --sp: #a9de7f;
+  --sp-s: #eaf8de;
+  --sp-d: #4f9f2a;
+  --su: #ffd36b;
+  --su-s: #fff2cc;
+  --su-d: #e39b00;
+  --au: #f6a978;
+  --au-s: #fde6d6;
+  --au-d: #d9622a;
+  --wi: #9fd3e8;
+  --wi-s: #e1f2f8;
+  --wi-d: #2f86a6;
+  --wi-dd: #236680; /* invierno para fondos con texto blanco */
+  --pk: #f5a8bd;
+  --pk-s: #fde6ec;
+  --pk-d: #d4517a;
+
+  /* Sombras de pegatina: desplazadas y sin desenfoque */
+  --pegatina: 0 5px 0 -1px rgb(52 66 18 / 0.11), 0 0 0 1.5px rgb(52 66 18 / 0.05);
+  --pegatina-l: 0 9px 0 -3px rgb(52 66 18 / 0.09), 0 0 0 2px rgb(52 66 18 / 0.05);
+
+  /* shadcn/ui sobre la paleta Álbum */
+  --background: var(--cream);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--olive);
+  --primary-foreground: var(--paper);
+  --secondary: var(--sp-s);
+  --secondary-foreground: var(--olive);
+  --muted-foreground: var(--muted);
+  --accent: var(--su-s);
+  --accent-foreground: var(--ink);
+  --destructive: var(--burg);
+  --border: #e4dfcc;
+  --input: #d6d2bd;
+  --ring: var(--focus);
+  --radius: 1.75rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--secondary);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-ink: var(--ink);
+  --color-olive: var(--olive);
+  --color-olive-d: var(--olive-d);
+  --color-green: var(--green);
+  --color-green-d: var(--green-d);
+  --color-leaf: var(--leaf);
+  --color-cream: var(--cream);
+  --color-paper: var(--paper);
+  --color-muted-ink: var(--muted);
+  --color-burg: var(--burg);
+  --color-sp: var(--sp);
+  --color-sp-s: var(--sp-s);
+  --color-sp-d: var(--sp-d);
+  --color-su: var(--su);
+  --color-su-s: var(--su-s);
+  --color-su-d: var(--su-d);
+  --color-au: var(--au);
+  --color-au-s: var(--au-s);
+  --color-au-d: var(--au-d);
+  --color-wi: var(--wi);
+  --color-wi-s: var(--wi-s);
+  --color-wi-d: var(--wi-d);
+  --color-wi-dd: var(--wi-dd);
+  --color-pk: var(--pk);
+  --color-pk-s: var(--pk-s);
+  --color-pk-d: var(--pk-d);
+
+  --font-sans: var(--font-nunito), system-ui, sans-serif;
+  --font-heading: var(--font-fraunces), Georgia, serif;
+  --font-mano: var(--font-caveat), cursive;
+
+  --shadow-pegatina: var(--pegatina);
+  --shadow-pegatina-l: var(--pegatina-l);
+
+  --radius-sm: calc(var(--radius) * 0.4);
+  --radius-md: calc(var(--radius) * 0.6);
+  --radius-lg: calc(var(--radius) * 0.8);
+  --radius-xl: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.2);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  /* Grano del dossier sobre toda la app */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    background: url("/marca/grain.png");
+    opacity: 0.2;
+    mix-blend-mode: multiply;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-heading text-olive;
+    font-variation-settings:
+      "SOFT" 0,
+      "WONK" 0;
+  }
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+}
+
+/* Contorno blanco de pegatina troquelada: estático, nunca se anima. */
+@utility troquel {
+  filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff)
+    drop-shadow(0 -2.5px 0 #fff) drop-shadow(0 5px 0 rgb(52 66 18 / 0.16));
+}
+
+/* Tira de cinta adhesiva sobre una tarjeta */
+@utility cinta {
+  position: absolute;
+  top: -11px;
+  width: 76px;
+  height: 24px;
+  clip-path: polygon(3% 0, 97% 4%, 100% 50%, 96% 100%, 2% 96%, 0 50%);
+}
+
+/* El único bucle de la app: el punto de «inscripción abierta». */
+@keyframes parpadeo {
+  50% {
+    opacity: 0.25;
+  }
+}
+@utility parpadeo {
+  animation: parpadeo 1.6s infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+/* Franja imposible: rayado rosa */
+@utility raya-imposible {
+  background: repeating-linear-gradient(135deg, var(--pk-s) 0 6px, #fffaf9 6px 12px);
+}

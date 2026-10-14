@@ -1,0 +1,759 @@
+<!doctype html>
+<!--
+  PROTOTIPO DESECHABLE · no es código de producción.
+  Ticket: ../issues/09-flujo-completo-de-inscripcion-prototipado.md
+  Pregunta: ¿se entiende y se disfruta de principio a fin la inscripción en el móvil?
+  Une: selector A · Ranking de 6 (01, revisado el 13-10-2026), dirección Álbum (07) y los 5 pasos (04). Incluye el email simulado, la vista con el
+  enlace de acceso (editar y cancelar), «¿Habéis perdido vuestro enlace?» y el borrador en el móvil.
+  Solo el borrador se guarda (localStorage), porque es justo lo que se quiere probar. Nada sale del navegador.
+  Barra del prototipo: «Ir a…», «Rellenar» (datos de ejemplo), ↺ (empezar de cero) y { } (estado).
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PROTOTIPO · Inscripción fotos de Navidad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Fraunces:opsz,wght@9..144,400..700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#26301a; --olive:#3b4d15; --olive-d:#263309; --green:#2e9a3a; --green-d:#1f6e28;
+  --cream:#fff8ec; --paper:#fffdf8; --muted:#646b55; --burg:#7d1a34;
+  --sp:#a9de7f; --sp-s:#eaf8de; --sp-d:#4f9f2a; --su:#ffd36b; --su-s:#fff2cc; --su-d:#e39b00;
+  --au:#f6a978; --au-s:#fde6d6; --au-d:#d9622a; --wi:#9fd3e8; --wi-s:#e1f2f8; --wi-d:#2f86a6;
+  --pk:#f5a8bd; --pk-s:#fde6ec; --pk-d:#d4517a;
+  --stk:0 5px 0 -1px rgba(52,66,18,.11), 0 0 0 1.5px rgba(52,66,18,.05);
+  --stk-l:0 9px 0 -3px rgba(52,66,18,.09), 0 0 0 2px rgba(52,66,18,.05);
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font-family:Nunito,system-ui,sans-serif;color:var(--ink);background:#d8d1bb;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;color:inherit}
+input,textarea{font-family:inherit;font-size:16px;color:var(--ink)}
+:focus-visible{outline:3px solid var(--su-d);outline-offset:2px}
+b{font-weight:800}
+.caveat{font-family:Caveat,cursive;font-weight:700}
+h1,h2,h3{font-family:Fraunces,serif;font-variation-settings:"SOFT" 0,"WONK" 0;color:var(--olive)}
+
+/* marco */
+.stage{min-height:100dvh;display:grid;place-items:center;padding:24px 0 96px}
+.device{position:relative;width:390px;height:min(844px,calc(100dvh - 130px));border-radius:46px;overflow:hidden;background:var(--cream);box-shadow:0 0 0 10px #1f2614,0 30px 60px -20px rgba(31,38,20,.55)}
+.device::after{content:"";position:absolute;inset:0;pointer-events:none;background:url(../../../dossier/assets/grain.png);opacity:.2;mix-blend-mode:multiply;z-index:30}
+.phone{height:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:none}
+.phone::-webkit-scrollbar{display:none}
+#app{min-height:100%;display:flex;flex-direction:column}
+.fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:35}
+.toast{position:absolute;left:16px;right:16px;bottom:100px;z-index:45;background:var(--ink);color:var(--paper);border-radius:16px;padding:12px 14px;font-size:14px;font-weight:800;line-height:1.35;opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .2s,transform .3s}
+.toast.show{opacity:1;transform:none}
+@media (max-width:520px){.stage{padding:0;display:block}.device{width:100%;height:100dvh;border-radius:0;box-shadow:none}.toast{bottom:150px}}
+
+main{padding:14px 20px 8px;flex:1}
+.cta-bar{position:sticky;bottom:0;z-index:10;padding:20px 20px calc(16px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--cream) 70%,rgba(255,248,236,0))}
+@media (max-width:520px){.cta-bar{padding-bottom:78px}}
+.cta{width:100%;height:58px;border:0;border-radius:999px;background:var(--olive);color:var(--paper);font:700 19px Fraunces,serif;box-shadow:0 6px 0 var(--olive-d);transition:transform .1s,box-shadow .1s}
+.cta:active{transform:translateY(5px);box-shadow:0 1px 0 var(--olive-d)}
+.cta-note{text-align:center;font-size:13px;color:var(--muted);font-weight:800;margin:0 auto 8px;background:var(--cream);border-radius:999px;padding:2px 10px;width:max-content;max-width:100%}
+.link{border:0;background:none;color:var(--green);font:800 14.5px Nunito;text-decoration:underline;text-underline-offset:3px;padding:8px 0}
+.link.danger{color:var(--burg)}
+
+/* piezas Álbum */
+.card{position:relative;background:var(--paper);border-radius:28px;padding:18px;box-shadow:var(--stk-l)}
+.tape{position:absolute;width:76px;height:24px;top:-11px;left:26px;background:rgba(255,211,107,.7);transform:rotate(-7deg);clip-path:polygon(3% 0,97% 4%,100% 50%,96% 100%,2% 96%,0 50%)}
+.tape.r{left:auto;right:22px;transform:rotate(6deg);background:rgba(169,222,127,.7)}
+.die{filter:drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff) drop-shadow(0 5px 0 rgba(52,66,18,.16))}
+.pill{display:inline-flex;align-items:center;gap:6px;font:800 12px Nunito;letter-spacing:.04em;text-transform:uppercase;background:var(--green);color:#fff;padding:5px 10px;border-radius:999px}
+.pill i{width:7px;height:7px;border-radius:50%;background:#fff;animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.25}}
+.lbl{display:block;font:800 12px Nunito;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.field{width:100%;border:0;border-bottom:2px dashed #e0dac4;background:transparent;padding:8px 0;font-weight:800;font-size:17px;outline:0}
+.field:focus{border-bottom-color:var(--green)}
+.field::placeholder{color:#b3b09a;font-weight:700}
+.err .field,.field.err{border-bottom-color:var(--burg)}
+.errmsg{color:var(--burg);font-size:13px;font-weight:800;margin-top:4px}
+.hint{font-size:13px;color:var(--muted);margin-top:5px;line-height:1.35}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mb{margin-bottom:20px}
+
+/* cabecera de paso */
+.fbar{display:flex;align-items:center;gap:12px;height:44px}
+.back{width:40px;height:40px;flex:none;border-radius:50%;border:0;display:grid;place-items:center;background:var(--paper);box-shadow:var(--stk);color:var(--olive)}
+.prog{flex:1;display:flex;gap:5px}
+.prog i{flex:1;height:6px;border-radius:9px;background:rgba(59,77,21,.13)}
+.prog i.on{background:var(--green)}
+.stepn{font-weight:800;color:var(--muted);font-size:13px}
+h1.q{font-size:30px;line-height:1.05;margin-top:16px}
+.aside{font-size:21px;color:var(--green);rotate:-2deg;display:inline-block;margin:4px 0 16px;line-height:1}
+
+/* portada */
+.top{display:flex;align-items:center;gap:10px}
+.top img{width:46px;height:46px}
+.top span{font:800 13px Nunito;color:var(--muted);letter-spacing:.02em}
+.hero{position:relative;margin:16px 0 6px;padding:26px 0 24px;min-height:240px}
+.hero .kick{font-size:30px;color:var(--green);transform:rotate(-4deg);display:inline-block;margin-left:4px}
+.hero h1{font-size:50px;line-height:.92;letter-spacing:-.02em;margin-top:2px;position:relative;z-index:2}
+.hero h1 em{font-style:normal;display:inline-block;background:var(--su);padding:0 10px 4px;border-radius:14px;transform:rotate(-3deg);box-shadow:var(--stk)}
+.hero .st{position:absolute;width:var(--w,70px);rotate:var(--r);z-index:1}
+.dates{rotate:-1.2deg;margin-top:12px}
+.dates big{display:block;font:700 22px/1.05 Fraunces;color:var(--olive);margin-bottom:6px}
+.dates p{font-size:15px;line-height:1.35}
+.open{margin-top:20px;rotate:.8deg;background:var(--sp-s)}
+.count{font:700 32px/1 Fraunces;color:var(--olive);margin:10px 0 8px;font-variant-numeric:tabular-nums}
+.count small{font:800 13px Nunito;color:var(--muted)}
+.open p{font-size:14.5px;line-height:1.4}
+.open .note{position:absolute;right:16px;bottom:-16px;font-size:24px;color:var(--burg);rotate:-6deg}
+.draft{display:flex;align-items:center;gap:10px;background:var(--su-s);margin-bottom:6px}
+.draft p{flex:1;font-size:14.5px;line-height:1.35}
+.draft button{border:0;border-radius:999px;background:var(--olive);color:var(--paper);font:800 14px Nunito;padding:10px 14px}
+.lost{display:block;margin:22px auto 0;text-align:center}
+
+/* paso 1 */
+.peque{margin-bottom:26px}
+.peque .hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.peque .hd b{font:700 17px Fraunces;color:var(--olive)}
+.rm{border:0;background:none;color:var(--muted);font-weight:800;font-size:13px;padding:6px}
+.sheet-cls{display:grid;grid-template-columns:repeat(4,1fr);gap:2px 6px;margin-top:6px}
+.cls{position:relative;border:0;background:none;padding:6px 0 4px;display:flex;flex-direction:column;align-items:center;gap:3px;font:800 11.5px Nunito;color:var(--muted)}
+.cls img{height:50px;width:auto;rotate:var(--r)}
+.cls.on{color:var(--ink)}
+.ring{position:absolute;inset:-2px -1px 0;width:calc(100% + 2px);height:calc(100% + 2px);overflow:visible;pointer-events:none}
+.ring path{fill:none;stroke:var(--green);stroke-width:3;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:0}
+.add{width:100%;height:56px;border-radius:22px;border:2.5px dashed #cfcab2;background:transparent;font:800 15px Nunito;color:var(--muted)}
+.stepper{display:flex;align-items:center;gap:14px}
+.stepper button{width:46px;height:46px;border-radius:50%;border:0;background:var(--paper);box-shadow:var(--stk);font:700 22px Fraunces;color:var(--olive)}
+.stepper button:disabled{opacity:.35}
+.stepper output{font:700 30px Fraunces;color:var(--olive);min-width:28px;text-align:center}
+.hermanos{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:4px}
+.hermanos p{font-weight:800;font-size:15px;line-height:1.3}
+
+/* paso 2 */
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.yn button{border:0;border-radius:20px;background:var(--paper);box-shadow:var(--stk);padding:14px 10px;font:800 15px Nunito;color:var(--muted);text-align:center}
+.yn button small{display:block;font:700 13px Nunito;margin-top:2px}
+.yn button.on{background:var(--green);color:#fff;box-shadow:0 5px 0 -1px var(--green-d)}
+.lote{display:flex;gap:12px;align-items:center;font-size:13.5px;color:var(--muted);line-height:1.4;margin:6px 0 14px}
+.lote .caveat{font-size:20px;color:var(--burg);flex:none;rotate:-4deg}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;border:0;background:none;text-align:left;padding:0}
+.switch p{font-weight:800;font-size:15.5px}
+.switch small{display:block;color:var(--muted);font-weight:700;font-size:13px}
+.sw{flex:none;width:58px;height:34px;border-radius:999px;background:#d9d4bf;position:relative;transition:background-color .2s}
+.sw i{position:absolute;top:3px;left:3px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 0 rgba(0,0,0,.12);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.switch.on .sw{background:var(--green)}
+.switch.on .sw i{transform:translateX(24px)}
+.total{display:flex;align-items:baseline;justify-content:space-between;background:var(--su-s);rotate:-.8deg}
+.total b{font:700 34px Fraunces;color:var(--olive)}
+.total span{font-weight:800;color:var(--muted);font-size:14px;line-height:1.3}
+
+/* paso 3 · selector C */
+.subs{display:flex;gap:6px;margin:6px 0 12px}
+.subs span{flex:1;font-size:12px;font-weight:800;color:#b0ad97;padding-top:7px;border-top:4px solid #e3dfcb;border-radius:2px}
+.subs span.on{color:var(--olive);border-color:var(--green)}
+.subs span.done{color:var(--muted);border-color:var(--sp)}
+.agenda{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.agenda .card{padding:12px 8px 6px;border-radius:24px}
+.agenda h3{font-size:17px;margin:0 6px 4px}
+.ag{position:relative;width:100%;display:flex;align-items:center;gap:6px;height:44px;border:0;border-bottom:1.5px solid #f0eada;background:none;padding:0 6px;font:800 17px Nunito;text-align:left}
+.ag:last-child{border-bottom:0}
+.ag .te{font-size:12px;color:var(--muted);font-weight:700}
+.ag.struck{color:rgba(125,26,52,.45)}
+.scr{position:absolute;left:0;top:50%;height:18px;width:100%;transform:translateY(-50%);overflow:visible;pointer-events:none}
+.scr path{fill:none;stroke:var(--burg);stroke-width:3.2;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;opacity:0}
+.ag.struck .scr path{stroke-dashoffset:0;opacity:1}
+.podium{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:10px 0 14px;margin:0 -2px;background:linear-gradient(var(--cream) 86%,rgba(255,248,236,0))}
+.slot{position:relative;height:64px;border-radius:18px;border:0;padding:7px 10px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;background:var(--paper);box-shadow:var(--stk);color:var(--ink)}
+.slot:nth-child(odd){rotate:-1deg}.slot:nth-child(even){rotate:1deg}
+.slot .sn{font:700 13px Fraunces;color:var(--olive)}
+.slot.s1{background:var(--su)}.slot.s2{background:var(--su-s)}.slot.s3{background:var(--sp-s)}
+.slot.empty{background:transparent;box-shadow:none;border:2px dashed #d6d2bd;rotate:0deg}
+.slot.empty .sn{color:#aaa68f}
+.sd b{display:block;font:700 19px Fraunces;line-height:1}
+.sd small{font-size:11.5px;font-weight:800;color:var(--muted)}
+.sd-e{font-size:11.5px;color:#aaa68f;font-weight:800;line-height:1.15}
+.protect{font-size:19px;color:var(--green);rotate:-1.5deg;display:block;margin:-4px 0 6px;line-height:1.05}
+.daych h3{font-size:16px;margin:8px 2px 8px}
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.chip{height:46px;border-radius:14px;border:0;background:var(--paper);box-shadow:var(--stk);font:800 15.5px Nunito}
+.chip.picked{background:transparent;box-shadow:none;border:2px solid var(--green);color:var(--green)}
+.chip.imp{display:grid;place-items:center;background:none;box-shadow:none;color:#cdb9b9;text-decoration:line-through;font-weight:700}
+.recap p{font-size:16px;line-height:1.45;margin:4px 0 8px}
+.recap ol{list-style:none;padding:0;margin:0 0 8px;display:grid;gap:4px}
+.recap li{display:flex;gap:10px;align-items:center;font-size:15.5px;font-weight:700}
+.recap li span{width:28px;height:24px;border-radius:8px;background:var(--su-s);display:grid;place-items:center;font:700 12px Fraunces}
+.mini{display:grid;grid-template-columns:40px repeat(10,1fr);gap:3px;align-items:center;margin:12px 0 4px;font-size:11.5px;color:var(--muted);font-weight:800}
+.mini i{height:24px;border-radius:5px;background:#ece8d6;display:grid;place-items:center;font:700 11px Fraunces;font-style:normal;color:#fff}
+.mini i.fav{background:var(--green)}
+.mini i.imp{background:repeating-linear-gradient(135deg,var(--pk) 0 3px,var(--pk-s) 3px 6px)}
+.mini .ax{grid-column:span 2;font-size:10.5px;color:#a3a08a}
+.edits{display:flex;gap:14px;flex-wrap:wrap;border-top:1.5px dashed #ebe5d1;margin-top:10px;padding-top:2px}
+
+/* paso 3 · selector A (Ranking de 6) */
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);font-weight:700;margin:2px 0 12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.lg{width:20px;height:20px;border-radius:6px;display:inline-grid;place-items:center;font:700 11px Fraunces;font-style:normal}
+.lg.fav{background:var(--green);color:#fff}.lg.ok{border:1.5px dashed #b9b8a3;background:var(--paper)}.lg.imp{background:repeating-linear-gradient(135deg,var(--pk-s) 0 3px,var(--paper) 3px 6px);color:var(--burg);border:1.5px solid rgba(125,26,52,.25)}
+.seg{position:relative;display:grid;grid-template-columns:1fr 1fr;background:rgba(59,77,21,.08);border-radius:999px;padding:4px}
+.seg-pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;background:var(--paper);box-shadow:var(--stk)}
+.seg.imp .seg-pill{transform:translateX(100%)}
+.seg button{position:relative;z-index:1;border:0;background:none;height:46px;font:800 14.5px Nunito;color:var(--muted)}
+.seg.fav button[data-m=fav]{color:var(--green)}.seg.imp button[data-m=imp]{color:var(--burg)}
+.hint3{font-size:13.5px;color:var(--muted);margin:10px 2px 12px;min-height:38px;line-height:1.4}
+.grid-a{display:grid;grid-template-columns:1fr 1fr;gap:9px 10px}
+.gh{font:700 16px Fraunces;color:var(--olive);padding:0 4px}.gh small{font:700 12.5px Nunito;color:var(--muted)}
+.cell{position:relative;height:48px;border-radius:14px;border:1.5px dashed #c9c7b1;background:var(--paper);font:800 16px Nunito;display:flex;align-items:center;justify-content:center;gap:6px}
+.cell.fav{background:var(--green);border:1.5px solid var(--green);color:#fff;box-shadow:0 4px 0 -1px var(--green-d)}
+.cell.imp{background:repeating-linear-gradient(135deg,var(--pk-s) 0 6px,#fffaf9 6px 12px);border:1.5px solid rgba(125,26,52,.2);color:rgba(125,26,52,.6)}
+.cell.imp .tm{text-decoration:line-through;text-decoration-thickness:2px}
+.cell .x{color:var(--burg);font-size:13px}
+.badge{position:absolute;top:-9px;right:-6px;width:28px;height:28px;border-radius:50%;background:var(--su);color:var(--ink);font:700 15px Fraunces;display:grid;place-items:center;transform:rotate(-6deg);box-shadow:0 3px 0 -1px rgba(52,66,18,.28),0 0 0 2px var(--paper)}
+.rank{margin-top:24px}
+.rank-h{display:flex;justify-content:space-between;align-items:baseline;margin:0 4px 10px}
+.rank h2{font-size:19px}.count{font-weight:800;color:var(--muted);font-size:13.5px}
+.rank ol{list-style:none;padding:0;display:grid;gap:6px}
+.rank li{display:flex;align-items:center;gap:8px;min-height:50px;padding:5px 5px 5px 8px;border-radius:15px;background:var(--cream)}
+.rn{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font:700 15px Fraunces;background:var(--su)}
+.rl{flex:1;font-size:14px;line-height:1.2;color:var(--muted)}.rl b{display:block;font-size:15px;color:var(--ink)}
+.rank li.empty{background:none;border:1.5px dashed #e0dcc6}
+.rank li.empty .rn{background:none;border:1.5px dashed #d4d0b9;color:#b3b09a}.rank li.empty .rl{color:#a8a58f;font-weight:700}
+.mini{width:36px;height:36px;flex:none;border-radius:11px;border:0;background:var(--paper);box-shadow:var(--stk);color:var(--olive);font-size:12px}
+.mini:disabled{opacity:.28}
+
+/* paso 4 */
+.sugg{display:flex;align-items:center;gap:8px;background:var(--su-s);border-radius:14px;padding:8px 10px;margin-top:8px;font-size:14px;font-weight:700}
+.sugg button{margin-left:auto;border:0;border-radius:999px;background:var(--olive);color:#fff;font:800 13px Nunito;padding:7px 12px}
+textarea.field{resize:none;height:84px;border:2px dashed #e0dac4;border-radius:14px;padding:10px;font-weight:700;font-size:15px}
+.cnt{float:right;font-weight:800;color:var(--muted);font-size:12px}
+
+/* paso 5 */
+.sum{margin-bottom:16px}
+.sum .hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.sum h2{font-size:18px}
+.sum p,.sum li{font-size:15px;line-height:1.45}
+.sum ul{padding-left:18px}
+.mail{background:var(--su-s);rotate:-.6deg}
+.mail big{display:block;font:700 22px/1.15 Fraunces;color:var(--olive);word-break:break-all;margin:4px 0}
+.priv{border-collapse:collapse;width:100%;font-size:13px;line-height:1.35;margin:6px 0 12px}
+.priv th{text-align:left;vertical-align:top;padding:6px 8px 6px 0;color:var(--muted);font-weight:800;width:92px}
+.priv td{padding:6px 0;border-bottom:1px dashed #ebe5d1}
+.chk{display:flex;gap:12px;align-items:flex-start;width:100%;border:0;background:none;text-align:left;padding:8px 0;font-size:14.5px;line-height:1.4;font-weight:700}
+.chk .box{flex:none;width:28px;height:28px;border-radius:9px;border:2.5px solid #bdb8a0;background:var(--paper);display:grid;place-items:center;color:#fff}
+.chk.on .box{background:var(--green);border-color:var(--green)}
+.chk.err .box{border-color:var(--burg)}
+.chk small{display:block;color:var(--muted);font-weight:700;font-size:12.5px;margin-top:2px}
+
+/* celebración */
+.big{font-size:46px;line-height:.95;color:var(--green);rotate:-4deg;display:block;margin:24px 0 20px;text-align:center}
+.stuck{display:flex;flex-wrap:wrap;gap:12px 22px;justify-content:center;margin:12px 0 6px}
+.stuck figure{display:flex;flex-direction:column;align-items:center;gap:2px;rotate:var(--r)}
+.stuck img{height:84px}
+.stuck figcaption{font:700 24px/.95 Caveat;text-align:center}
+.stuck figcaption small{display:block;font-size:18px;color:var(--muted)}
+.checks{list-style:none;padding:0;margin-top:12px;border-top:2px dashed #ebe5d1;padding-top:10px;display:grid;gap:8px}
+.checks li{display:flex;gap:8px;align-items:flex-start;font-weight:700;font-size:15px;line-height:1.35}
+.checks svg{flex:none;color:var(--green);margin-top:1px}
+.next{margin-top:24px;rotate:-.8deg;background:var(--su-s)}
+.next .caveat{font-size:26px;color:var(--burg)}
+.next p{font-size:15px;line-height:1.45}
+
+/* email simulado */
+.mailbox{background:#eef0f3;flex:1;padding:14px 14px 20px}
+.mb-top{display:flex;align-items:center;gap:10px;font:600 13px system-ui;color:#555;margin-bottom:12px}
+.mb-top button{border:0;background:none;font:600 15px system-ui;color:#0a66d0}
+.mb-msg{background:#fff;border-radius:16px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.mb-h{font:600 13px/1.4 system-ui;color:#555;border-bottom:1px solid #eee;padding-bottom:10px;margin-bottom:12px}
+.mb-h b{color:#111;font-size:16px;display:block;margin-bottom:4px}
+.em{background:var(--cream);border-radius:14px;padding:18px 16px;font-size:15px;line-height:1.5}
+.em img{width:54px;display:block;margin:0 auto 6px}
+.em h2{text-align:center;font-size:24px;margin-bottom:10px}
+.em .btn{display:block;width:100%;margin:16px 0 8px;border:0;border-radius:999px;background:var(--olive);color:#fff;font:700 17px Fraunces;padding:14px;box-shadow:0 5px 0 var(--olive-d)}
+.em small{display:block;color:var(--muted);font-size:12px;line-height:1.4;margin-top:10px}
+.mb-note{font:600 12px system-ui;color:#777;text-align:center;margin-top:12px}
+
+/* inscripción (enlace) */
+.status{display:flex;align-items:center;gap:10px;margin:10px 0 18px}
+.status p{font-size:13.5px;color:var(--muted);font-weight:700;line-height:1.3}
+.ins{margin-bottom:16px}
+.ins .hd{display:flex;justify-content:space-between;align-items:center}
+.ins .hd button{border:0;border-radius:999px;background:var(--cream);box-shadow:var(--stk);font:800 13px Nunito;color:var(--olive);padding:7px 12px}
+.ins p{font-size:15px;line-height:1.45;margin-top:6px}
+.ins .muted{color:var(--muted);font-size:13px}
+
+/* hoja inferior */
+.sheet-bg{position:absolute;inset:0;background:rgba(38,48,26,.35);z-index:40}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:41;background:var(--paper);border-radius:28px 28px 0 0;padding:22px 20px calc(24px + env(safe-area-inset-bottom))}
+@media (max-width:520px){.sheet{padding-bottom:84px}}
+.sheet h2{font-size:22px;margin-bottom:8px}
+.sheet p{font-size:15px;line-height:1.45;color:var(--muted);margin-bottom:12px}
+.sheet .cta{margin-top:14px}
+.sheet .cta.danger{background:var(--burg);box-shadow:0 6px 0 #4f0f20}
+.sheet .alt{display:block;width:100%;margin-top:10px;text-align:center}
+
+/* barra del prototipo */
+.proto-bar{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:100;display:flex;align-items:center;gap:4px;background:#111;color:#fff;border-radius:999px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.35);font:600 12.5px ui-monospace,Menlo,monospace;white-space:nowrap}
+.proto-bar button,.proto-bar select{height:34px;border-radius:999px;border:0;background:#2b2b2b;color:#fff;font:600 12.5px ui-monospace,Menlo,monospace;padding:0 11px}
+.proto-bar button.on{background:#c9f7a8;color:#111}
+.proto-bar .tag{background:#ff5a1f;color:#111;border-radius:999px;padding:4px 8px;font-size:10.5px;font-weight:800;letter-spacing:.05em}
+.proto-state{position:fixed;right:16px;bottom:70px;width:min(380px,calc(100vw - 32px));max-height:55vh;overflow:auto;background:#111;color:#c9f7a8;border-radius:16px;padding:14px 16px;font:12px/1.5 ui-monospace,Menlo,monospace;z-index:99;white-space:pre-wrap;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+@media (max-width:520px){.proto-bar .tag{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}.pill i{animation:none}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="device">
+    <div class="phone" id="phone"><div id="app"></div></div>
+    <div class="fx" id="fx"></div>
+    <div id="sheet"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+</div>
+<nav class="proto-bar" aria-label="Controles del prototipo">
+  <span class="tag">PROTOTIPO</span>
+  <select id="jump" aria-label="Ir a una pantalla">
+    <option value="">Ir a…</option>
+    <option value="portada">Portada</option>
+    <option value="p1">Paso 1 · Peques</option><option value="p2">Paso 2 · Lotes</option>
+    <option value="p3">Paso 3 · Horario</option><option value="p4">Paso 4 · Datos</option>
+    <option value="p5">Paso 5 · Resumen</option><option value="hecho">¡Apuntados!</option>
+    <option value="email">Email</option><option value="inscripcion">Vuestra inscripción</option>
+  </select>
+  <button id="demo" title="Rellenar con datos de ejemplo">Rellenar</button>
+  <button id="reset" title="Empezar de cero (borra el borrador)">↺</button>
+  <button id="stateBtn" title="Ver el estado">{ }</button>
+</nav>
+<aside class="proto-state" id="state" hidden></aside>
+
+<script>
+/* ===================== datos ===================== */
+const ASSETS = '../../../dossier/assets/';
+const CLASSES = [['patitos', 'Patitos'], ['gatitos', 'Gatitos'], ['ardillas', 'Ardillas'], ['osos', 'Osos'], ['delfines', 'Delfines'], ['tigres', 'Tigres'], ['elefantes', 'Elefantes'], ['pinguinos', 'Pingüinos']]
+  .map(([id, name]) => ({ id, name, img: `${ASSETS}an-${id}.png` }));
+const CL = Object.fromEntries(CLASSES.map(c => [c.id, c]));
+const DAYS = [{ id: 'lun', name: 'Lunes', num: 2 }, { id: 'mar', name: 'Martes', num: 3 }];
+const TIMES = []; for (let h = 15; h < 20; h++) for (const m of [0, 30]) TIMES.push({ s: `${h}:${m ? '30' : '00'}`, e: m ? `${h + 1}:00` : `${h}:30` });
+const FR = []; DAYS.forEach(d => TIMES.forEach(t => FR.push({ id: `${d.id}-${t.s.replace(':', '')}`, day: d, s: t.s, e: t.e })));
+const F = Object.fromEntries(FR.map(f => [f.id, f]));
+const dayFr = d => FR.filter(f => f.day.id === d);
+const MAX = 6, PRICE = { socia: 22, no: 30 }, DIGITAL = 5;
+const STEP_T = ['', '¿Quién sale en las fotos?', '¿Cuántos lotes queréis?', '¿Qué horas os vienen mejor?', '¿Cómo os avisamos?', '¿Está todo bien?'];
+const STEP_K = ['', 'Peques', 'Lotes', 'Horario', 'Vuestros datos', 'Resumen'];
+const CLOSE = new Date('2026-10-27T21:00:00+01:00').getTime(), T0 = Date.now(), NOW0 = new Date('2026-10-26T10:12:00+01:00').getTime();
+
+const blank = () => ({ peques: [{ nombre: '', apellido: '', cls: null }], hermanos: 0, socia: null, lotes: 1, digital: false, imp: [], fav: [], nombre: '', email: '', tel: '', obs: '', priv: false, comp: false });
+const FORM_KEYS = Object.keys(blank());
+const clone = o => JSON.parse(JSON.stringify(o));
+const pickForm = o => Object.fromEntries(FORM_KEYS.map(k => [k, clone(o[k])]));
+let S = { screen: 'portada', step: 1, sub: 1, mode: 'fav', editing: false, tried: {}, ...blank() };
+let INS = null; // la inscripción enviada (en el «servidor», solo en memoria)
+let dir = 0, last = null;
+
+/* ===================== borrador (localStorage) ===================== */
+const DKEY = 'prototipo-fotos-navidad-borrador';
+const hasContent = f => f.peques.some(p => p.nombre || p.cls) || f.socia !== null || f.fav.length || f.imp.length || f.nombre || f.email;
+function saveDraft() { if (INS || S.editing) return; try { hasContent(S) ? localStorage.setItem(DKEY, JSON.stringify({ ...pickForm(S), step: S.step, sub: S.sub })) : localStorage.removeItem(DKEY); } catch {} }
+function readDraft() { try { const d = JSON.parse(localStorage.getItem(DKEY) || 'null'); return d && hasContent(d) ? d : null; } catch { return null; } }
+function clearDraft() { try { localStorage.removeItem(DKEY); } catch {} }
+
+/* ===================== utilidades ===================== */
+const app = document.getElementById('app'), phone = document.getElementById('phone'), fx = document.getElementById('fx'), sheetEl = document.getElementById('sheet'), toastEl = document.getElementById('toast');
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const BOUNCY = CSS.supports('animation-timing-function', 'linear(0, 1)') ? 'linear(0, 0.007, 0.029 2.2%, 0.118 4.7%, 0.625 14.4%, 0.826 19%, 0.902, 0.962, 1.008 26.1%, 1.041 28.7%, 1.064 32.1%, 1.07 33.6%, 1.073 35.1%, 1.07 37.5%, 1.045 43.6%, 1.012 52.3%, 0.998 59%, 0.991 65.2%, 0.996 80%, 1)' : 'cubic-bezier(.34,1.56,.64,1)';
+function anim(el, kf, o = {}) {
+  if (!el || !el.animate) return;
+  if (RM) { if (!kf.some(k => 'opacity' in k)) return; return el.animate(kf.map(k => ({ opacity: k.opacity ?? 1 })), { duration: 160, fill: 'backwards' }); }
+  return el.animate(kf, { duration: 520, easing: BOUNCY, fill: 'backwards', ...o });
+}
+const shake = el => anim(el, [{ transform: 'translateX(0)' }, { transform: 'translateX(-7px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(-3px)' }, { transform: 'none' }], { duration: 340, easing: 'ease-out', fill: 'none' });
+const haptic = () => { try { navigator.userActivation?.hasBeenActive && navigator.vibrate?.(8); } catch {} };
+let tT; function toast(m) { toastEl.textContent = m; toastEl.classList.add('show'); clearTimeout(tT); tT = setTimeout(() => toastEl.classList.remove('show'), 2600); }
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const lab = id => { const f = F[id]; return `${f.day.name.toLowerCase()} ${f.day.num} a las ${f.s}`; };
+const rot = i => [-6, 4, -3, 7, -5, 3, -8, 5][i % 8];
+const total = f => f.socia === null ? null : f.lotes * (f.socia ? PRICE.socia : PRICE.no) + (f.digital ? f.lotes * DIGITAL : 0);
+const peqTxt = f => f.peques.map(p => `${esc(p.nombre) || '—'} ${esc(p.apellido)}${p.cls ? ` (${CL[p.cls].name})` : ''}`).join(', ');
+const firstName = f => f.peques.find(p => p.nombre)?.nombre || 'vuestra familia';
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const TYPOS = { 'gmial.com': 'gmail.com', 'gmai.com': 'gmail.com', 'gamil.com': 'gmail.com', 'gmail.co': 'gmail.com', 'gmail.es': 'gmail.com', 'gmal.com': 'gmail.com', 'hotmial.com': 'hotmail.com', 'hotmal.com': 'hotmail.com', 'hotmai.com': 'hotmail.com', 'hotmail.co': 'hotmail.com', 'outlok.com': 'outlook.com', 'outllok.com': 'outlook.com', 'outlook.co': 'outlook.com', 'iclod.com': 'icloud.com', 'icloud.co': 'icloud.com', 'yaho.es': 'yahoo.es', 'yahoo.co': 'yahoo.com' };
+const suggest = e => { const m = /^([^@\s]+)@([^@\s]+)$/.exec(e.trim().toLowerCase()); return m && TYPOS[m[2]] ? `${m[1]}@${TYPOS[m[2]]}` : null; };
+function left() { const s = Math.max(0, Math.floor((CLOSE - (NOW0 + Date.now() - T0)) / 1000)); return { d: Math.floor(s / 86400), h: Math.floor(s % 86400 / 3600), m: Math.floor(s % 3600 / 60), s: s % 60 }; }
+const pad = n => String(n).padStart(2, '0');
+
+const I = {
+  back: '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
+  check: '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5c2 1.2 3.6 2.8 5 5 2.6-5 6-8.6 11-11.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
+  tick: '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
+};
+const ring = '<svg class="ring" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path pathLength="100" d="M52 6 C 82 4, 97 26, 95 52 C 93 80, 72 96, 46 95 C 20 94, 4 76, 6 50 C 8 26, 26 8, 58 9"/></svg>';
+const scribble = '<svg class="scr" viewBox="0 0 100 18" preserveAspectRatio="none" aria-hidden="true"><path pathLength="100" d="M3 10 C 14 4, 24 14, 38 9 S 60 4, 72 10 S 90 13, 97 7"/></svg>';
+
+/* ===================== validación ===================== */
+function errors(step, f = S) {
+  const e = {};
+  if (step === 1) f.peques.forEach((p, i) => { if (!p.nombre.trim()) e[`n${i}`] = 'Falta el nombre'; if (!p.apellido.trim()) e[`a${i}`] = 'Falta el apellido'; if (!p.cls) e[`c${i}`] = 'Elegid su clase'; });
+  if (step === 2 && f.socia === null) e.socia = 'Decidnos si sois socios del AFA';
+  if (step === 4) { if (!f.nombre.trim()) e.nombre = 'Falta vuestro nombre'; if (!EMAIL_RE.test(f.email.trim())) e.email = f.email ? 'Ese email no parece completo' : 'Falta el email'; }
+  if (step === 5 && !f.priv) e.priv = 'Hace falta vuestro consentimiento para apuntaros';
+  return e;
+}
+const showErr = (step, k) => S.tried[step] && errors(step)[k] ? `<p class="errmsg">${errors(step)[k]}</p>` : '';
+
+/* ===================== pantallas ===================== */
+function portada() {
+  const d = readDraft(), t = left();
+  return `<main>
+    <div class="top" data-in><img src="${ASSETS}logo-circle.png" alt="AFA CEI Las Palmeras"><span>AFA CEI LAS PALMERAS</span></div>
+    ${d ? `<div class="card draft" data-in><p><b>Tenéis una inscripción a medias</b> en este móvil.</p><button data-act="start" style="background:none;color:var(--muted);text-decoration:underline">Empezar de nuevo</button></div>` : ''}
+    <div class="hero">
+      <span class="kick caveat" data-in>¡Llega la Navidad!</span>
+      <h1 data-in>Fotos de<br>Navidad <em>2026</em></h1>
+      <img class="st die" data-in="st" src="${ASSETS}an-pinguinos.png" alt="" style="--w:62px;--r:12deg;right:6px;top:0">
+      <img class="st die" data-in="st" src="${ASSETS}an-patitos.png" alt="" style="--w:50px;--r:-10deg;right:84px;top:-14px">
+      <img class="st die" data-in="st" src="${ASSETS}an-osos.png" alt="" style="--w:64px;--r:8deg;right:16px;bottom:-6px">
+      <img class="st die" data-in="st" src="${ASSETS}an-tigres.png" alt="" style="--w:56px;--r:-8deg;right:92px;bottom:-12px">
+    </div>
+    <div class="card dates" data-in><span class="tape"></span><big>Lunes 2 y martes 3 de noviembre</big><p>De 15:00 a 20:00, en la escuela. Cinco minutos por familia, con todos vuestros peques.</p></div>
+    <div class="card open" data-in><span class="tape r"></span>
+      <span class="pill"><i></i>Inscripción abierta</span>
+      <div class="count" data-countdown>${t.d} <small>d</small> ${t.h} <small>h</small> ${pad(t.m)} <small>min</small></div>
+      <p>No hace falta correr: el <b>miércoles 28</b> sorteamos las horas y <b>hay hueco para todas las familias</b>.</p>
+      <span class="note caveat">¡prometido!</span>
+    </div>
+    <button class="link lost" data-act="lost">¿Habéis perdido vuestro enlace?</button>
+  </main>
+  <footer class="cta-bar"><button class="cta" data-act="${d ? 'resume' : 'start'}">${d ? 'Seguir donde lo dejamos' : 'Apuntarnos'}</button></footer>`;
+}
+
+function stepHead() {
+  return `<div class="fbar"><button class="back" data-act="back" aria-label="Atrás">${I.back}</button>
+    <div class="prog">${[1, 2, 3, 4, 5].map(i => `<i class="${S.editing ? (i === S.step ? 'on' : '') : (i <= S.step ? 'on' : '')}"></i>`).join('')}</div>
+    <span class="stepn">${S.editing ? 'Cambiando' : `${S.step} de 5`}</span></div>
+    <h1 class="q" data-in>${STEP_T[S.step]}</h1>`;
+}
+
+function paso1() {
+  return `${stepHead()}<span class="aside caveat" data-in>los de la escuela, con su clase</span>
+  ${S.peques.map((p, i) => `
+    <div class="card peque" data-in data-peque="${i}" style="rotate:${i % 2 ? .8 : -.6}deg"><span class="tape ${i % 2 ? 'r' : ''}"></span>
+      <div class="hd"><b>Peque ${i + 1}</b>${S.peques.length > 1 ? `<button class="rm" data-act="rmPeque" data-i="${i}">Quitar</button>` : ''}</div>
+      <div class="row2 mb">
+        <div><input class="field ${S.tried[1] && errors(1)[`n${i}`] ? 'err' : ''}" data-f="nombre" data-i="${i}" value="${esc(p.nombre)}" placeholder="Nombre" autocomplete="off" aria-label="Nombre del peque ${i + 1}">${showErr(1, `n${i}`)}</div>
+        <div><input class="field ${S.tried[1] && errors(1)[`a${i}`] ? 'err' : ''}" data-f="apellido" data-i="${i}" value="${esc(p.apellido)}" placeholder="Primer apellido" autocomplete="off" aria-label="Apellido del peque ${i + 1}">${showErr(1, `a${i}`)}</div>
+      </div>
+      <span class="lbl">Su clase</span>
+      <div class="sheet-cls">${CLASSES.map((c, j) => `<button class="cls ${p.cls === c.id ? 'on' : ''}" data-act="cls" data-i="${i}" data-c="${c.id}" aria-pressed="${p.cls === c.id}" style="--r:${rot(j + i)}deg"><img class="die" src="${c.img}" alt="">${c.name}${p.cls === c.id ? ring : ''}</button>`).join('')}</div>
+      ${showErr(1, `c${i}`)}
+    </div>`).join('')}
+  <button class="add" data-act="addPeque" data-in>+ Añadir otro peque</button>
+  <div class="card" style="margin-top:22px;rotate:-.5deg" data-in>
+    <div class="hermanos"><p>¿Vienen hermanos que no van a la escuela?<br><small class="hint">Solo para que el fotógrafo sepa cuántos sois.</small></p>
+      <div class="stepper"><button data-act="herm" data-d="-1" ${S.hermanos <= 0 ? 'disabled' : ''} aria-label="Uno menos">−</button><output>${S.hermanos}</output><button data-act="herm" data-d="1" ${S.hermanos >= 6 ? 'disabled' : ''} aria-label="Uno más">+</button></div></div>
+  </div>`;
+}
+
+function paso2() {
+  const t = total(S), pl = S.socia === null ? null : (S.socia ? PRICE.socia : PRICE.no);
+  return `${stepHead()}<span class="aside caveat" data-in>el pago va aparte, aquí solo nos decís cuántos</span>
+  <div class="card mb" data-in><span class="tape"></span>
+    <span class="lbl">¿Sois socios del AFA este curso?</span>
+    <div class="yn ${S.tried[2] && errors(2).socia ? 'err' : ''}" id="yn"><button class="${S.socia === true ? 'on' : ''}" data-act="socia" data-v="1" aria-pressed="${S.socia === true}">Sí, somos socios<small>${PRICE.socia} € el lote</small></button><button class="${S.socia === false ? 'on' : ''}" data-act="socia" data-v="0" aria-pressed="${S.socia === false}">No<small>${PRICE.no} € el lote</small></button></div>
+    ${showErr(2, 'socia')}
+  </div>
+  <div class="card mb" data-in style="rotate:.6deg"><span class="tape r"></span>
+    <span class="lbl">Lotes</span>
+    <div class="lote"><span class="caveat">cada lote:</span><span>1 foto impresa 20×25, 2 calendarios 10×15 y 6 fotos de cartera 7×10.</span></div>
+    <div class="stepper"><button data-act="lotes" data-d="-1" ${S.lotes <= 1 ? 'disabled' : ''} aria-label="Un lote menos">−</button><output>${S.lotes}</output><button data-act="lotes" data-d="1" ${S.lotes >= 5 ? 'disabled' : ''} aria-label="Un lote más">+</button><span class="hint" style="margin:0">${S.lotes === 5 ? '¿Más? Decídnoslo en observaciones.' : 'de 1 a 5'}</span></div>
+  </div>
+  <div class="card mb" data-in>
+    <button class="switch ${S.digital ? 'on' : ''}" data-act="digital" role="switch" aria-checked="${S.digital}"><p>Archivo digital<small>+${DIGITAL} € por lote · las fotos en alta calidad</small></p><span class="sw"><i></i></span></button>
+  </div>
+  <div class="card total" data-in><span>Total orientativo${pl ? `<br>${S.lotes} × ${pl} €${S.digital ? ` + ${S.lotes} × ${DIGITAL} €` : ''}` : '<br>decidnos primero si sois socios'}</span><b data-total>${t === null ? '—' : t + ' €'}</b></div>`;
+}
+
+/* --- paso 3: selector C --- */
+function ranges(dayId, f = S) {
+  const out = []; let r = null;
+  dayFr(dayId).forEach(x => { if (f.imp.includes(x.id)) { if (r) r.e = x.e; else r = { s: x.s, e: x.e }; } else if (r) { out.push(r); r = null; } });
+  if (r) out.push(r); return out;
+}
+function horarioTxt(f) {
+  const fav = f.fav.length ? `<p>Vuestra hora favorita es el <b>${lab(f.fav[0])}</b>.</p>${f.fav.length > 1 ? `<p>Si no puede ser, por este orden:</p><ol>${f.fav.slice(1).map((id, i) => `<li><span>${i + 2}ª</span>${lab(id)}</li>`).join('')}</ol>` : ''}` : '<p>No tenéis favoritas: <b>cualquier hora posible</b> os va bien.</p>';
+  const imp = DAYS.map(d => { const r = ranges(d.id, f); if (!r.length) return ''; return `<p>No podéis el <b>${d.name.toLowerCase()} ${d.num} ${r.map(x => `de ${x.s} a ${x.e}`).join(' ni ')}</b>.</p>`; }).join('');
+  const ok = FR.length - f.fav.length - f.imp.length;
+  return fav + imp + (ok ? `<p>Las otras ${ok} horas <b>os van bien</b>.</p>` : '');
+}
+function miniMap(f) {
+  return `<div class="mini" aria-hidden="true">${DAYS.map(d => `<span>${d.name.slice(0, 3)} ${d.num}</span>${dayFr(d.id).map(x => { const n = f.fav.indexOf(x.id) + 1; return `<i class="${n ? 'fav' : f.imp.includes(x.id) ? 'imp' : ''}">${n || ''}</i>`; }).join('')}`).join('')}<span></span>${['15h', '16h', '17h', '18h', '19h'].map(h => `<span class="ax">${h}</span>`).join('')}</div>`;
+}
+function paso3() {
+  const n = id => S.fav.indexOf(id) + 1;
+  const cells = TIMES.map(t => DAYS.map(d => {
+    const id = `${d.id}-${t.s.replace(':', '')}`, k = n(id), st = k ? 'fav' : S.imp.includes(id) ? 'imp' : 'ok';
+    return `<button class="cell ${st}" data-act="cell" data-id="${id}" aria-label="${d.name} ${d.num} ${t.s}: ${st === 'fav' ? 'favorita número ' + k : st === 'imp' ? 'no podéis' : 'os va bien'}"><span class="tm">${t.s}</span>${st === 'imp' ? '<span class="x">✕</span>' : ''}${st === 'fav' ? `<span class="badge" data-badge="${id}">${k}</span>` : ''}</button>`;
+  }).join('')).join('');
+  const slots = Array.from({ length: MAX }, (_, i) => {
+    const id = S.fav[i];
+    if (!id) return `<li class="empty"><span class="rn">${i + 1}</span><span class="rl">${i === S.fav.length ? (i === 0 ? 'Tocad vuestra hora favorita' : 'Siguiente opción (opcional)') : '—'}</span></li>`;
+    const f = F[id];
+    return `<li data-flip="r-${id}"><span class="rn">${i + 1}</span><span class="rl"><b>${f.day.name} ${f.day.num}</b>${f.s} – ${f.e}</span>
+      <button class="mini" data-act="up" data-id="${id}" ${i === 0 ? 'disabled' : ''} aria-label="Subir">▲</button><button class="mini" data-act="down" data-id="${id}" ${i === S.fav.length - 1 ? 'disabled' : ''} aria-label="Bajar">▼</button><button class="mini" data-act="unfav" data-id="${id}" aria-label="Quitar">✕</button></li>`;
+  }).join('');
+  const hint = S.mode === 'fav'
+    ? `Tocad las horas <b>por orden de preferencia</b>: la primera que toquéis será vuestra 1ª. Hasta ${MAX}.`
+    : `Tocad las horas en las que <b>no podéis venir de ninguna manera</b> (${S.imp.length} de ${MAX}).`;
+  return `${stepHead()}<span class="aside caveat" data-in>todas las demás cuentan como «nos va bien»</span>
+    <div class="legend" data-in><span><i class="lg fav">1</i>Favorita</span><span><i class="lg ok"></i>Nos va bien</span><span><i class="lg imp">✕</i>No podemos</span></div>
+    <div class="seg ${S.mode}"><span class="seg-pill"></span><button data-act="mode" data-m="fav" aria-pressed="${S.mode === 'fav'}">♥ Favoritas</button><button data-act="mode" data-m="imp" aria-pressed="${S.mode === 'imp'}">✕ No podemos</button></div>
+    <p class="hint3">${hint}</p>
+    <div class="grid-a"><div class="gh">Lunes <small>2 nov</small></div><div class="gh">Martes <small>3 nov</small></div>${cells}</div>
+    <div class="card rank"><span class="tape"></span><div class="rank-h"><h2>Vuestro orden</h2><span class="count" id="a-count">${S.fav.length} de ${MAX}</span></div><ol>${slots}</ol>
+      <span class="protect caveat" style="margin-top:12px">cuantas más favoritas marquéis, más os protege el reparto</span></div>`;
+}
+function paso4() {
+  const sug = suggest(S.email);
+  return `${stepHead()}<span class="aside caveat" data-in>para mandaros el enlace y, el miércoles 28, vuestra hora</span>
+  <div class="card" data-in><span class="tape"></span>
+    <div class="mb"><span class="lbl">Vuestro nombre</span><input class="field ${S.tried[4] && errors(4).nombre ? 'err' : ''}" data-f="nombre" value="${esc(S.nombre)}" placeholder="Nombre y apellido" autocomplete="name">${showErr(4, 'nombre')}</div>
+    <div class="mb"><span class="lbl">Email</span><input class="field ${S.tried[4] && errors(4).email ? 'err' : ''}" data-f="email" type="email" inputmode="email" autocapitalize="off" value="${esc(S.email)}" placeholder="vuestro@email.com" autocomplete="email" ${S.editing ? 'disabled' : ''}>
+      ${S.editing ? '<p class="hint">Para cambiar el email, escribid al AFA.</p>' : ''}
+      <div data-live="sugg">${sug && !S.editing ? `<div class="sugg">¿Queríais decir <b>${esc(sug)}</b>?<button data-act="fix">Sí</button></div>` : ''}</div>${showErr(4, 'email')}</div>
+    <div class="mb"><span class="lbl">Teléfono (opcional)</span><input class="field" data-f="tel" type="tel" inputmode="tel" value="${esc(S.tel)}" placeholder="600 000 000" autocomplete="tel"><p class="hint">Para avisaros por WhatsApp si algo cambia el día de las fotos.</p></div>
+    <div><span class="lbl">Observaciones (opcional) <span class="cnt" data-live="cnt">${S.obs.length}/300</span></span><textarea class="field" data-f="obs" maxlength="300" placeholder="Venimos con carrito, Marc es muy tímido…">${esc(S.obs)}</textarea><p class="hint">No incluyáis datos de salud. Si hay algo delicado, escribid al AFA.</p></div>
+  </div>`;
+}
+
+function paso5() {
+  const t = total(S);
+  const sec = (n, title, body) => `<div class="card sum" data-in><div class="hd"><h2>${title}</h2><button class="link" data-act="goStep" data-s="${n}">Cambiar</button></div>${body}</div>`;
+  return `${stepHead()}<span class="aside caveat" data-in>repasadlo y listo</span>
+  ${sec(1, 'Peques', `<p>${peqTxt(S)}</p>${S.hermanos ? `<p>+ ${S.hermanos} hermano${S.hermanos > 1 ? 's' : ''} que no va${S.hermanos > 1 ? 'n' : ''} a la escuela</p>` : ''}`)}
+  ${sec(2, 'Lotes', `<p>${S.lotes} lote${S.lotes > 1 ? 's' : ''}${S.digital ? ' con archivo digital' : ''} · ${S.socia ? 'socios' : 'no socios'} · <b>${t} €</b></p>`)}
+  ${sec(3, 'Horario', `<p>${S.fav.length} favorita${S.fav.length === 1 ? '' : 's'}${S.fav.length ? ` (1ª: ${lab(S.fav[0])})` : ''} · ${S.imp.length} hora${S.imp.length === 1 ? '' : 's'} imposible${S.imp.length === 1 ? '' : 's'}</p>`)}
+  <div class="card mail sum" data-in><span class="tape r"></span><span class="lbl">¿Es correcto? Ahí os llegará vuestra hora</span><big>${esc(S.email) || '—'}</big><button class="link" data-act="goStep" data-s="4">No, cambiarlo</button></div>
+  <div class="card" data-in>
+    <span class="lbl">Protección de datos</span>
+    <table class="priv"><tr><th>Responsable</th><td>AFA CEI Las Palmeras</td></tr><tr><th>Finalidad</th><td>Organizar la sesión de fotos: inscripción, sorteo de horas y avisos.</td></tr><tr><th>Legitimación</th><td>Vuestro consentimiento, también como madre, padre o tutor/a. Podéis retirarlo cancelando.</td></tr><tr><th>Destinatarios</th><td>El fotógrafo (agenda) y proveedores técnicos con contrato.</td></tr><tr><th>Derechos</th><td>Ver, corregir y borrar vuestros datos con vuestro enlace. <button class="link" data-act="privMore" style="padding:0">+ info</button></td></tr></table>
+    <button class="chk ${S.priv ? 'on' : ''} ${S.tried[5] && !S.priv ? 'err' : ''}" data-act="priv" role="checkbox" aria-checked="${S.priv}"><span class="box">${S.priv ? I.tick : ''}</span><span>He leído la información y consiento, también como madre, padre o tutor/a de los peques, que el AFA use estos datos para organizar la sesión de fotos.</span></button>
+    ${showErr(5, 'priv')}
+    <button class="chk ${S.comp ? 'on' : ''}" data-act="comp" role="checkbox" aria-checked="${S.comp}"><span class="box">${S.comp ? I.tick : ''}</span><span>Guardad nuestro resultado de este año para compensarnos en el sorteo del año que viene si no nos toca ninguna favorita.<small>Opcional. Solo guardamos una clave de vuestro email y un número.</small></span></button>
+  </div>`;
+}
+
+function paso() {
+  const body = [null, paso1, paso2, paso3, paso4, paso5][S.step]();
+  let cta = 'Siguiente';
+  if (S.editing) cta = 'Guardar cambios';
+  else if (S.step === 3 && !S.fav.length) cta = 'Seguir sin favoritas';
+  if (S.step === 5) cta = 'Enviar inscripción';
+  return `<main>${body}</main><footer class="cta-bar"><button class="cta" data-act="next">${cta}</button></footer>`;
+}
+
+function hecho() {
+  const f = INS, ps = f.peques.filter(p => p.cls);
+  return `<main>
+    <span class="big caveat" data-in>¡Ya estáis apuntados!</span>
+    <div class="card" data-in><span class="tape"></span><span class="tape r"></span>
+      <h2 style="text-align:center;font-size:22px;margin-top:6px">Familia de ${esc(firstName(f))}</h2>
+      <div class="stuck">${ps.map((p, i) => `<figure data-in="st" style="--r:${rot(i)}deg"><img class="die" src="${CL[p.cls].img}" alt=""><figcaption>${esc(p.nombre)}<small>${CL[p.cls].name}</small></figcaption></figure>`).join('')}</div>
+      <ul class="checks"><li>${I.check}${f.lotes} lote${f.lotes > 1 ? 's' : ''}${f.digital ? ' con archivo digital' : ''} · ${total(f)} €</li><li>${I.check}${f.fav.length} favorita${f.fav.length === 1 ? '' : 's'} y ${f.imp.length} imposible${f.imp.length === 1 ? '' : 's'}</li><li>${I.check}<span>Os hemos enviado un email a <b>${esc(f.email)}</b> con vuestro enlace</span></li></ul>
+    </div>
+    <div class="card next" data-in><p class="caveat">¿Y ahora?</p><p>El <b>miércoles 28</b> hacemos el sorteo y os escribimos con vuestra hora. Hasta el martes 27 a las 21:00 podéis cambiar lo que queráis desde el enlace del email.</p></div>
+    <button class="link" style="display:block;margin:14px auto 0" data-act="openMail">Ver el email (simulación)</button>
+  </main>
+  <footer class="cta-bar"><button class="cta" data-act="share">Avisar al grupo de clase</button></footer>`;
+}
+
+function email() {
+  const f = INS, n = f.peques.length;
+  return `<div class="mailbox">
+    <div class="mb-top"><button data-act="toHecho">‹ Bandeja</button><span style="margin-left:auto">Simulación del email</span></div>
+    <div class="mb-msg">
+      <div class="mb-h"><b>Ya estáis apuntados a las fotos de Navidad</b>AFA Las Palmeras &lt;fotos@afalaspalmeras.es&gt;<br>para ${esc(f.email)}</div>
+      <div class="em"><img src="${ASSETS}logo-circle.png" alt="">
+        <h2>¡Ya estáis apuntados!</h2>
+        <p>Hola, ${esc(f.nombre.split(' ')[0] || '')}:</p>
+        <p>Hemos recibido vuestra inscripción para las fotos de Navidad: <b>${n} peque${n > 1 ? 's' : ''}</b>${f.hermanos ? ` y ${f.hermanos} hermano${f.hermanos > 1 ? 's' : ''}` : ''}, <b>${f.lotes} lote${f.lotes > 1 ? 's' : ''}</b>${f.digital ? ' con archivo digital' : ''} (${total(f)} €).</p>
+        <p>El <b>miércoles 28 de octubre</b> sorteamos las horas y os escribimos con la vuestra.</p>
+        <button class="btn" data-act="openIns">Ver o cambiar vuestra inscripción</button>
+        <small>Este enlace es solo vuestro: no lo reenviéis. Podéis cambiar o cancelar la inscripción hasta el martes 27 a las 21:00. Caduca el 1 de noviembre.<br>Privacidad: afalaspalmeras.es/privacidad</small>
+      </div>
+    </div>
+    <p class="mb-note">Sin nombres de peques en el email (los datos de la cuenta de Resend están en EE. UU.).</p>
+  </div>`;
+}
+
+function inscripcion() {
+  const f = INS;
+  const sec = (n, title, body) => `<div class="card ins" data-in><div class="hd"><h2 style="font-size:18px">${title}</h2><button data-act="edit" data-s="${n}">Cambiar</button></div>${body}</div>`;
+  return `<main>
+    <div class="top" data-in><img src="${ASSETS}logo-circle.png" alt=""><span>FOTOS DE NAVIDAD 2026</span></div>
+    <h1 class="q" data-in>Vuestra inscripción</h1>
+    <div class="status" data-in><span class="pill"><i></i>Abierta</span><p>Podéis cambiar lo que queráis hasta el martes 27 a las 21:00. El miércoles 28 veréis aquí vuestra hora.</p></div>
+    ${sec(1, 'Peques', `<p>${peqTxt(f)}</p>${f.hermanos ? `<p class="muted">+ ${f.hermanos} hermano${f.hermanos > 1 ? 's' : ''} que no va${f.hermanos > 1 ? 'n' : ''} a la escuela</p>` : ''}`)}
+    ${sec(2, 'Lotes', `<p>${f.lotes} lote${f.lotes > 1 ? 's' : ''}${f.digital ? ' con archivo digital' : ''} · ${f.socia ? 'socios' : 'no socios'} · <b>${total(f)} €</b></p>`)}
+    ${sec(3, 'Horario', `<div class="recap">${horarioTxt(f)}</div>${miniMap(f)}`)}
+    ${sec(4, 'Vuestros datos', `<p>${esc(f.nombre)} · ${esc(f.email)}${f.tel ? ` · ${esc(f.tel)}` : ''}</p>${f.obs ? `<p class="muted">«${esc(f.obs)}»</p>` : ''}`)}
+    <button class="link danger" style="display:block;margin:6px auto 0" data-act="cancelAsk">Cancelar la inscripción</button>
+  </main>`;
+}
+
+function cancelada() {
+  return `<main style="text-align:center;padding-top:80px">
+    <span class="big caveat" data-in>Inscripción cancelada</span>
+    <div class="card" data-in><p style="font-size:16px;line-height:1.5">Hemos borrado vuestros datos. Si cambiáis de idea, podéis volver a apuntaros hasta el <b>martes 27 a las 21:00</b>.</p></div>
+  </main><footer class="cta-bar"><button class="cta" data-act="home">Volver a la portada</button></footer>`;
+}
+
+const SCREENS = { portada, paso, hecho, email, inscripcion, cancelada };
+
+/* ===================== render ===================== */
+function render({ enter = true, from } = {}) {
+  const before = measure();
+  app.innerHTML = SCREENS[S.screen]();
+  if (dir) anim(app, [{ opacity: 0, transform: `translateX(${40 * dir}px) rotate(${2 * dir}deg)` }, { opacity: 1, transform: 'none' }], { duration: 480 });
+  if (enter) [...app.querySelectorAll('[data-in]')].slice(0, 10).forEach((el, i) => {
+    const st = el.dataset.in === 'st';
+    anim(el, [{ opacity: 0, transform: `scale(${st ? 1.5 : 1.12}) rotate(${st ? -14 : -3}deg) translateY(${st ? -30 : -6}px)` }, { opacity: 1, transform: 'none' }], { duration: st ? 640 : 540, delay: 55 * i + (dir ? 120 : 0) });
+  });
+  else playFlip(before, from);
+  dir = 0;
+  afterRender();
+  saveDraft();
+  document.getElementById('state').textContent = JSON.stringify({ pantalla: S.screen, paso: S.step, sub: S.sub, editando: S.editing, formulario: pickForm(S), enviada: INS }, null, 2);
+}
+function measure() { const m = new Map(); app.querySelectorAll('[data-flip]').forEach(e => m.set(e.dataset.flip, e.getBoundingClientRect())); return m; }
+function playFlip(before, from = {}) {
+  app.querySelectorAll('[data-flip]').forEach(e => {
+    const k = e.dataset.flip, b = e.getBoundingClientRect(); let a = before.get(k);
+    if (!a && from[k]) { a = from[k]; e.style.transformOrigin = '0 0'; anim(e, [{ transform: `translate(${a.left - b.left}px,${a.top - b.top}px) scale(${a.width / b.width},${a.height / b.height})`, opacity: .6 }, { transform: 'none', opacity: 1 }], { duration: 560 }); return; }
+    if (!a) return anim(e, [{ opacity: 0, transform: 'scale(.6) rotate(-12deg)' }, { opacity: 1, transform: 'none' }]);
+    const dx = a.left - b.left, dy = a.top - b.top; if (Math.abs(dx) + Math.abs(dy) > 1) anim(e, [{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }]);
+  });
+}
+function afterRender() {
+  if (last?.type === 'cls') {
+    const t = app.querySelector(`[data-act="cls"][data-i="${last.i}"][data-c="${last.c}"]`);
+    anim(t?.querySelector('img'), [{ transform: 'scale(.8) rotate(-12deg)' }, { transform: 'scale(1)' }], { fill: 'none' });
+    const p = t?.querySelector('.ring path'); if (p && !RM) p.animate([{ strokeDashoffset: 100 }, { strokeDashoffset: 0 }], { duration: 420, easing: 'cubic-bezier(.3,.7,.2,1)' });
+  }
+  if (last?.type === 'mode') { const tx = m => m === 'imp' ? 'translateX(100%)' : 'translateX(0)'; anim(app.querySelector('.seg-pill'), [{ transform: tx(last.prev) }, { transform: tx(S.mode) }], { duration: 420 }); }
+  if (last?.type === 'cell') {
+    app.querySelectorAll('[data-badge]').forEach(b => { const id = b.dataset.badge, k = S.fav.indexOf(id) + 1, p = last.prev[id];
+      if (p === undefined && id === last.id) anim(b, [{ transform: 'scale(0) rotate(-60deg)' }, { transform: 'scale(1) rotate(-6deg)' }], { duration: 600 });
+      else if (p !== undefined && p !== k) anim(b, [{ transform: 'scale(1.35) rotate(10deg)' }, { transform: 'scale(1) rotate(-6deg)' }]); });
+    if (last.id) anim(app.querySelector(`.cell[data-id="${last.id}"]`), [{ transform: 'scale(.9)' }, { transform: 'none' }], { fill: 'none' });
+    if (last.id && S.imp.includes(last.id)) anim(app.querySelector(`.cell[data-id="${last.id}"] .x`), [{ transform: 'scale(0) rotate(-90deg)', opacity: 0 }, { transform: 'none', opacity: 1 }]);
+  }
+  if (last?.type === 'imp') { const p = app.querySelector(`.ag[data-id="${last.id}"].struck path`); if (p && !RM) p.animate([{ strokeDashoffset: 100 }, { strokeDashoffset: 0 }], { duration: 360, easing: 'cubic-bezier(.3,.7,.2,1)' }); }
+  if (last?.type === 'bump') anim(app.querySelector(last.sel), [{ transform: 'scale(1.3)' }, { transform: 'none' }], { fill: 'none' });
+  if (S.screen === 'hecho' && last?.type === 'sent') confetti();
+  last = null;
+}
+function confetti() {
+  if (RM) return;
+  const cols = ['#ffd36b', '#f6a978', '#f5a8bd', '#9fd3e8', '#a9de7f', '#2e9a3a'];
+  for (let i = 0; i < 36; i++) {
+    const s = document.createElement('i'), w = 7 + Math.random() * 8;
+    s.style.cssText = `position:absolute;top:-20px;left:${Math.random() * 100}%;width:${w}px;height:${w * (Math.random() > .5 ? 1 : .55)}px;background:${cols[i % 6]};border-radius:${Math.random() > .5 ? '50%' : '2px 9px'}`;
+    fx.appendChild(s);
+    s.animate([{ transform: 'translate(0,0) rotate(0)' }, { transform: `translate(${(Math.random() - .5) * 120}px,${fx.clientHeight + 40}px) rotate(${(Math.random() - .5) * 720}deg)` }], { duration: 1400 + Math.random() * 800, delay: Math.random() * 300, easing: 'cubic-bezier(.2,.6,.4,1)', fill: 'backwards' }).onfinish = () => s.remove();
+  }
+}
+setInterval(() => { const el = app.querySelector('[data-countdown]'); if (el) { const t = left(); el.innerHTML = `${t.d} <small>d</small> ${t.h} <small>h</small> ${pad(t.m)} <small>min</small> ${pad(t.s)} <small>s</small>`; } }, 1000);
+
+/* ===================== navegación ===================== */
+function go(screen, opts = {}) { Object.assign(S, opts); S.screen = screen; phone.scrollTop = 0; fx.innerHTML = ''; render(); }
+function next() {
+  const e = errors(S.step);
+  if (Object.keys(e).length) {
+    S.tried[S.step] = true; render({ enter: false });
+    const first = app.querySelector('.errmsg'); first?.scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'center' }); shake(first?.parentElement);
+    return;
+  }
+  if (S.editing) { INS = pickForm(S); S.editing = false; dir = -1; go('inscripcion'); return toast('Cambios guardados.'); }
+  if (S.step === 5) { INS = pickForm(S); clearDraft(); last = { type: 'sent' }; dir = 1; return go('hecho'); }
+  dir = 1; go('paso', { step: S.step + 1, sub: 1 });
+}
+function back() {
+  if (S.editing) { S.editing = false; Object.assign(S, clone(INS)); dir = -1; return go('inscripcion'); }
+  dir = -1; if (S.step === 1) return go('portada');
+  go('paso', { step: S.step - 1 });
+}
+function startEdit(step) { Object.assign(S, clone(INS)); S.editing = true; S.tried = {}; dir = 1; go('paso', { step, sub: 1 }); }
+
+/* ===================== hojas ===================== */
+function sheet(html) {
+  sheetEl.innerHTML = `<div class="sheet-bg" data-act="closeSheet"></div><div class="sheet" role="dialog" aria-modal="true">${html}</div>`;
+  anim(sheetEl.querySelector('.sheet-bg'), [{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: 'ease-out' });
+  anim(sheetEl.querySelector('.sheet'), [{ transform: 'translateY(100%)' }, { transform: 'none' }], { duration: 480 });
+  sheetEl.querySelector('input')?.focus({ preventScroll: true });
+}
+function closeSheet() { sheetEl.innerHTML = ''; }
+
+/* ===================== acciones ===================== */
+const ACT = {
+  start: () => { if (readDraft()) clearDraft(); Object.assign(S, blank(), { tried: {}, editing: false }); dir = 1; go('paso', { step: 1, sub: 1 }); },
+  resume: () => { const d = readDraft(); Object.assign(S, pickForm(d), { tried: {}, editing: false }); dir = 1; go('paso', { step: d.step || 1, sub: d.sub || 1 }); },
+  lost: () => sheet(`<h2>¿Habéis perdido vuestro enlace?</h2><p>Escribid el email con el que os apuntasteis y os mandamos uno nuevo. El anterior dejará de funcionar.</p><input class="field" type="email" inputmode="email" placeholder="vuestro@email.com" aria-label="Email"><button class="cta" data-act="lostSend">Enviarme un enlace nuevo</button>`),
+  lostSend: () => sheet(`<h2>Revisad vuestro email</h2><p>Si ese email tiene una inscripción, en unos minutos os llegará un enlace nuevo. Mirad también en la carpeta de spam.</p><button class="cta" data-act="closeSheet">Entendido</button>`),
+  closeSheet,
+  back, next,
+  addPeque: () => { S.peques.push({ nombre: '', apellido: '', cls: null }); render({ enter: false }); const c = app.querySelector(`[data-peque="${S.peques.length - 1}"]`); anim(c, [{ opacity: 0, transform: 'scale(1.12) rotate(-3deg)' }, { opacity: 1, transform: 'none' }]); c.scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'center' }); c.querySelector('input').focus({ preventScroll: true }); },
+  rmPeque: b => { S.peques.splice(+b.dataset.i, 1); render({ enter: false }); },
+  cls: b => { haptic(); S.peques[+b.dataset.i].cls = b.dataset.c; last = { type: 'cls', i: b.dataset.i, c: b.dataset.c }; render({ enter: false }); },
+  herm: b => { S.hermanos = Math.max(0, Math.min(6, S.hermanos + +b.dataset.d)); last = { type: 'bump', sel: '.hermanos output' }; render({ enter: false }); },
+  socia: b => { haptic(); S.socia = b.dataset.v === '1'; last = { type: 'bump', sel: '[data-total]' }; render({ enter: false }); },
+  lotes: b => { S.lotes = Math.max(1, Math.min(5, S.lotes + +b.dataset.d)); last = { type: 'bump', sel: '.stepper output' }; render({ enter: false }); },
+  digital: () => { haptic(); S.digital = !S.digital; last = { type: 'bump', sel: '[data-total]' }; render({ enter: false }); },
+  mode: b => { last = { type: 'mode', prev: S.mode }; S.mode = b.dataset.m; render({ enter: false }); },
+  cell: b => {
+    const id = b.dataset.id, prev = Object.fromEntries(S.fav.map((x, i) => [x, i + 1]));
+    if (S.mode === 'fav') {
+      if (S.fav.includes(id)) S.fav = S.fav.filter(x => x !== id);
+      else { if (S.fav.length >= MAX) { toast(`Ya tenéis ${MAX} favoritas. Quitad una para elegir otra.`); shake(b); return shake(app.querySelector('#a-count')); } S.imp = S.imp.filter(x => x !== id); S.fav.push(id); }
+    } else {
+      if (S.imp.includes(id)) S.imp = S.imp.filter(x => x !== id);
+      else { if (S.imp.length >= MAX) { toast(`Como mucho ${MAX} horas imposibles. Quitad una para tachar otra.`); return shake(b); } S.imp.push(id); S.fav = S.fav.filter(x => x !== id); }
+    }
+    haptic(); last = { type: 'cell', id, prev }; render({ enter: false });
+  },
+  up: b => { const prev = Object.fromEntries(S.fav.map((x, j) => [x, j + 1])), i = S.fav.indexOf(b.dataset.id); if (i > 0) [S.fav[i - 1], S.fav[i]] = [S.fav[i], S.fav[i - 1]]; last = { type: 'cell', prev }; render({ enter: false }); },
+  down: b => { const prev = Object.fromEntries(S.fav.map((x, j) => [x, j + 1])), i = S.fav.indexOf(b.dataset.id); if (i < S.fav.length - 1) [S.fav[i + 1], S.fav[i]] = [S.fav[i], S.fav[i + 1]]; last = { type: 'cell', prev }; render({ enter: false }); },
+  unfav: b => { const prev = Object.fromEntries(S.fav.map((x, i) => [x, i + 1])); S.fav = S.fav.filter(x => x !== b.dataset.id); last = { type: 'cell', prev }; render({ enter: false }); },
+  fix: () => { S.email = suggest(S.email); render({ enter: false }); toast('Email corregido.'); },
+  priv: () => { haptic(); S.priv = !S.priv; render({ enter: false }); },
+  comp: () => { S.comp = !S.comp; render({ enter: false }); },
+  privMore: () => sheet(`<h2>Más sobre vuestros datos</h2><p>Aquí iría la página /privacidad completa: qué datos pedimos y por qué, cuánto tiempo los guardamos (se borran al cerrar la edición, como mucho el 31 de enero), quién los trata y cómo ejercer vuestros derechos o reclamar ante la AEPD.</p><button class="cta" data-act="closeSheet">Volver</button>`),
+  goStep: b => { dir = -1; go('paso', { step: +b.dataset.s }); },
+  share: () => toast('Aquí se abriría WhatsApp con un mensaje para el grupo de clase.'),
+  openMail: () => { dir = 1; go('email'); },
+  toHecho: () => { dir = -1; go('hecho'); },
+  openIns: () => { dir = 1; go('inscripcion'); },
+  edit: b => startEdit(+b.dataset.s),
+  cancelAsk: () => sheet(`<h2>¿Cancelar la inscripción?</h2><p>Borraremos vuestros datos y perderéis vuestro sitio en el sorteo. Podéis volver a apuntaros mientras siga abierta la inscripción.</p><button class="cta danger" data-act="cancelDo">Sí, cancelar</button><button class="link alt" data-act="closeSheet">No, volver</button>`),
+  cancelDo: () => { closeSheet(); INS = null; Object.assign(S, blank()); dir = 1; go('cancelada'); },
+  home: () => { dir = -1; go('portada'); },
+};
+document.querySelector('.device').addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (!b || b.disabled) return; ACT[b.dataset.act]?.(b, e); });
+app.addEventListener('input', e => {
+  const el = e.target, k = el.dataset.f; if (!k) return;
+  if (el.dataset.i !== undefined) S.peques[+el.dataset.i][k] = el.value; else S[k] = el.value;
+  if (k === 'obs') app.querySelector('[data-live="cnt"]').textContent = `${S.obs.length}/300`;
+  if (k === 'email') { const s = suggest(S.email); app.querySelector('[data-live="sugg"]').innerHTML = s ? `<div class="sugg">¿Queríais decir <b>${esc(s)}</b>?<button data-act="fix">Sí</button></div>` : ''; }
+  saveDraft();
+});
+
+/* ===================== barra del prototipo ===================== */
+const DEMO = { peques: [{ nombre: 'Lucía', apellido: 'García', cls: 'osos' }, { nombre: 'Marc', apellido: 'García', cls: 'tigres' }], hermanos: 1, socia: true, lotes: 2, digital: true, imp: ['lun-1500', 'lun-1530', 'mar-1500', 'mar-1530'], fav: ['lun-1700', 'mar-1730', 'lun-1730', 'mar-1800'], nombre: 'Ana García', email: 'ana.garcia@gmial.com', tel: '', obs: '', priv: false, comp: false };
+document.getElementById('demo').onclick = () => { Object.assign(S, clone(DEMO), { tried: {} }); if (S.screen !== 'paso') { S.screen = 'paso'; S.step = 1; S.sub = 1; } render(); toast('Rellenado con datos de ejemplo (el email lleva una errata a propósito).'); };
+document.getElementById('reset').onclick = () => { clearDraft(); INS = null; S = { screen: 'portada', step: 1, sub: 1, mode: 'fav', editing: false, tried: {}, ...blank() }; closeSheet(); go('portada'); };
+document.getElementById('stateBtn').onclick = e => { const s = document.getElementById('state'); s.hidden = !s.hidden; e.currentTarget.classList.toggle('on', !s.hidden); };
+document.getElementById('jump').onchange = e => {
+  const v = e.target.value; e.target.value = ''; if (!v) return; closeSheet();
+  const needIns = ['hecho', 'email', 'inscripcion'].includes(v);
+  if (needIns && !INS) INS = { ...clone(DEMO), email: 'ana.garcia@gmail.com', priv: true };
+  if (v[0] === 'p' && v !== 'portada') { if (!hasContent(S)) Object.assign(S, clone(DEMO)); S.editing = false; return go('paso', { step: +v[1], sub: +v[1] === 3 ? 1 : 1 }); }
+  go(v);
+};
+render();
+</script>
+</body>
+</html>

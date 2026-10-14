@@ -1,0 +1,49 @@
+{
+  "edicion": "ejemplo-2026",
+  "version": 1,
+  "franjas": [
+    {
+      "codigo": "lun-1700",
+      "huecos": 2
+    },
+    {
+      "codigo": "lun-1730",
+      "huecos": 1
+    },
+    {
+      "codigo": "lun-1800",
+      "huecos": 0
+    },
+    {
+      "codigo": "mar-1700",
+      "huecos": 3
+    }
+  ],
+  "inscripciones": [
+    {
+      "id": "1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed",
+      "favoritas": ["lun-1700", "lun-1730"],
+      "imposibles": ["mar-1700"]
+    },
+    {
+      "id": "6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b",
+      "favoritas": ["lun-1700"],
+      "imposibles": []
+    },
+    {
+      "id": "9f1c2a4e-3b7d-4e8a-a6c5-0d2f8e1b7c39",
+      "favoritas": [],
+      "imposibles": ["lun-1730"]
+    },
+    {
+      "id": "c3a5e7f9-2b4d-4f6a-8c0e-1d3f5a7b9c2e",
+      "favoritas": ["lun-1800", "lun-1700", "mar-1700"],
+      "imposibles": []
+    },
+    {
+      "id": "e2d4f6a8-5c7e-4a9b-b1d3-f5a7c9e1b3d5",
+      "favoritas": ["mar-1700", "lun-1730"],
+      "imposibles": ["lun-1700", "lun-1800"]
+    }
+  ]
+}

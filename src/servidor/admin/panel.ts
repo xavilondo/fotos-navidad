@@ -1,0 +1,216 @@
+import { and, asc, count, desc, eq, inArray, or, sql } from "drizzle-orm";
+import {
+  diagnosticar,
+  repartir,
+  RepartoImposible,
+  type Diagnostico,
+  type EstadisticasReparto,
+} from "@/dominio/reparto";
+import * as t from "@/servidor/db/schema";
+import type { BaseDatos } from "@/servidor/db/tipos";
+import { clasesDe, franjasDe } from "@/servidor/edicion/repositorio";
+import { listaActual } from "@/servidor/sorteo/lista";
+
+export type Resumen = {
+  inscripciones: number;
+  peques: number;
+  hermanos: number;
+  lotes: number;
+  conDigital: number;
+  socias: number;
+  sinFavoritas: number;
+  huecosLibres: number;
+};
+
+export async function resumen(db: BaseDatos, edicionId: string): Promise<Resumen> {
+  const [r] = await db
+    .select({
+      inscripciones: count(),
+      hermanos: sql<number>`coalesce(sum(${t.inscripcion.hermanosExternos}), 0)`.mapWith(Number),
+      lotes: sql<number>`coalesce(sum(${t.inscripcion.lotes}), 0)`.mapWith(Number),
+      conDigital: sql<number>`count(*) filter (where ${t.inscripcion.archivoDigital})`.mapWith(
+        Number,
+      ),
+      socias: sql<number>`count(*) filter (where ${t.inscripcion.socia})`.mapWith(Number),
+      sinFavoritas: sql<number>`count(*) filter (where not exists (
+        select 1 from preferencia p where p.inscripcion_id = "inscripcion"."id" and p.tipo = 'favorita'))`.mapWith(
+        Number,
+      ),
+    })
+    .from(t.inscripcion)
+    .where(eq(t.inscripcion.edicionId, edicionId));
+  const [p] = await db
+    .select({ n: count() })
+    .from(t.peque)
+    .innerJoin(t.inscripcion, eq(t.inscripcion.id, t.peque.inscripcionId))
+    .where(eq(t.inscripcion.edicionId, edicionId));
+  const franjas = await franjasDe(db, edicionId);
+  return { ...r, peques: p.n, huecosLibres: franjas.reduce((n, f) => n + f.huecosLibres, 0) };
+}
+
+export async function porClase(db: BaseDatos, edicionId: string) {
+  const clases = await clasesDe(db, edicionId);
+  const filas = await db
+    .select({ claseId: t.peque.claseId, n: count() })
+    .from(t.peque)
+    .innerJoin(t.inscripcion, eq(t.inscripcion.id, t.peque.inscripcionId))
+    .where(eq(t.inscripcion.edicionId, edicionId))
+    .groupBy(t.peque.claseId);
+  const n = new Map(filas.map((f) => [f.claseId, f.n]));
+  return clases.map((c) => ({ ...c, peques: n.get(c.id) ?? 0 }));
+}
+
+export type DemandaFranja = {
+  codigo: string;
+  inicio: Date;
+  huecos: number;
+  /** Favoritas ponderadas por posición: la 1ª vale 6, la 6ª vale 1. */
+  peso: number;
+  primeras: number;
+  favoritas: number;
+  imposibles: number;
+};
+
+/** Mapa de calor de la demanda: favoritas ponderadas por posición e imposibles por separado. */
+export async function demanda(db: BaseDatos, edicionId: string): Promise<DemandaFranja[]> {
+  const franjas = await franjasDe(db, edicionId);
+  const filas = await db
+    .select({
+      franjaId: t.preferencia.franjaId,
+      peso: sql<number>`coalesce(sum(7 - ${t.preferencia.posicion}) filter (where ${t.preferencia.tipo} = 'favorita'), 0)`.mapWith(
+        Number,
+      ),
+      primeras: sql<number>`count(*) filter (where ${t.preferencia.posicion} = 1)`.mapWith(Number),
+      favoritas: sql<number>`count(*) filter (where ${t.preferencia.tipo} = 'favorita')`.mapWith(
+        Number,
+      ),
+      imposibles: sql<number>`count(*) filter (where ${t.preferencia.tipo} = 'imposible')`.mapWith(
+        Number,
+      ),
+    })
+    .from(t.preferencia)
+    .innerJoin(t.franja, eq(t.franja.id, t.preferencia.franjaId))
+    .where(eq(t.franja.edicionId, edicionId))
+    .groupBy(t.preferencia.franjaId);
+  const d = new Map(filas.map((f) => [f.franjaId, f]));
+  return franjas.map((f) => ({
+    codigo: f.codigo,
+    inicio: f.inicio,
+    huecos: f.huecosLibres,
+    peso: d.get(f.id)?.peso ?? 0,
+    primeras: d.get(f.id)?.primeras ?? 0,
+    favoritas: d.get(f.id)?.favoritas ?? 0,
+    imposibles: d.get(f.id)?.imposibles ?? 0,
+  }));
+}
+
+export type PosibleDuplicado = {
+  clave: string;
+  peque: string;
+  clase: string;
+  inscripciones: { id: string; nombreAdulto: string; email: string; creadoEn: Date }[];
+};
+
+/** Mismo nombre + apellido + clase de peque en dos o más inscripciones (sin mayúsculas, tildes ni espacios). */
+export async function posiblesDuplicados(
+  db: BaseDatos,
+  edicionId: string,
+): Promise<PosibleDuplicado[]> {
+  const normal = (c: typeof t.peque.nombre | typeof t.peque.apellido) =>
+    sql`lower(regexp_replace(translate(${c}, 'ÁÀÄÂáàäâÉÈËÊéèëêÍÌÏÎíìïîÓÒÖÔóòöôÚÙÜÛúùüûÑñÇç', 'AAAAaaaaEEEEeeeeIIIIiiiiOOOOooooUUUUuuuuNnCc'), '\\s+', ' ', 'g'))`;
+  const grupos = await db
+    .select({
+      clave: sql<string>`${normal(t.peque.nombre)} || '|' || ${normal(t.peque.apellido)} || '|' || ${t.peque.claseId}`,
+      ids: sql<string[]>`array_agg(distinct ${t.peque.inscripcionId})`,
+      peque: sql<string>`min(${t.peque.nombre} || ' ' || ${t.peque.apellido})`,
+      clase: sql<string>`min(${t.clase.nombre})`,
+    })
+    .from(t.peque)
+    .innerJoin(t.inscripcion, eq(t.inscripcion.id, t.peque.inscripcionId))
+    .innerJoin(t.clase, eq(t.clase.id, t.peque.claseId))
+    .where(eq(t.inscripcion.edicionId, edicionId))
+    .groupBy(sql`1`)
+    .having(sql`count(distinct ${t.peque.inscripcionId}) > 1`);
+  if (grupos.length === 0) return [];
+  const ids = [...new Set(grupos.flatMap((g) => g.ids))];
+  const ins = await db
+    .select({
+      id: t.inscripcion.id,
+      nombreAdulto: t.inscripcion.nombreAdulto,
+      email: t.inscripcion.email,
+      creadoEn: t.inscripcion.creadoEn,
+    })
+    .from(t.inscripcion)
+    .where(inArray(t.inscripcion.id, ids));
+  const porId = new Map(ins.map((i) => [i.id, i]));
+  return grupos.map((g) => ({
+    clave: g.clave,
+    peque: g.peque,
+    clase: g.clase,
+    inscripciones: g.ids
+      .map((id) => porId.get(id)!)
+      .sort((a, b) => a.creadoEn.getTime() - b.creadoEn.getTime()),
+  }));
+}
+
+/** Inscripciones cuyo email ha fallado o rebotado: hay que avisarlas por WhatsApp. */
+export async function emailsSinEntregar(db: BaseDatos, edicionId: string) {
+  return db
+    .select({
+      id: t.inscripcion.id,
+      nombreAdulto: t.inscripcion.nombreAdulto,
+      email: t.inscripcion.email,
+      telefono: t.inscripcion.telefono,
+      estado: t.inscripcion.emailEstado,
+    })
+    .from(t.inscripcion)
+    .where(
+      and(
+        eq(t.inscripcion.edicionId, edicionId),
+        or(eq(t.inscripcion.emailEstado, "fallido"), eq(t.inscripcion.emailEstado, "rebotado")),
+      ),
+    )
+    .orderBy(asc(t.inscripcion.nombreAdulto));
+}
+
+/** Emails de la outbox que no han salido (para reintentar desde el panel). */
+export async function outboxPendiente(db: BaseDatos) {
+  return db
+    .select({
+      id: t.emailOutbox.id,
+      para: t.emailOutbox.para,
+      tipo: t.emailOutbox.tipo,
+      estado: t.emailOutbox.estado,
+      intentos: t.emailOutbox.intentos,
+      creadoEn: t.emailOutbox.creadoEn,
+    })
+    .from(t.emailOutbox)
+    .where(inArray(t.emailOutbox.estado, ["pendiente", "fallido", "rebotado"]))
+    .orderBy(desc(t.emailOutbox.creadoEn))
+    .limit(100);
+}
+
+export type DiagnosticoPanel = Diagnostico & {
+  /** Un reparto de prueba (semilla fija): orientativo, para ver cuántas tendrían su 1ª, otra favorita… */
+  simulacion: EstadisticasReparto | null;
+};
+
+/**
+ * Diagnóstico en vivo del reparto (solo admin): el óptimo con los datos de ahora. No guarda nada.
+ */
+export async function diagnosticoEnVivo(
+  db: BaseDatos,
+  edicion: { id: string; slug: string },
+  exclusiones: readonly string[] = [],
+): Promise<DiagnosticoPanel> {
+  const lista = await listaActual(db, edicion);
+  const validas = exclusiones.filter((id) => lista.inscripciones.some((i) => i.id === id));
+  const d = diagnosticar(lista, { exclusiones: validas });
+  let simulacion: EstadisticasReparto | null = null;
+  try {
+    simulacion = d.cabe ? repartir(lista, "00000", { exclusiones: validas }).estadisticas : null;
+  } catch (e) {
+    if (!(e instanceof RepartoImposible)) throw e;
+  }
+  return { ...d, simulacion };
+}

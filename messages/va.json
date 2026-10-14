@@ -1,0 +1,418 @@
+{
+  "comun": {
+    "afa": "AFA CEI Las Palmeras",
+    "idioma": {
+      "etiqueta": "Idioma",
+      "es": "Castellano",
+      "va": "Valencià"
+    },
+    "cerrar": "Tancar",
+    "volverPortada": "Tornar a la portada",
+    "euros": "{n} €"
+  },
+  "portada": {
+    "meta": {
+      "titulo": "{nombre} · AFA CEI Las Palmeras",
+      "descripcion": "Apunteu-vos a les fotos de Nadal de l'escola. És igual quan us apunteu: les hores es repartixen amb un sorteig just i comprovable."
+    },
+    "kicker": "Arriba el Nadal!",
+    "titulo": "Fotos de<br></br>Nadal <destacado>{anio}</destacado>",
+    "fechas": {
+      "texto": "De {inicio} a {fin}, a l'escola. {minutos} minuts per família, amb tots els vostres xiquets i xiquetes."
+    },
+    "cuentaAtras": {
+      "etiqueta": "Falten {texto}",
+      "dias": "d",
+      "horas": "h",
+      "minutos": "min",
+      "segundos": "s"
+    },
+    "estado": {
+      "antes": {
+        "pastilla": "Obri el {dia} a les {hora}",
+        "texto": "Tindreu <b>fins al {dia} a les {hora}</b>. No cal estar-hi a les {horaApertura} en punt: és igual quan us apunteu."
+      },
+      "abierta": {
+        "pastilla": "Inscripció oberta",
+        "texto": "No cal córrer: el <b>{dia}</b> sortegem les hores i <b>hi ha lloc per a totes les famílies</b>.",
+        "nota": "promés!"
+      },
+      "cerrada": {
+        "pastilla": "Inscripció tancada",
+        "texto": "<b>{n, plural, one {# família apuntada} other {# famílies apuntades}}.</b> Aquesta és l'empremta de la llista: a partir d'ara, si algú la tocara, l'empremta canviaria.",
+        "sorteo": "El <b>{dia}</b> sortegem amb el número de l'ONCE del {diaCierre} (21:25) i us escrivim amb la vostra hora.",
+        "copiar": "Copiar",
+        "copiada": "Empremta copiada.",
+        "huellaAria": "Empremta de la llista"
+      },
+      "publicada": {
+        "pastilla": "Hores publicades",
+        "texto": "<b>Mireu el vostre correu:</b> hi teniu la vostra hora i l'enllaç per a veure-la. Podeu canviar-vos a una hora lliure o cancel·lar fins al {dia} a les {hora}.",
+        "cifras": {
+          "primera": "amb la 1a",
+          "otra": "amb una altra preferida",
+          "imposible": "en una impossible"
+        }
+      },
+      "terminada": {
+        "pastilla": "Agenda tancada",
+        "titulo": "Ens veiem {dias}!",
+        "dia": "el {dia}",
+        "texto": "Arribeu 5 minuts abans de la vostra hora. Si no la trobeu, demaneu de nou el vostre enllaç."
+      }
+    },
+    "cta": {
+      "antes": "Obri el {dia} a les {hora}",
+      "abierta": "Apuntar-nos"
+    },
+    "comoRepartimos": "Com repartim les hores?",
+    "sinEdicion": {
+      "titulo": "Molt prompte",
+      "texto": "Encara no hi ha dates per a les pròximes fotos. Us avisarem pel WhatsApp de la classe."
+    },
+    "borrador": {
+      "aMedias": "<b>Teniu una inscripció a mitges</b> en aquest mòbil.",
+      "empezar": "Començar de nou",
+      "seguir": "Continuar on ho vam deixar"
+    }
+  },
+  "noEncontrada": {
+    "titulo": "Aquesta pàgina no existeix",
+    "texto": "Pot ser que l'enllaç estiga incomplet o que aquesta part encara no estiga oberta.",
+    "volver": "Tornar a la portada"
+  },
+  "enlacePerdido": {
+    "abrir": "Heu perdut el vostre enllaç?",
+    "titulo": "Heu perdut el vostre enllaç?",
+    "texto": "Escriviu el correu amb què us vau apuntar i us enviarem un enllaç nou. L'anterior deixarà de funcionar.",
+    "email": "Correu electrònic",
+    "enviar": "Envieu-me un enllaç nou",
+    "enviando": "S'està enviant…",
+    "hecho": "Mireu el vostre correu",
+    "hechoTexto": "Si aquest correu té una inscripció, en uns minuts us arribarà un enllaç nou. Mireu també en la carpeta de correu brossa.",
+    "entendido": "Entesos",
+    "limite": "Ja heu demanat diversos enllaços hui. Mireu el vostre correu o proveu-ho demà.",
+    "error": "Alguna cosa ha fallat. Torneu-ho a provar d'ací a un moment."
+  },
+  "inscripcion": {
+    "meta": {
+      "titulo": "Apuntar-nos · Fotos de Nadal"
+    },
+    "cabecera": {
+      "atras": "Arrere",
+      "pasoDe": "{paso} de {total}",
+      "cambiando": "Canviant",
+      "progreso": "Pas {paso} de {total}"
+    },
+    "pasos": {
+      "1": {
+        "titulo": "Qui ix en les fotos?",
+        "nota": "els de l'escola, amb la seua classe"
+      },
+      "2": {
+        "titulo": "Quants lots voleu?",
+        "nota": "el pagament va a banda, ací només ens dieu quants"
+      },
+      "3": {
+        "titulo": "Quines hores us van millor?",
+        "nota": "totes les altres compten com «ens va bé»"
+      },
+      "4": {
+        "titulo": "Com us avisem?",
+        "nota": "per a enviar-vos l'enllaç i, el {diaSorteo}, la vostra hora"
+      },
+      "5": {
+        "titulo": "Està tot bé?",
+        "nota": "repasseu-ho i ja està"
+      }
+    },
+    "cta": {
+      "siguiente": "Següent",
+      "sinFavoritas": "Continuar sense preferides",
+      "enviar": "Enviar la inscripció",
+      "enviando": "S'està enviant…",
+      "guardar": "Guardar els canvis",
+      "guardando": "S'està guardant…"
+    },
+    "peques": {
+      "peque": "Xiquet o xiqueta {n}",
+      "quitar": "Llevar",
+      "nombre": "Nom",
+      "apellido": "Primer cognom",
+      "nombreAria": "Nom del xiquet o xiqueta {n}",
+      "apellidoAria": "Primer cognom del xiquet o xiqueta {n}",
+      "suClase": "La seua classe",
+      "claseAria": "Classe del xiquet o xiqueta {n}",
+      "anadir": "+ Afegir un altre xiquet o xiqueta",
+      "hermanos": "Vénen germans que no van a l'escola?",
+      "hermanosAyuda": "Només perquè el fotògraf sàpia quants sou.",
+      "unoMenos": "Un menys",
+      "unoMas": "Un més",
+      "hermanosAria": "Germans que no van a l'escola"
+    },
+    "lotes": {
+      "socios": "Sou socis de l'AFA aquest curs?",
+      "si": "Sí, som socis",
+      "no": "No",
+      "precioLote": "{precio} € el lot",
+      "lotes": "Lots",
+      "cadaLote": "cada lot:",
+      "contenidoLote": "1 foto impresa 20×25, 2 calendaris 10×15 i 6 fotos de cartera 7×10.",
+      "rango": "de {min} a {max}",
+      "masLotes": "En voleu més? Digueu-nos-ho en les observacions.",
+      "menos": "Un lot menys",
+      "mas": "Un lot més",
+      "lotesAria": "Nombre de lots",
+      "digital": "Arxiu digital",
+      "digitalAyuda": "+{precio} € per lot · les fotos en alta qualitat",
+      "total": "Total orientatiu",
+      "desglose": "{lotes} × {precio} €",
+      "desgloseDigital": "{lotes} × {precio} € + {lotes} × {digital} €",
+      "primeroSocios": "digueu-nos primer si sou socis"
+    },
+    "horario": {
+      "leyendaFavorita": "Preferida",
+      "leyendaBien": "Ens va bé",
+      "leyendaImposible": "No podem",
+      "modo": "Què esteu marcant",
+      "modoFavoritas": "♥ Preferides",
+      "modoImposibles": "✕ No podem",
+      "ayudaFavoritas": "Toqueu les hores <b>per ordre de preferència</b>: la primera que toqueu serà la vostra 1a. Fins a {max}.",
+      "ayudaImposibles": "Toqueu les hores en què <b>no podeu vindre de cap manera</b> ({n} de {max}).",
+      "celda": "{dia} {hora}: {estado}",
+      "estadoFavorita": "preferida número {n}",
+      "estadoImposible": "no podeu",
+      "estadoBien": "us va bé",
+      "vuestroOrden": "El vostre ordre",
+      "cuenta": "{n} de {max}",
+      "tocadFavorita": "Toqueu la vostra hora preferida",
+      "siguienteOpcion": "Següent opció (opcional)",
+      "subir": "Pujar {franja}",
+      "bajar": "Baixar {franja}",
+      "quitar": "Llevar {franja}",
+      "protege": "com més preferides marqueu, més us protegix el repartiment",
+      "limiteFavoritas": "Ja teniu {max} preferides. Lleveu-ne una per a triar-ne una altra.",
+      "limiteImposibles": "Com a molt {max} hores impossibles. Lleveu-ne una per a ratllar-ne una altra.",
+      "anuncioFavorita": "{franja}: preferida número {n}",
+      "anuncioQuitada": "{franja}: ja no és preferida",
+      "anuncioImposible": "{franja}: no podeu",
+      "anuncioPosible": "{franja}: us va bé",
+      "anuncioOrden": "{franja}: ara és la {n}a"
+    },
+    "datos": {
+      "nombre": "El vostre nom",
+      "nombrePh": "Nom i cognom",
+      "email": "Correu electrònic",
+      "emailPh": "vostre@correu.com",
+      "emailFijo": "Per a canviar el correu, escriviu a l'AFA.",
+      "quisisteis": "Volíeu dir <b>{email}</b>?",
+      "si": "Sí",
+      "telefono": "Telèfon (opcional)",
+      "telefonoAyuda": "Per a avisar-vos per WhatsApp si alguna cosa canvia el dia de les fotos.",
+      "observaciones": "Observacions (opcional)",
+      "observacionesPh": "Venim amb cotxet, és molt vergonyós…",
+      "observacionesAyuda": "No hi poseu dades de salut. Si hi ha alguna cosa delicada, escriviu a l'AFA.",
+      "cuenta": "{n}/{max}"
+    },
+    "resumen": {
+      "cambiar": "Canviar",
+      "peques": "Xiquets i xiquetes",
+      "hermanos": "{n, plural, one {+ # germà que no va a l'escola} other {+ # germans que no van a l'escola}}",
+      "lotes": "Lots",
+      "lotesTexto": "{n, plural, one {# lot} other {# lots}}{digital, select, si { amb arxiu digital} other {}} · {socia, select, si {socis} other {no socis}} · <b>{total} €</b>",
+      "horario": "Horari",
+      "horarioTexto": "{favoritas, plural, =0 {Sense preferides} one {# preferida} other {# preferides}}{primera, select, no {} other { (1a: {primera})}} · {imposibles, plural, =0 {cap hora impossible} one {# hora impossible} other {# hores impossibles}}",
+      "datos": "Les vostres dades",
+      "emailCorrecto": "És correcte? Ací us arribarà la vostra hora",
+      "cambiarEmail": "No, canviar-lo",
+      "proteccion": "Protecció de dades",
+      "masInfo": "+ info",
+      "consentimiento": "He llegit la informació i hi consent, també com a mare, pare o tutor/a dels xiquets i xiquetes, que l'AFA use aquestes dades per a organitzar la sessió de fotos.",
+      "compensacion": "Guardeu el nostre resultat d'enguany per a compensar-nos en el sorteig de l'any que ve si no ens toca cap preferida.",
+      "compensacionAyuda": "Opcional. Només guardem una clau del vostre correu i un número."
+    },
+    "errores": {
+      "faltaNombre": "Falta el nom",
+      "faltaApellido": "Falta el cognom",
+      "faltaClase": "Trieu la seua classe",
+      "faltaPeque": "Afegiu almenys un xiquet o xiqueta",
+      "demasiadosPeques": "Són massa xiquets: escriviu a l'AFA",
+      "faltaSocia": "Digueu-nos si sou socis de l'AFA",
+      "faltaNombreAdulto": "Falta el vostre nom",
+      "faltaEmail": "Falta el correu",
+      "emailIncompleto": "Aquest correu no pareix complet",
+      "telefonoRaro": "Aquest telèfon no pareix correcte",
+      "demasiadoLargo": "És massa llarg",
+      "faltaConsentimiento": "Cal el vostre consentiment per a apuntar-vos",
+      "demasiadasFavoritas": "Hi ha massa preferides",
+      "demasiadasImposibles": "Hi ha massa hores impossibles",
+      "favoritaEImposible": "Una hora no pot ser preferida i impossible alhora",
+      "franjaDesconocida": "Hi ha una hora que no existix",
+      "franjaRepetida": "Hi ha una hora repetida",
+      "generico": "Reviseu aquesta dada",
+      "emailYaInscrito": "Aquest correu ja té una inscripció"
+    },
+    "envio": {
+      "cerrada": "La inscripció ja està tancada. Si creieu que és un error, escriviu a l'AFA.",
+      "limite": "Massa intents des d'aquesta connexió. Proveu-ho d'ací a una estona.",
+      "verificacion": "No hem pogut comprovar que no sou un robot. Torneu-ho a provar.",
+      "error": "Alguna cosa ha fallat. Torneu-ho a provar d'ací a un moment: no s'ha perdut res.",
+      "invalida": "Reviseu les dades marcades.",
+      "noEncontrada": "Aquest enllaç ja no funciona. Demaneu-ne un de nou des de la portada."
+    },
+    "hecho": {
+      "titulo": "Ja esteu apuntats!",
+      "familia": "Família de {nombre}",
+      "familiaSinNombre": "La vostra família",
+      "lotes": "{n, plural, one {# lot} other {# lots}}{digital, select, si { amb arxiu digital} other {}} · {total} €",
+      "preferencias": "{favoritas, plural, =0 {Sense preferides} one {# preferida} other {# preferides}} i {imposibles, plural, =0 {cap impossible} one {# impossible} other {# impossibles}}",
+      "email": "Us hem enviat un correu a <b>{email}</b> amb el vostre enllaç",
+      "yAhora": "I ara?",
+      "siguiente": "El <b>{diaSorteo}</b> fem el sorteig i us escrivim amb la vostra hora. Fins al {cierre} podeu canviar el que vulgueu des de l'enllaç del correu.",
+      "noLlega": "No us arriba? Mireu en la carpeta de correu brossa o demaneu l'enllaç una altra vegada des de la portada.",
+      "avisar": "Avisar el grup de classe",
+      "textoCompartir": "Ja ens hem apuntat a les fotos de Nadal de l'AFA. No cal córrer: les hores se sortegen el {diaSorteo}. {url}",
+      "copiado": "Enllaç copiat per a enganxar-lo en el grup."
+    }
+  },
+  "enlace": {
+    "meta": {
+      "titulo": "La vostra inscripció · Fotos de Nadal"
+    },
+    "titulo": "La vostra inscripció",
+    "abierta": {
+      "pastilla": "Oberta",
+      "texto": "Podeu canviar el que vulgueu fins al {cierre}. El {diaSorteo} veureu ací la vostra hora."
+    },
+    "cerrada": {
+      "pastilla": "Tancada",
+      "texto": "La inscripció està tancada. El {diaSorteo} veureu ací la vostra hora."
+    },
+    "cambiar": "Canviar",
+    "cambiarAria": "Canviar: {seccion}",
+    "horarioFavorita": "La vostra hora preferida és el <b>{franja}</b>.",
+    "horarioOrden": "Si no pot ser, per aquest ordre:",
+    "horarioSinFavoritas": "No teniu preferides: <b>qualsevol hora possible</b> us va bé.",
+    "horarioImposibles": "No podeu el <b>{dia} {rangos}</b>.",
+    "rango": "de {inicio} a {fin}",
+    "rangosUnion": " ni ",
+    "horarioResto": "{n, plural, one {L'altra hora <b>us va bé</b>.} other {Les altres # hores <b>us van bé</b>.}}",
+    "franja": "{dia} a les {hora}",
+    "cancelar": "Cancel·lar la inscripció",
+    "cancelarTitulo": "Cancel·lem la vostra inscripció?",
+    "cancelarTexto": "Esborrarem totes les vostres dades. Podreu tornar a apuntar-vos mentre la inscripció continue oberta.",
+    "cancelarTextoPublicada": "La vostra hora quedarà lliure per a una altra família i esborrarem totes les vostres dades.",
+    "cancelarSi": "Sí, cancel·lar",
+    "cancelando": "S'està cancel·lant…",
+    "cancelarNo": "No, mantindre-la",
+    "cancelada": {
+      "titulo": "Inscripció cancel·lada",
+      "texto": "Hem esborrat les vostres dades. Si canvieu d'idea, podeu tornar a apuntar-vos fins al {cierre}.",
+      "textoPublicada": "Hem esborrat les vostres dades i la vostra hora ha quedat lliure per a una altra família."
+    },
+    "guardado": "Canvis guardats.",
+    "noValido": {
+      "titulo": "Aquest enllaç ja no funciona",
+      "texto": "Potser n'heu demanat un de nou (l'anterior deixa de funcionar) o ha caducat."
+    }
+  },
+  "sorteo": {
+    "meta": {
+      "titulo": "Com repartim les hores · Fotos de Nadal",
+      "descripcion": "És igual quan us apunteu: el millor repartiment possible i la sort només per a desempatar, comprovable per qualsevol."
+    },
+    "titulo": "Com repartim les hores",
+    "nota": "sense trampa ni cartó",
+    "volver": "Tornar a la portada",
+    "daIgual": {
+      "titulo": "És igual quan us apunteu",
+      "texto": "Les hores no es repartixen per ordre d'arribada. Apuntar-se només obrir o un minut abans de tancar és <b>exactament igual</b>, i hi ha lloc per a totes les famílies."
+    },
+    "pasos": {
+      "titulo": "Quatre passos",
+      "1": {
+        "cuando": "{dia} · {hora}",
+        "titulo": "Tanquem i publiquem l'empremta",
+        "texto": "L'empremta és com una foto de la llista d'inscripcions: si algú canviara una sola coma, l'empremta seria una altra. La publiquem ací i en el WhatsApp de l'AFA."
+      },
+      "2": {
+        "cuando": "{dia} · 21:25",
+        "titulo": "Ix el número de l'ONCE",
+        "texto": "Fem servir el número del Cupó Diari d'aquella nit. Ningú no el coneix abans, tampoc l'AFA."
+      },
+      "3": {
+        "cuando": "{dia}",
+        "titulo": "Busquem el millor repartiment",
+        "texto": "L'ordinador mira les respostes de totes les famílies alhora i busca el repartiment que deixa millor la família que pitjor queda:",
+        "n1": "que ningú no vaja a una hora impossible,",
+        "n2": "que ningú no es quede sense una preferida,",
+        "n3": "que el menor nombre de famílies acabe en la seua 6a, després en la 5a…"
+      },
+      "4": {
+        "cuando": "{dia}",
+        "titulo": "La sort només desempata",
+        "texto": "Quasi sempre hi ha diversos repartiments igual de bons. Entre ells tria el número de l'ONCE, i també quins 5 minuts us toquen dins de la mitja hora."
+      },
+      "antitruco": "I una regla perquè ningú no guanye marcant-ne menys: una hora que «us va bé» compta just després de la vostra última preferida. Com més preferides marqueu, més us protegix el repartiment."
+    },
+    "cifras": {
+      "titulo": "Les xifres d'enguany",
+      "antes": "Ací veureu les xifres així que publiquem les hores, el {dia}.",
+      "destacado": "{con} <small>de {total} famílies tenen una de les seues preferides</small>",
+      "sinFavoritas": "{n, plural, one {# família no va marcar preferides} other {# famílies no van marcar preferides}}: qualsevol hora els anava bé.",
+      "aria": "Famílies segons la preferència que els ha tocat",
+      "favorita": "{n}a preferida",
+      "nosVaBien": "Ens va bé",
+      "imposible": "Impossible",
+      "barra": "{etiqueta}: {n, plural, one {# família} other {# famílies}}"
+    },
+    "comprobar": {
+      "titulo": "Comproveu-ho vosaltres",
+      "texto": "El programa és públic. Una persona de la junta que no gestiona l'aplicació rep les dades sense noms, repetix el repartiment amb l'empremta i el número de l'ONCE, i comprova que ix exactament el mateix.",
+      "huella": "Empremta de la llista ({cuando})",
+      "pendienteHuella": "es publica en tancar",
+      "once": "Número de l'ONCE ({cuando})",
+      "pendienteOnce": "encara no ha eixit",
+      "version": "Versió del repartiment",
+      "resultado": "Empremta del resultat",
+      "exclusiones": "{n, plural, one {# inscripció duplicada exclosa abans del sorteig} other {# inscripcions duplicades excloses abans del sorteig}}",
+      "sello": "✓ Comprovat per la persona verificadora de l'AFA el {fecha}",
+      "codigo": "Veure el programa del repartiment"
+    },
+    "nunca": "Mai no publiquem quina família té cada hora."
+  },
+  "resultado": {
+    "kicker": "Ja teniu la vostra hora!",
+    "hora": "{dia} · {hora}",
+    "favorita": "La vostra {n}a preferida!",
+    "nos_va_bien": "No ha pogut ser cap de les vostres preferides, però és una hora que us va bé.",
+    "imposible": "No ha estat possible evitar una de les vostres hores impossibles: hi havia més famílies que buits possibles. Si no podeu vindre, mireu les hores lliures o escriviu a l'AFA.",
+    "sin_favoritas": "Us anava bé qualsevol hora: aquesta és la vostra.",
+    "movida": "L'AFA ha canviat la vostra hora.",
+    "cambiada": "És l'hora lliure a la qual us vau canviar.",
+    "llegad": "Arribeu 5 minuts abans.",
+    "calendario": "Afegir al calendari",
+    "libres": {
+      "titulo": "Hores lliures ara",
+      "texto": "Si us va millor, podeu canviar-vos a una d'aquestes hores fins al {fin}. La primera família que l'agafa se la queda, i la vostra hora d'ara queda lliure per a una altra.",
+      "ninguna": "Ara mateix no hi ha hores lliures.",
+      "cambiar": "Canviar-nos",
+      "cambiarAria": "Canviar-nos al {franja}",
+      "mas": "Veure més hores lliures",
+      "confirmar": "Us canviem al {franja}?",
+      "confirmarTexto": "La vostra hora d'ara ({actual}) quedarà lliure per a una altra família.",
+      "si": "Sí, canviar-nos",
+      "cambiando": "S'està canviant…",
+      "no": "No, ens quedem",
+      "ocupada": "Vaja, una altra família acaba d'agafar aquesta hora. Trieu-ne una altra.",
+      "hecho": "Fet! La vostra hora nova és el {franja}."
+    },
+    "terminada": "Ja no es poden fer canvis. Si teniu un problema amb la vostra hora, escriviu a l'AFA.",
+    "sinHora": "Aquesta inscripció no ha entrat en el sorteig. Si creieu que és un error, escriviu a l'AFA."
+  },
+  "calendario": {
+    "titulo": "Fotos de Nadal · AFA CEI Las Palmeras",
+    "descripcion": "Arribeu 5 minuts abans. Si al final no podeu vindre, cancel·leu des del vostre enllaç per a deixar l'hora lliure a una altra família.",
+    "lugar": "CEI Las Palmeras"
+  }
+}
