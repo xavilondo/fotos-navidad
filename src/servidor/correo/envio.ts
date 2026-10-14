@@ -16,6 +16,9 @@ let cliente: Resend | null = null;
 export async function enviarEmail(m: MensajeSaliente): Promise<{ id: string }> {
   const clave = process.env.RESEND_API_KEY;
   if (!clave) {
+    if (process.env.VERCEL_ENV === "production") {
+      throw new Error("El envío de correo no está configurado en producción");
+    }
     console.info(
       `\n✉️  [email sin enviar: falta RESEND_API_KEY] para ${m.para} · ${m.asunto}\n${m.texto}\n`,
     );

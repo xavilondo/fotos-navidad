@@ -11,17 +11,20 @@
 - Next.js, directorio raíz del repositorio, pnpm según `packageManager` y Node.js 22 según `engines`.
 - Funciones en Frankfurt (`fra1`) y cron diario según `vercel.json`.
 - Variables `URL_APP=https://fotos-navidad.vercel.app` y `URL_REPOSITORIO=https://github.com/xavilondo/fotos-navidad/tree/main/src/dominio/reparto` en Vercel.
+- Enlace local de Vercel en `.vercel/project.json` (excluido de Git).
+- Neon: proyecto `fotos-navidad`, ID `autumn-boat-49597453`, región AWS Frankfurt. Cómputo principal y valores predeterminados fijados a 0,25 CU, con suspensión tras cinco minutos sin actividad.
+- Migraciones aplicadas y edición `navidad-2026` cargada: dos días de sesión, 20 franjas y 120 huecos libres. Sin inscripciones ficticias.
+- Cuenta de administración `xavi` creada. La contraseña y los secretos preparados están en `.env.vercel.local`, excluido de Git y con permisos `0600`. Guardadlos en el gestor de contraseñas.
+- Sin proveedor de correo en producción, los emails fallan y permanecen en cola; no se dan por enviados ni se registran enlaces personales en la consola. El modo consola se mantiene para desarrollo.
 
 ## Pendiente
 
-- Crear una base Neon independiente en Frankfurt. La integración existente usa Launch con facturación por consumo: requiere aprobación de presupuesto antes de crear el recurso. No se ha creado ni conectado ninguna base de otros proyectos.
-- Configurar `DATABASE_URL`, ejecutar `pnpm db:migrar` y cargar `navidad-2026`. Las vistas previas deben usar una base independiente de producción.
-- Crear las cuentas de administración con `pnpm admin:crear`.
-- Configurar Resend y su webhook de rebotes, con el remitente de un dominio verificado.
-- Configurar Turnstile para los dominios reales, sin claves de prueba en producción.
-- Configurar `CRON_SECRET` y `CLAVE_COMPENSACION` como secretos, nunca en Git.
-- Confirmar dominio, DNS, email de contacto y NIF del AFA.
-- Repetir el despliegue y verificar las páginas una vez disponible la base de datos. El primer intento se detuvo al recopilar páginas por falta de `DATABASE_URL`.
+- Aplicar cuotas del proyecto Neon: presupuesto autorizado de hasta 10 USD/mes. `scripts/neon-limites.ts` prepara un máximo de 60 CU-h/mes (6,36 USD de cómputo al precio actual), 500 MB de datos escritos, 500 MB por rama y 1 GB de transferencia. Neon suspende el cómputo al alcanzar una cuota. **Todavía no aplicadas**: pendiente confirmar la creación de una clave API temporal con alcance exclusivo a este proyecto. Revocarla al terminar. La reducción a 0,25 CU y la suspensión por inactividad no constituyen un límite mensual de gasto.
+- Conectar la base únicamente a Production y guardar `DATABASE_URL`, `CRON_SECRET` y `CLAVE_COMPENSACION` en Vercel: formulario preparado, pendiente confirmación del acceso mediante credenciales. Las vistas previas deben usar una base independiente de producción.
+- Correo aplazado por el usuario. La app usa actualmente Resend; si se elige una cuenta propia, el envío necesitará SMTP (IMAP solo recibe) y adaptar el proveedor. No se ha configurado la cuenta de Mundo Pétreo.
+- Turnstile pendiente; sin su secreto, la app rechaza las inscripciones en producción. No se han usado claves de prueba.
+- Dominio todavía por decidir: podría ser un subdominio de la escuela. Se mantiene la URL de Vercel. Faltan email de contacto y NIF del AFA para privacidad.
+- Repetir el despliegue y verificar las páginas después de conectar la base. El primer intento se detuvo al recopilar páginas por falta de `DATABASE_URL`.
 
 ## Validación local
 
