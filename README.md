@@ -91,7 +91,7 @@ Decisiones técnicas que conviene saber:
 
 ## Despliegue (Vercel + Neon + Resend + Turnstile)
 
-Lo prepara el AFA con sus cuentas: ver la lista en [`.scratch/fotos-navidad/issues/06-dominio-y-cuentas-del-afa.md`](.scratch/fotos-navidad/issues/06-dominio-y-cuentas-del-afa.md).
+El repositorio está en [xavilondo/fotos-navidad](https://github.com/xavilondo/fotos-navidad) y conectado al proyecto [fotos-navidad de Vercel](https://vercel.com/agenciagurumk-5316s-projects/fotos-navidad), en el equipo habitual del usuario, por indicación del 14-10-2026. El estado de la puesta en marcha está en [docs/despliegue.md](docs/despliegue.md). La lista original de cuentas del AFA sigue en [`.scratch/fotos-navidad/issues/06-dominio-y-cuentas-del-afa.md`](.scratch/fotos-navidad/issues/06-dominio-y-cuentas-del-afa.md).
 
 1. **GitHub:** repositorio público en la cuenta del AFA. Nunca lleva datos ni claves.
 2. **Neon** (`aws-eu-central-1`): un proyecto y una base de datos. Ejecutad las migraciones con la URL de producción:
@@ -118,7 +118,7 @@ Lo prepara el AFA con sus cuentas: ver la lista en [`.scratch/fotos-navidad/issu
 4. **Dominio:** `fotos.afalaspalmeras.es` en Vercel. En Resend, verificad el dominio en `eu-west-1`.
 5. **Vercel Pro** desde el 25/10 hasta la purga. Comprobad que _Model Training_ está desactivado. **Resend Pro** del ~20/10 al 3/11.
 6. Antes de abrir, la persona de la junta que revisa el valenciano repasa `messages/va.json`, los emails (`src/servidor/emails/plantillas/textos.ts`) y `/privacidad` (`src/contenido/privacidad.ts`).
-7. **Antes de publicar el repositorio:** la carpeta `dossier/` (con fotos de peques) ya no se versiona, pero sigue en los primeros commits. Cread el repositorio público a partir de un historial limpio, por ejemplo un único commit inicial: `git checkout --orphan publico && git commit -m "Fotos de Navidad"`.
+7. **Historial limpio:** GitHub se publicó con un commit inicial sin `dossier/` ni los commits que lo contenían. El historial anterior se conserva únicamente en la rama local `codex/historial-local`. **No subáis esa rama, ni hagáis `git push --all` o `git push --mirror`**: volverían a publicar el dossier con fotos de peques.
 
 ## Calendario de operación (2026)
 

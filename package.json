@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Inscripción y reparto justo de horas para las fotos de Navidad del AFA CEI Las Palmeras",
   "engines": {
-    "node": ">=22"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "next dev",
