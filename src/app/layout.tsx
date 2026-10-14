@@ -17,7 +17,6 @@ const caveat = Caveat({ subsets: ["latin"], variable: "--font-caveat", weight: [
 
 export const metadata: Metadata = {
   title: "Fotos de Navidad · AFA CEI Las Palmeras",
-  icons: { icon: "/marca/logo-circle.png" },
 };
 
 export const viewport: Viewport = {
