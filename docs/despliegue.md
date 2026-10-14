@@ -14,11 +14,11 @@
 - Enlace local de Vercel en `.vercel/project.json` (excluido de Git).
 - Neon: proyecto `fotos-navidad`, ID `autumn-boat-49597453`, región AWS Frankfurt. Cómputo principal y valores predeterminados fijados a 0,25 CU, con suspensión tras cinco minutos sin actividad.
 - Migraciones aplicadas y edición `navidad-2026` cargada: dos días de sesión, 20 franjas y 120 huecos libres. Sin inscripciones ficticias.
-- Cuenta de administración `xavi` creada. La contraseña y los secretos preparados están en `.env.vercel.local`, excluido de Git y con permisos `0600`. Guardadlos en el gestor de contraseñas.
+- Cuenta de administración `afa` (antes `xavi`, renombrada por petición del usuario el 14-10-2026). Conserva su contraseña, identificador y sesiones. El cambio está registrado en la auditoría. La contraseña y los secretos preparados están en `.env.vercel.local`, excluido de Git y con permisos `0600`. Guardadlos en el gestor de contraseñas.
 - Sin proveedor de correo en producción, los emails fallan y permanecen en cola; no se dan por enviados ni se registran enlaces personales en la consola. El modo consola se mantiene para desarrollo.
 - Base conectada exclusivamente a Production. `DATABASE_URL`, `CRON_SECRET` y `CLAVE_COMPENSACION` guardados como secretos de Vercel.
 - Despliegue de producción correcto: https://fotos-navidad.vercel.app. Portada comprobada con las fechas reales de la edición.
-- Acceso al panel comprobado con `xavi`: cero inscripciones, 120 huecos libres y edición antes de abrir. El acceso anónimo a `/admin` redirige al formulario de entrada.
+- Comprobación inicial del panel con `xavi` (ahora `afa`): cero inscripciones, 120 huecos libres y edición antes de abrir. El acceso anónimo a `/admin` redirige al formulario de entrada.
 - Clave API temporal de Neon creada con alcance exclusivo a este proyecto, revocada tras la comprobación y eliminada del archivo local temporal.
 
 ## Apertura temporal para pruebas
