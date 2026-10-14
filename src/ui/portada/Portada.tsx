@@ -14,11 +14,31 @@ import { AvisoBorrador, CtaInscripcion } from "./CtaInscripcion";
 import { EnlacePerdido } from "./EnlacePerdido";
 
 /** Mascotas troqueladas del hero: imagen, ancho, giro y posición. */
+/**
+ * Mascotas troqueladas del hero: un grupo de 2×2 arriba a la derecha, junto a «¡Llega la Navidad!»
+ * y «Fotos de», siempre por encima de la línea «Navidad 2026» para que el título no las tape.
+ * Escalan con el ancho de la pantalla (iPhone SE a 480 px).
+ */
 const MASCOTAS = [
-  { clase: "pinguinos", w: 62, giro: 12, pos: { right: 6, top: 0 } },
-  { clase: "patitos", w: 50, giro: -10, pos: { right: 84, top: -14 } },
-  { clase: "osos", w: 64, giro: 8, pos: { right: 16, bottom: -6 } },
-  { clase: "tigres", w: 56, giro: -8, pos: { right: 92, bottom: -12 } },
+  { clase: "pinguinos", w: "clamp(40px, 12.5vw, 54px)", giro: 12, pos: { right: 0, top: -10 } },
+  {
+    clase: "patitos",
+    w: "clamp(36px, 11vw, 48px)",
+    giro: -10,
+    pos: { right: "clamp(44px, 13vw, 58px)", top: -18 },
+  },
+  {
+    clase: "osos",
+    w: "clamp(40px, 12.5vw, 52px)",
+    giro: 8,
+    pos: { right: 2, top: "clamp(46px, 12.5vw, 54px)" },
+  },
+  {
+    clase: "tigres",
+    w: "clamp(36px, 11.5vw, 46px)",
+    giro: -8,
+    pos: { right: "clamp(46px, 13.5vw, 60px)", top: "clamp(50px, 13vw, 52px)" },
+  },
 ] as const;
 
 const UN_DIA = 86_400_000;
@@ -47,7 +67,7 @@ export async function Portada({
         </Pegar>
         {estado === "abierta" && <AvisoBorrador slug={edicion.slug} />}
 
-        <div className="relative mt-3.5 min-h-[228px] pt-[26px] pb-[18px]">
+        <div className="relative mt-3.5 pt-[26px] pb-[6px]">
           <Pegar indice={1} className="inline-block">
             <p className="ml-1 inline-block -rotate-[4deg] font-mano text-[30px] font-bold text-green-d">
               {t("kicker")}
