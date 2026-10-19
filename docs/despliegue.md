@@ -1,6 +1,18 @@
 # Puesta en marcha · 14-10-2026
 
-## Configurado
+## Conexión actual comprobada · 19-10-2026
+
+La web de Vercel ya usa PostgreSQL del servidor propio, **no Neon**. Destino: `host.gurumk.com:6432` (PgBouncer), base `app_fotos_navidad`. El despliegue activo `dpl_FBvr4S7toK3fpYHsb6tR8pqqmLS6` coincide con el registro privado de verificación de la migración del 14-10-2026 y lleva la marca `migrationTarget=postgresql18-hosting`. Las variables actuales de Production también están identificadas como migradas al hosting, sin vínculo con la integración de Neon.
+
+Vercel devuelve `[SENSITIVE]` al descargar estas variables: no permite recuperar las credenciales. Se ha usado la configuración privada guardada para ese mismo despliegue durante la migración, en el proyecto local `migracion-postgre`, conservando los valores originales de los secretos sin mostrarlos ni versionarlos.
+
+Actualizados `.env.local` y `.env.vercel.local` con las 16 variables de base de datos de esa configuración, incluidas las conexiones con pool y directa. Se retira `EDICION_ACTUAL=ensayo` de `.env.local` para seleccionar la edición actual como Vercel. Ambos archivos tienen permisos `0600` y están excluidos de Git; las copias anteriores quedan bajo `.vercel/comprobacion-base/copias/`, también excluido. El desarrollo local comparte ahora esta base remota.
+
+Verificación de solo lectura desde la conexión local actualizada: PostgreSQL **18.6**, base `app_fotos_navidad`, **112 inscripciones**, TLS hasta PgBouncer con certificado autorizado. No se han modificado datos, variables remotas ni despliegues.
+
+**Migración `0004_sin-sorteo` aplicada** el 19-10-2026 a esta base, por petición del usuario y justo antes de desplegar el código del ADR 0002: la tabla `sorteo` (vacía) pasa a `reparto`, se añade `hueco.extra` y el origen `sorteo` pasa a `reparto`. Después: 5 migraciones, `navidad-2026` abierta hasta el 27-10 y 112 inscripciones sin horas. La inscripción se deja abierta para seguir probando.
+
+## Configuración inicial · 14-10-2026
 
 - GitHub público: https://github.com/xavilondo/fotos-navidad.
 - Rama de producción: `main`, con historial limpio desde `11f4685`.
@@ -12,7 +24,7 @@
 - Funciones en Frankfurt (`fra1`) y cron diario según `vercel.json`.
 - Variables `URL_APP=https://fotos-navidad.vercel.app` y `URL_REPOSITORIO=https://github.com/xavilondo/fotos-navidad/tree/main/src/dominio/reparto` en Vercel.
 - Enlace local de Vercel en `.vercel/project.json` (excluido de Git).
-- Neon: proyecto `fotos-navidad`, ID `autumn-boat-49597453`, región AWS Frankfurt. Cómputo principal y valores predeterminados fijados a 0,25 CU, con suspensión tras cinco minutos sin actividad.
+- Neon, origen histórico antes de la migración al servidor propio: proyecto `fotos-navidad`, ID `autumn-boat-49597453`, región AWS Frankfurt. Se configuró a 0,25 CU, con suspensión tras cinco minutos sin actividad. La conexión actual se describe arriba.
 - Migraciones aplicadas y edición `navidad-2026` cargada: dos días de sesión, 20 franjas y 120 huecos libres. Sin inscripciones ficticias.
 - Cuenta de administración `afa` (antes `xavi`, renombrada por petición del usuario el 14-10-2026). Conserva su contraseña, identificador y sesiones. El cambio está registrado en la auditoría. La contraseña y los secretos preparados están en `.env.vercel.local`, excluido de Git y con permisos `0600`. Guardadlos en el gestor de contraseñas.
 - Sin proveedor de correo en producción, los emails fallan y permanecen en cola; no se dan por enviados ni se registran enlaces personales en la consola. El modo consola se mantiene para desarrollo.
