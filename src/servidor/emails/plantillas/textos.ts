@@ -11,7 +11,7 @@ import type { Bloque, ContenidoEmail, DatosEmail, Idioma, Trozo } from "./tipos"
 type Datos<T extends DatosEmail["tipo"]> = Extract<DatosEmail, { tipo: T }>;
 /** `urlApp` va sin barra final. */
 type Contexto = { f: FechasEmail; idioma: Idioma; urlApp: string };
-type Cuerpo = Omit<ContenidoEmail, "saludo" | "pie" | "antetitulo" | "logo">;
+type Cuerpo = Omit<ContenidoEmail, "saludo" | "pie" | "antetitulo" | "logo" | "mascotas">;
 
 type Textos = {
   antetitulo: string;
@@ -474,7 +474,8 @@ export function contenidoEmail(idioma: Idioma, datos: DatosEmail): ContenidoEmai
   const { motivo, ...resto } = cuerpo;
   return {
     ...resto,
-    logo: `${urlApp}/marca/logo-circle.png`,
+    logo: `${urlApp}/marca/logo-email.png`,
+    mascotas: `${urlApp}/marca/mascotas-email.png`,
     antetitulo: t.antetitulo,
     saludo: t.saludo(nombreParaSaludar(datos.nombre)),
     pie: {

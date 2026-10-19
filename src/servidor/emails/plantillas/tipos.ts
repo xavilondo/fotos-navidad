@@ -70,8 +70,9 @@ export type ContenidoEmail = {
   asunto: string;
   /** Texto que los clientes de correo muestran junto al asunto. */
   previa: string;
-  /** URL absoluta del logo. */
+  /** URLs absolutas del logo y de la fila de mascotas de las clases (imágenes ligeras para email). */
   logo: string;
+  mascotas: string;
   antetitulo: string;
   titulo: string;
   saludo: string;

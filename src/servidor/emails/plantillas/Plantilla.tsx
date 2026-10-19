@@ -1,6 +1,7 @@
 import {
   Body,
   Button,
+  Column,
   Container,
   Head,
   Heading,
@@ -8,6 +9,7 @@ import {
   Img,
   Link,
   Preview,
+  Row,
   Section,
   Text,
 } from "@react-email/components";
@@ -16,8 +18,8 @@ import { LOCALE } from "@/i18n/idioma";
 import type { Bloque, ContenidoEmail, Idioma, Trozo } from "./tipos";
 
 /**
- * Plantilla común de los emails, en estilo Álbum ligero: papel crema, tarjeta clara, logo y
- * títulos con serifa. Todo con estilos en línea y tablas (los componentes de React Email), para
+ * Plantilla común de los emails, en estilo Álbum ligero: papel crema, tarjeta clara, logo,
+ * títulos con serifa y, al pie, las mascotas de las clases y la franja de las estaciones del dossier. Todo con estilos en línea y tablas (los componentes de React Email), para
  * que se vea bien en Gmail, Outlook y Apple Mail.
  *
  * No se cargan fuentes externas (ni Google Fonts): abrir el email no avisa a terceros. Fraunces y
@@ -30,11 +32,19 @@ const COLOR = {
   tinta: "#26301a",
   oliva: "#3b4d15",
   verde: "#2e9a3a",
+  /** Verde para texto pequeño: el verde normal no llega a 4,5:1 sobre el papel (como en la app). */
+  verdeOscuro: "#1f6e28",
   apagado: "#646b55",
   linea: "#ece3cf",
   veranoSuave: "#fff2cc",
   verano: "#ffd36b",
+  primavera: "#a9de7f",
+  otono: "#f6a978",
+  invierno: "#9fd3e8",
 } as const;
+
+/** La franja de las cuatro estaciones del dossier. */
+const ESTACIONES = [COLOR.primavera, COLOR.verano, COLOR.otono, COLOR.invierno];
 
 const TITULOS = "Fraunces, Georgia, 'Times New Roman', serif";
 const TEXTO = "Nunito, Arial, Helvetica, sans-serif";
@@ -55,7 +65,7 @@ const s = {
     fontWeight: 700,
     letterSpacing: "0.12em",
     textTransform: "uppercase",
-    color: COLOR.verde,
+    color: COLOR.verdeOscuro,
     textAlign: "center",
     margin: "0 0 4px",
   },
@@ -246,7 +256,35 @@ export function Plantilla({ idioma, contenido }: { idioma: Idioma; contenido: Co
               <PintarBloque key={i} bloque={bloque} />
             ))}
           </Section>
-          <Section style={{ padding: "18px 12px 0" }}>
+          <Section style={{ textAlign: "center", padding: "22px 0 0" }}>
+            <Img
+              src={contenido.mascotas}
+              width="360"
+              height="51"
+              alt=""
+              style={{ margin: "0 auto", display: "block", maxWidth: "100%", height: "auto" }}
+            />
+          </Section>
+          <Section style={{ maxWidth: "360px", margin: "10px auto 0" }}>
+            <Row>
+              {ESTACIONES.map((color, i) => (
+                <Column
+                  key={color}
+                  style={{
+                    backgroundColor: color,
+                    height: "6px",
+                    lineHeight: "6px",
+                    fontSize: "1px",
+                    width: "25%",
+                    borderRadius: i === 0 ? "6px 0 0 6px" : i === 3 ? "0 6px 6px 0" : "0",
+                  }}
+                >
+                  &nbsp;
+                </Column>
+              ))}
+            </Row>
+          </Section>
+          <Section style={{ padding: "14px 12px 0" }}>
             <Text style={s.pie}>
               <strong>{contenido.pie.afa}</strong>
               {" · "}

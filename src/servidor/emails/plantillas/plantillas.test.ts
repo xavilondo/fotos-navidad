@@ -27,10 +27,11 @@ describe("renderizarEmail: cada tipo en cada idioma", () => {
           expect(r.texto).toContain(datos.enlace);
         }
 
-        // Pie: AFA, privacidad y logo.
+        // Pie: AFA, privacidad, logo y mascotas (versiones ligeras para email).
         expect(r.html).toContain('href="https://fotos.afalaspalmeras.es/privacidad"');
         expect(r.texto).toContain("https://fotos.afalaspalmeras.es/privacidad");
-        expect(r.html).toContain("https://fotos.afalaspalmeras.es/marca/logo-circle.png");
+        expect(r.html).toContain("https://fotos.afalaspalmeras.es/marca/logo-email.png");
+        expect(r.html).toContain("https://fotos.afalaspalmeras.es/marca/mascotas-email.png");
         expect(r.texto).toContain("AFA CEI Las Palmeras");
 
         // Solo la primera palabra del nombre del adulto, y ningún hueco sin rellenar.

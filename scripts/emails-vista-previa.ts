@@ -11,11 +11,10 @@ import { EJEMPLOS } from "@/servidor/emails/plantillas/ejemplos";
 
 const carpeta = join(process.cwd(), ".scratch", "emails-vista-previa");
 await mkdir(join(carpeta, "marca"), { recursive: true });
-// El dominio aún no sirve el logo: la vista previa usa una copia local.
-await copyFile(
-  join(process.cwd(), "public", "marca", "logo-circle.png"),
-  join(carpeta, "marca", "logo-circle.png"),
-);
+// La vista previa usa copias locales de las imágenes de la marca.
+for (const imagen of ["logo-email.png", "mascotas-email.png"]) {
+  await copyFile(join(process.cwd(), "public", "marca", imagen), join(carpeta, "marca", imagen));
+}
 
 const escapar = (t: string) =>
   t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -25,10 +24,9 @@ for (const idioma of ["es", "va"] as Idioma[]) {
   for (const datos of Object.values(EJEMPLOS) as DatosEmail[]) {
     const { asunto, html, texto } = await renderizarEmail(idioma, datos);
     const nombre = `${datos.tipo}.${idioma}`;
-    const logo = `${datos.urlApp}/marca/logo-circle.png`;
     await writeFile(
       join(carpeta, `${nombre}.html`),
-      html.replaceAll(logo, "marca/logo-circle.png"),
+      html.replaceAll(`${datos.urlApp}/marca/`, "marca/"),
     );
     await writeFile(join(carpeta, `${nombre}.txt`), texto);
     filas.push(
