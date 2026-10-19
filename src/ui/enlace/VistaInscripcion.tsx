@@ -63,7 +63,8 @@ export function VistaInscripcion({
   const [cancelando, setCancelando] = useState(false);
   const [cancelada, setCancelada] = useState(false);
   const abierta = vista.estado === "abierta";
-  const sePuedeCancelar = abierta || vista.estado === "publicada";
+  // Solo mientras la inscripción está abierta: con las horas ya dadas, cualquier duda va al AFA.
+  const sePuedeCancelar = abierta;
 
   const editar = (s: Seccion) => {
     setF(vista.formulario);
@@ -159,9 +160,7 @@ export function VistaInscripcion({
         <Pegar indice={1}>
           <Tarjeta>
             <p className="text-base leading-normal">
-              {abierta
-                ? t("cancelada.texto", { cierre: datos.textos.cierre })
-                : t("cancelada.textoPublicada")}
+              {t("cancelada.texto", { cierre: datos.textos.cierre })}
             </p>
           </Tarjeta>
         </Pegar>
@@ -343,7 +342,7 @@ export function VistaInscripcion({
         abierta={confirmarCancelar}
         onCerrar={() => setConfirmarCancelar(false)}
         titulo={t("cancelarTitulo")}
-        descripcion={abierta ? t("cancelarTexto") : t("cancelarTextoPublicada")}
+        descripcion={t("cancelarTexto")}
       >
         <BotonCta
           type="button"

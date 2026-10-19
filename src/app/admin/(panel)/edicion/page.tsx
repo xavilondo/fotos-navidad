@@ -241,7 +241,7 @@ export default async function PaginaEdicion() {
             <dd>{cuando(edicion.abreEn)}</dd>
             <dt className="font-bold text-muted-ink">Cierra</dt>
             <dd>{cuando(edicion.cierraEn)}</dd>
-            <dt className="font-bold text-muted-ink">Cancelaciones hasta</dt>
+            <dt className="font-bold text-muted-ink">Publicada hasta</dt>
             <dd>{cuando(edicion.cambiosHasta)}</dd>
             <dt className="font-bold text-muted-ink">Huecos</dt>
             <dd>

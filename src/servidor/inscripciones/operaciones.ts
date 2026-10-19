@@ -424,9 +424,9 @@ export async function actualizarSeccion(
 }
 
 /**
- * Cancela la inscripción: se borran los datos en cascada (también la hora asignada, que queda
- * libre), queda una línea anónima en la auditoría y se manda el email de cancelación.
- * Se puede mientras la inscripción está abierta y, tras publicar, hasta el fin de los cambios.
+ * Cancela la inscripción: se borran los datos en cascada, queda una línea anónima en la auditoría
+ * y se manda el email de cancelación. Solo mientras la inscripción está abierta: una vez cerrada,
+ * las familias ya no pueden cambiar nada y, si tienen cualquier duda, escriben al AFA.
  */
 export async function cancelarInscripcion(
   db: BaseDatos,
@@ -438,28 +438,15 @@ export async function cancelarInscripcion(
     if (!ins) return { estado: "no_encontrada" };
     const actual = await edicionActual(tx, { bloquear: true });
     if (!actual || actual.edicion.id !== ins.edicionId) return { estado: "no_encontrada" };
-    if (actual.estado !== "abierta" && actual.estado !== "publicada") return { estado: "cerrada" };
-
-    const [asig] = await tx
-      .select({ huecoId: t.asignacion.huecoId, inicio: t.hueco.inicio })
-      .from(t.asignacion)
-      .innerJoin(t.hueco, eq(t.hueco.id, t.asignacion.huecoId))
-      .where(eq(t.asignacion.inscripcionId, ins.id));
+    if (actual.estado !== "abierta") return { estado: "cerrada" };
 
     await tx.delete(t.inscripcion).where(eq(t.inscripcion.id, ins.id));
-    // Un hueco extra solo existía para esta familia: no se queda libre para otra.
-    if (asig) {
-      await tx.delete(t.hueco).where(and(eq(t.hueco.id, asig.huecoId), eq(t.hueco.extra, true)));
-    }
     await registrarAuditoria(tx, {
       edicionId: ins.edicionId,
       actor: { tipo: "familia" },
       accion: "inscripcion.cancelada",
       inscripcionId: ins.id,
-      detalle: {
-        estado: actual.estado,
-        ...(asig && { huecoLiberado: asig.huecoId, inicio: asig.inicio.toISOString() }),
-      },
+      detalle: { estado: actual.estado },
     });
     const id = await encolarEmail(tx, {
       para: ins.email,
@@ -467,7 +454,7 @@ export async function cancelarInscripcion(
       datos: {
         tipo: "cancelacion",
         cierraEn: actual.edicion.cierraEn.toISOString(),
-        sePuedeVolver: actual.estado === "abierta",
+        sePuedeVolver: true,
         ...comunEmail(actual.edicion, ctx.urlApp, ins.nombreAdulto),
       },
     });

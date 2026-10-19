@@ -14,7 +14,7 @@ Las familias se apuntan desde el móvil y marcan sus horas **favoritas** (hasta 
 | ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | Familias      | `/`                    | Portada con cinco estados según el reloj del servidor (antes, abierta, cerrada, publicada, terminada).                         |
 |               | `/inscripcion`         | Inscripción en 5 pasos, con borrador guardado en el móvil.                                                                     |
-|               | `/i/[enlace]`          | Ver, cambiar o cancelar la inscripción. Cuando se publica el reparto: la hora definitiva y el `.ics`.                          |
+|               | `/i/[enlace]`          | Ver, cambiar o cancelar la inscripción mientras está abierta. Cuando se publica el reparto: la hora definitiva y el `.ics`.    |
 |               | `/reparto`             | Cómo se reparten las horas y las cifras del año (`/sorteo` redirige aquí).                                                     |
 |               | `/privacidad`          | Texto de privacidad.                                                                                                           |
 | Panel del AFA | `/admin`               | Panel de control, inscripciones, reparto, horas, exportaciones, auditoría y edición (configurador, registros, cierre y purga). |
@@ -131,7 +131,7 @@ El repositorio está en [xavilondo/fotos-navidad](https://github.com/xavilondo/f
 | Mar 27/10 21:00                 | —        | Cierra la inscripción.                                                                                                                                     |
 | Mar 27 noche                    | Admin    | `pnpm copia:cifrada`. Si hay duplicados, se **excluyen** (no se borran). Panel → Reparto → **Calcular el reparto** (queda en borrador).                    |
 | Mié 28/10                       | Admin    | Revisar los conflictos, llamar a esas familias y ponerlas a mano en una hora que les vaya bien (ficha → hora extra). **Publicar**: los emails salen solos. |
-| Hasta dom 1/11 20:00            | Familias | Cancelar si no pueden venir (la hora es definitiva: no hay cambios).                                                                                       |
+| Hasta dom 1/11 20:00            | Familias | Solo consultan su hora definitiva: sin cambios ni cancelaciones. Dudas y bajas, escribiendo al AFA.                                                        |
 | Dom 1/11 noche                  | Admin    | Exportaciones → agenda del fotógrafo (PDF) y Excel de lotes, que también es para el fotógrafo, después de que firme el compromiso de confidencialidad.     |
 | Lun 2 y mar 3/11                | —        | Fotos.                                                                                                                                                     |
 | Al entregar las fotos (≤ 31/01) | Admin    | `pnpm copia:cifrada`, borrar todas las copias y Panel → Edición → **Cerrar la edición** (purga). Vercel vuelve a Hobby y se da de baja Resend Pro.         |

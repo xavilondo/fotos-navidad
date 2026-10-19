@@ -210,8 +210,8 @@ const ES: Textos = {
         p("Esta es vuestra hora definitiva."),
         boton("Ver vuestra hora", d.enlace),
         nota(
-          "Si al final no podéis venir, cancelad desde el enlace para avisar al AFA. Este enlace " +
-            "es solo vuestro: no lo reenviéis.",
+          "Si tenéis cualquier duda o al final no podéis venir, responded a este email y os " +
+            "contestará el AFA. Este enlace es solo vuestro: no lo reenviéis.",
         ),
       ],
       motivo:
@@ -414,8 +414,8 @@ const VA: Textos = {
         p("Aquesta és la vostra hora definitiva."),
         boton("Veure la vostra hora", d.enlace),
         nota(
-          "Si al final no podeu vindre, cancel·leu des de l'enllaç per a avisar l'AFA. Aquest " +
-            "enllaç és només vostre: no el reenvieu.",
+          "Si teniu qualsevol dubte o al final no podeu vindre, responeu a aquest correu i us " +
+            "contestarà l'AFA. Aquest enllaç és només vostre: no el reenvieu.",
         ),
       ],
       motivo: "Us escrivim perquè esteu apuntats amb aquest correu a les fotos de Nadal de l'AFA.",

@@ -22,6 +22,12 @@ La app envía por SMTP con la cuenta de Gmail del AFA (`afaceilaspalmeras@gmail.
 
 Pendiente antes de admitir familias reales: decidir si se mantiene Gmail (una cuenta personal no tiene contrato de encargado de tratamiento con Google) y actualizar `/privacidad`, que nombra a Resend y a Neon.
 
+## Antes de la apertura real: reiniciar la edición
+
+Tras los ensayos, también si se calculó o publicó un reparto de prueba, `pnpm edicion:reiniciar navidad-2026` deja la edición como recién cargada: borra inscripciones (con peques, preferencias, enlaces y horas), huecos extra, reparto, emails en cola y límites, y devuelve las fechas a la config (abre el 26-10 a las 09:00 y cierra el 27-10 a las 21:00). Va en seco por defecto; `--aplicar` lo hace en una transacción y lo deja en la auditoría como `edicion.reiniciada`. Se niega en cuanto llega la apertura real de la config, para no borrar nunca inscripciones de familias.
+
+Antes de reiniciar o de publicar el reparto: `pnpm copia:cifrada`. Necesita un `pg_dump` de la versión del servidor (18): el script usa el de `brew install libpq` si está, y `pnpm copia:cifrada --comprobar` prueba la conexión sin copiar datos (comprobado el 19-10-2026).
+
 ## Configuración inicial · 14-10-2026
 
 - GitHub público: https://github.com/xavilondo/fotos-navidad.

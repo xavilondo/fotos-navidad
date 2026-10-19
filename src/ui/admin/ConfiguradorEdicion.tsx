@@ -162,7 +162,7 @@ export function ConfiguradorEdicion({
               [
                 ["abreEn", "Abre"],
                 ["cierraEn", "Cierra"],
-                ["cambiosHasta", "Cancelaciones hasta"],
+                ["cambiosHasta", "Publicada hasta"],
               ] as const
             ).map(([k, texto]) => (
               <label key={k} className="block">

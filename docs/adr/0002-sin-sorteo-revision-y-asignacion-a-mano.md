@@ -10,4 +10,4 @@ El AFA no quiere sortear. Si al final hay un conflicto de horario, prefiere habl
 - Volver a calcular empieza de cero y descarta los ajustes a mano. Publicar solo se puede hacer una vez y exige que todas las inscripciones sin excluir tengan hora.
 - Las exclusiones tras el cierre ya no protegen una lista congelada: viven en `inscripcion.excluida_motivo` y la excluida se queda sin hora.
 - Sin huella, el cron ya no tiene nada que calcular al cierre: solo reintenta emails y limpia.
-- **La hora publicada es definitiva** (añadido el 19-10-2026): las familias ya no pueden pasarse a una hora libre. Solo pueden cancelar, y solo el AFA mueve a alguien.
+- **La hora publicada es definitiva** (añadido el 19-10-2026): las familias ya no pueden pasarse a una hora libre ni cancelar: tras el cierre solo consultan su hora y, para cualquier duda o baja, escriben al AFA. Solo el AFA mueve o borra a alguien.

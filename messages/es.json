@@ -44,7 +44,7 @@
       },
       "publicada": {
         "pastilla": "Horas publicadas",
-        "texto": "<b>Mirad vuestro email:</b> ahí tenéis vuestra hora y el enlace para verla. Es la hora definitiva; si al final no podéis venir, cancelad desde el enlace.",
+        "texto": "<b>Mirad vuestro email:</b> ahí tenéis vuestra hora y el enlace para verla. Es la hora definitiva; si tenéis cualquier duda, escribid al AFA.",
         "cifras": {
           "primera": "con su 1ª",
           "otra": "con otra favorita",
@@ -308,14 +308,12 @@
     "cancelar": "Cancelar la inscripción",
     "cancelarTitulo": "¿Cancelamos vuestra inscripción?",
     "cancelarTexto": "Borraremos todos vuestros datos. Podréis volver a apuntaros mientras la inscripción siga abierta.",
-    "cancelarTextoPublicada": "Vuestra hora quedará libre y borraremos todos vuestros datos.",
     "cancelarSi": "Sí, cancelar",
     "cancelando": "Cancelando…",
     "cancelarNo": "No, mantenerla",
     "cancelada": {
       "titulo": "Inscripción cancelada",
-      "texto": "Hemos borrado vuestros datos. Si cambiáis de idea, podéis volver a apuntaros hasta el {cierre}.",
-      "textoPublicada": "Hemos borrado vuestros datos y vuestra hora ha quedado libre."
+      "texto": "Hemos borrado vuestros datos. Si cambiáis de idea, podéis volver a apuntaros hasta el {cierre}."
     },
     "guardado": "Cambios guardados.",
     "noValido": {
@@ -382,13 +380,13 @@
     "cambiada": "Es la hora libre a la que os cambiasteis.",
     "llegad": "Llegad 5 minutos antes.",
     "calendario": "Añadir al calendario",
-    "definitiva": "Esta es vuestra hora definitiva. Si al final no podéis venir, cancelad desde esta página para avisar al AFA.",
+    "definitiva": "Esta es vuestra hora definitiva. Si tenéis cualquier duda, escribid al AFA respondiendo al email que os hemos enviado.",
     "terminada": "Si tenéis un problema con vuestra hora, escribid al AFA.",
     "sinHora": "Esta inscripción no ha entrado en el reparto. Si creéis que es un error, escribid al AFA."
   },
   "calendario": {
     "titulo": "Fotos de Navidad · AFA CEI Las Palmeras",
-    "descripcion": "Llegad 5 minutos antes. Si al final no podéis venir, cancelad desde vuestro enlace.",
+    "descripcion": "Llegad 5 minutos antes. Si tenéis cualquier duda, escribid al AFA.",
     "lugar": "CEI Las Palmeras"
   }
 }

@@ -19,7 +19,7 @@ Las familias de la escuela infantil se apuntan a la sesión de fotos de Navidad 
 | Lun 26/10/2026 09:00 | Abre la inscripción |
 | Mar 27/10 21:00 | Cierra la inscripción |
 | Mié 28/10 | El admin calcula el reparto, resuelve los conflictos y lo publica (email a cada familia) |
-| Hasta dom 1/11 20:00 | Las familias pueden pasarse a un hueco libre o cancelar |
+| Hasta dom 1/11 20:00 | Las familias ven su hora definitiva; no pueden cambiarla ni cancelar (cualquier duda, al AFA) |
 | Lun 2 y mar 3/11, 15:00–20:00 | Fotos: huecos de 5 min, 1 inscripción por hueco, 120 huecos |
 
 Hay hasta 119 familias y **todas tienen hueco**. La justicia está en qué hueco toca, no en si toca. Nota: el 25/10/2026 acaba el horario de verano, así que el 26/10 a las 09:00 son las 08:00 UTC.
@@ -149,7 +149,7 @@ Ver [Resultado e intercambios](issues/10-resultado-e-intercambios.md).
   - «Llegad 5 minutos antes».
 - Si no le ha tocado una favorita, el tono es cercano. Si le ha tocado una imposible, lo explica con franqueza: «No ha sido posible evitar una de vuestras horas imposibles: había más familias que huecos posibles».
 - **La hora publicada es la definitiva** (decisión del 19-10-2026): las familias no pueden cambiarse de hora ni pedir otra. No hay lista de horas libres.
-- **Cancelar tras la publicación**, hasta el 1/11 a las 20:00, con el aviso «Vuestra hora quedará libre». Nadie más puede cogerla.
+- **Sin cancelar tras el cierre** (decisión del 19-10-2026): las familias solo pueden editar o cancelar mientras la inscripción está abierta. Con las horas dadas, ya no interactúan con la app: cualquier duda o baja la gestionan escribiendo al AFA.
 - Solo el admin puede mover a una familia (también a una hora extra), y eso queda en la auditoría y manda un email.
 
 ## 5. Reparto
@@ -247,7 +247,7 @@ Ver [Presupuesto de emails en la apertura](issues/08-presupuesto-de-emails-en-la
 | **Ya inscritos** | Envío con un email existente | «Ya teníais una inscripción» · botón «Editadla aquí» |
 | **Enlace nuevo** | «Enlace perdido» | «Aquí tenéis vuestro enlace nuevo. El anterior ya no funciona» · botón |
 | **Cancelación** | Al cancelar | «Hemos cancelado vuestra inscripción y borrado vuestros datos. Si cambiáis de idea, podéis volver a apuntaros hasta el martes 27 a las 21:00» |
-| **Resultado** | Al publicar el reparto | «Ya tenéis vuestra hora: lunes 2 a las 16:35» · «¡Vuestra 2ª favorita!» (o el texto cercano o franco de §4.6) · «Llegad 5 minutos antes» · .ics adjunto · botón «Ver vuestra hora» · «Esta es vuestra hora definitiva» · «Si al final no podéis venir, cancelad desde el enlace para avisar al AFA» |
+| **Resultado** | Al publicar el reparto | «Ya tenéis vuestra hora: lunes 2 a las 16:35» · «¡Vuestra 2ª favorita!» (o el texto cercano o franco de §4.6) · «Llegad 5 minutos antes» · .ics adjunto · botón «Ver vuestra hora» · «Esta es vuestra hora definitiva» · «Si tenéis cualquier duda o al final no podéis venir, responded a este email y os contestará el AFA» |
 | **Movidos por el AFA** | Admin mueve | «El AFA ha cambiado vuestra hora: ahora es …» · .ics · botón |
 
 No hay recordatorios (ni antes del cierre ni el día anterior a la sesión): solo se envían los emails de la tabla.

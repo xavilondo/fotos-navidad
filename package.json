@@ -22,11 +22,12 @@
     "db:migrar": "tsx scripts/migrar.ts",
     "edicion:cargar": "tsx scripts/edicion-cargar.ts",
     "edicion:retirar-ficticias": "tsx scripts/edicion-retirar-ficticias.ts",
+    "edicion:reiniciar": "tsx scripts/edicion-reiniciar.ts",
     "emails:vista-previa": "tsx scripts/emails-vista-previa.ts",
     "edicion:ensayo": "tsx scripts/edicion-ensayo.ts",
     "admin:crear": "tsx scripts/admin-crear.ts",
     "semilla:familias": "tsx scripts/semilla-familias.ts",
-    "copia:cifrada": "bash scripts/copia-cifrada.sh"
+    "copia:cifrada": "tsx scripts/copia-cifrada.ts"
   },
   "dependencies": {
     "@date-fns/tz": "1.5.0",

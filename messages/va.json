@@ -44,7 +44,7 @@
       },
       "publicada": {
         "pastilla": "Hores publicades",
-        "texto": "<b>Mireu el vostre correu:</b> hi teniu la vostra hora i l'enllaç per a veure-la. És l'hora definitiva; si al final no podeu vindre, cancel·leu des de l'enllaç.",
+        "texto": "<b>Mireu el vostre correu:</b> hi teniu la vostra hora i l'enllaç per a veure-la. És l'hora definitiva; si teniu qualsevol dubte, escriviu a l'AFA.",
         "cifras": {
           "primera": "amb la 1a",
           "otra": "amb una altra preferida",
@@ -308,14 +308,12 @@
     "cancelar": "Cancel·lar la inscripció",
     "cancelarTitulo": "Cancel·lem la vostra inscripció?",
     "cancelarTexto": "Esborrarem totes les vostres dades. Podreu tornar a apuntar-vos mentre la inscripció continue oberta.",
-    "cancelarTextoPublicada": "La vostra hora quedarà lliure i esborrarem totes les vostres dades.",
     "cancelarSi": "Sí, cancel·lar",
     "cancelando": "S'està cancel·lant…",
     "cancelarNo": "No, mantindre-la",
     "cancelada": {
       "titulo": "Inscripció cancel·lada",
-      "texto": "Hem esborrat les vostres dades. Si canvieu d'idea, podeu tornar a apuntar-vos fins al {cierre}.",
-      "textoPublicada": "Hem esborrat les vostres dades i la vostra hora ha quedat lliure."
+      "texto": "Hem esborrat les vostres dades. Si canvieu d'idea, podeu tornar a apuntar-vos fins al {cierre}."
     },
     "guardado": "Canvis guardats.",
     "noValido": {
@@ -382,13 +380,13 @@
     "cambiada": "És l'hora lliure a la qual us vau canviar.",
     "llegad": "Arribeu 5 minuts abans.",
     "calendario": "Afegir al calendari",
-    "definitiva": "Aquesta és la vostra hora definitiva. Si al final no podeu vindre, cancel·leu des d'aquesta pàgina per a avisar l'AFA.",
+    "definitiva": "Aquesta és la vostra hora definitiva. Si teniu qualsevol dubte, escriviu a l'AFA responent al correu que us hem enviat.",
     "terminada": "Si teniu un problema amb la vostra hora, escriviu a l'AFA.",
     "sinHora": "Aquesta inscripció no ha entrat en el repartiment. Si creieu que és un error, escriviu a l'AFA."
   },
   "calendario": {
     "titulo": "Fotos de Nadal · AFA CEI Las Palmeras",
-    "descripcion": "Arribeu 5 minuts abans. Si al final no podeu vindre, cancel·leu des del vostre enllaç.",
+    "descripcion": "Arribeu 5 minuts abans. Si teniu qualsevol dubte, escriviu a l'AFA.",
     "lugar": "CEI Las Palmeras"
   }
 }

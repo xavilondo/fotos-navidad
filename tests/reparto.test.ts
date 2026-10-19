@@ -232,7 +232,7 @@ describe("reparto", () => {
     expect((await publicarReparto(db, ADMIN, CTX.urlApp)).estado).toBe("ok");
   });
 
-  it("tras publicar la hora es definitiva: solo el AFA mueve, y cancelar deja el hueco libre", async () => {
+  it("tras publicar la hora es definitiva: las familias no cambian ni cancelan, solo el AFA mueve", async () => {
     await familias(db, 4);
     await moverEdicion(db, "cerrada");
     await calcularReparto(db, ADMIN);
@@ -248,25 +248,11 @@ describe("reparto", () => {
     expect(await emailsDe(db, "movidos")).toHaveLength(1);
     expect(await listarHuecosLibres(db, ed.id)).toHaveLength(116);
 
-    // Cancelar tras publicar libera la hora (nadie la coge: solo el AFA podría mover a alguien).
+    // Con las horas dadas, las familias ya no pueden cancelar: cualquier duda va al AFA.
     const token = await ultimoEnlace(db, "resultado");
-    expect((await cancelarInscripcion(db, token, CTX)).estado).toBe("ok");
-    expect(await listarHuecosLibres(db, ed.id)).toHaveLength(117);
-    const [linea] = await db
-      .select()
-      .from(schema.auditoria)
-      .where(eq(schema.auditoria.accion, "inscripcion.cancelada"));
-    expect(linea.detalle).toHaveProperty("huecoLiberado");
-
-    // Pasado el plazo ya no se puede cancelar.
-    await db.update(schema.edicion).set({ cambiosHasta: sql`now() - interval '1 minute'` });
-    const otro = (await emailsDe(db, "resultado")).find(
-      (e) => e.inscripcionId !== a.inscripcionId,
-    )!;
-    const tokenOtro = (otro.datos as { enlace: string }).enlace.split("/i/")[1];
-    if (await leerPorEnlace(db, tokenOtro)) {
-      expect((await cancelarInscripcion(db, tokenOtro, CTX)).estado).toBe("cerrada");
-    }
+    expect((await cancelarInscripcion(db, token, CTX)).estado).toBe("cerrada");
+    expect(await listarHuecosLibres(db, ed.id)).toHaveLength(116);
+    expect(await db.select().from(schema.inscripcion)).toHaveLength(4);
     expect(
       (
         await db
