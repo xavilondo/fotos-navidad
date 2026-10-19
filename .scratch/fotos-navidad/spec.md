@@ -228,7 +228,7 @@ Ver [Panel de administración y exportaciones](issues/13-panel-de-administracion
 - **Reparto**: diagnóstico, cálculo en borrador, conflictos y publicación (§5.4).
 - **Exportaciones** (solo admin, por descarga):
   - **Agenda del fotógrafo**: PDF por día ordenado por hora, y también CSV. Lleva hora, apellido, nombres de peques con su clase, nº de hermanos externos, nº de lotes y archivo digital. **Sin email, teléfono ni observaciones.**
-  - **CSV de tesorería**: familia (nombre del adulto), socia, lotes, archivo digital y total en €. La app no marca pagos.
+  - **Excel de lotes** (`.xlsx`, para tesorería y el fotógrafo, decisión del 19-10-2026): familia (nombre del adulto), email, socia, lotes, precio por lote e importe de los lotes, archivo digital, nº de archivos digitales (uno por lote), su precio y su importe, y total en €. La app no marca pagos.
 - **Sin** herramienta de emails masivos y **sin** configurador visual en 2026 (fase 5).
 - Registro de **peticiones de derechos** y de **incidentes** (fase 5).
 
@@ -368,7 +368,7 @@ Construye en este orden (sustituye al del encargo). Al terminar cada fase, resum
 | **1 · Inscripción** | §4.1–4.4, §7 (alta, ya inscritos, enlace nuevo, cancelación), §8 (consentimiento, tabla, `/privacidad`, Turnstile, límites) | **22/10** | Playwright en verde. **Prueba real**: el AFA abre el enlace desde un chat de WhatsApp en iPhone y Android, se apunta, edita, cancela y recupera el borrador. Valenciano revisado por la junta |
 | **2 · Admin básico** | §6 (acceso, panel de control con mapa de calor, inscripciones, duplicados, alta manual, emails sin entregar, auditoría) | **25/10** | Las 2 cuentas creadas; el AFA da de alta a mano una inscripción |
 | **3 · Reparto** | §5 completo, §4.5 (`/reparto`), estados `cerrada`/`publicada` de la portada | **27/10, antes de las 21:00** | Tests del reparto en verde; cálculo con el *seed* de 119 familias; un conflicto resuelto con una hora extra |
-| **4 · Resultado** | §4.6, emails de resultado y de movidos, `.ics`, mover desde el admin, agenda del fotógrafo y CSV de tesorería | **28/10** | Resultado enviado y visible; la hora publicada es definitiva |
+| **4 · Resultado** | §4.6, emails de resultado y de movidos, `.ics`, mover desde el admin, agenda del fotógrafo y Excel de lotes | **28/10** | Resultado enviado y visible; la hora publicada es definitiva |
 | **5 · Cierre** | Purga con botón, compensación, copias, peticiones e incidentes, configurador visual | después de las fotos (31/01 como mucho) | Purga probada en una rama de Neon |
 
 Antes del 26/10: pasar a Vercel Pro el 25/10, Resend Pro hacia el 20/10 y «calentar» Neon abriendo el panel el domingo.

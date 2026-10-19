@@ -10,7 +10,7 @@ test.describe("panel de administración", () => {
     await page.getByLabel("Contraseña").fill("mala");
     await page.getByRole("button", { name: "Entrar" }).click();
     await expect(page.getByText("Usuario o contraseña incorrectos.")).toBeVisible();
-    const r = await page.request.get("/admin/exportar/tesoreria.csv", { maxRedirects: 0 });
+    const r = await page.request.get("/admin/exportar/lotes.xlsx", { maxRedirects: 0 });
     expect(r.status()).toBe(307);
     expect(await r.text()).not.toContain("Total");
   });

@@ -1,12 +1,13 @@
 import { asc, desc, eq } from "drizzle-orm";
 import { z } from "zod";
-import { calcularTotal } from "@/dominio/inscripcion/precio";
+import { desglosarImporte } from "@/dominio/inscripcion/precio";
 import { registrarAuditoria } from "@/servidor/auditoria/registrar";
 import * as t from "@/servidor/db/schema";
 import type { BaseDatos } from "@/servidor/db/tipos";
 import type { FilaEdicion } from "@/servidor/edicion/repositorio";
 import { agendaCsv, agendaPdf, type FilaAgenda } from "@/servidor/exportaciones/agenda";
-import { tesoreriaCsv } from "@/servidor/exportaciones/tesoreria";
+import { lotesXlsx } from "@/servidor/exportaciones/lotes";
+import { esEmailFicticio } from "@/servidor/inscripciones/operaciones";
 import type { Admin } from "./auth";
 
 /** La agenda del fotógrafo: hora, apellido, peques con su clase, hermanos y lotes. Nada de contacto ni observaciones. */
@@ -49,7 +50,7 @@ export async function filasAgenda(db: BaseDatos, edicionId: string): Promise<Fil
   });
 }
 
-export const zArchivo = z.enum(["agenda.pdf", "agenda.csv", "tesoreria.csv"]);
+export const zArchivo = z.enum(["agenda.pdf", "agenda.csv", "lotes.xlsx"]);
 export type Archivo = z.infer<typeof zArchivo>;
 
 /** Genera una exportación (solo admin, por descarga) y lo deja en la auditoría. */
@@ -65,10 +66,11 @@ export async function exportar(
     accion: "exportacion",
     detalle: { archivo },
   });
-  if (archivo === "tesoreria.csv") {
+  if (archivo === "lotes.xlsx") {
     const filas = await db
       .select({
         familia: t.inscripcion.nombreAdulto,
+        email: t.inscripcion.email,
         socia: t.inscripcion.socia,
         lotes: t.inscripcion.lotes,
         archivoDigital: t.inscripcion.archivoDigital,
@@ -77,9 +79,16 @@ export async function exportar(
       .where(eq(t.inscripcion.edicionId, edicion.id))
       .orderBy(desc(t.inscripcion.creadoEn));
     return {
-      cuerpo: tesoreriaCsv(filas.map((f) => ({ ...f, total: calcularTotal(edicion.precios, f) }))),
-      tipo: "text/csv; charset=utf-8",
-      nombre: `tesoreria-${edicion.slug}.csv`,
+      cuerpo: await lotesXlsx(
+        filas.map((f) => ({
+          ...f,
+          email: esEmailFicticio(f.email) ? "" : f.email,
+          desglose: desglosarImporte(edicion.precios, f),
+        })),
+        `Lotes · ${edicion.nombre}`,
+      ),
+      tipo: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      nombre: `lotes-${edicion.slug}.xlsx`,
     };
   }
   const filas = await filasAgenda(db, edicion.id);

@@ -132,7 +132,7 @@ El repositorio está en [xavilondo/fotos-navidad](https://github.com/xavilondo/f
 | Mar 27 noche                    | Admin    | `pnpm copia:cifrada`. Si hay duplicados, se **excluyen** (no se borran). Panel → Reparto → **Calcular el reparto** (queda en borrador).                    |
 | Mié 28/10                       | Admin    | Revisar los conflictos, llamar a esas familias y ponerlas a mano en una hora que les vaya bien (ficha → hora extra). **Publicar**: los emails salen solos. |
 | Hasta dom 1/11 20:00            | Familias | Cancelar si no pueden venir (la hora es definitiva: no hay cambios).                                                                                       |
-| Dom 1/11 noche                  | Admin    | Exportaciones → agenda del fotógrafo (PDF), después de que firme el compromiso de confidencialidad. CSV de tesorería.                                      |
+| Dom 1/11 noche                  | Admin    | Exportaciones → agenda del fotógrafo (PDF) y Excel de lotes, que también es para el fotógrafo, después de que firme el compromiso de confidencialidad.     |
 | Lun 2 y mar 3/11                | —        | Fotos.                                                                                                                                                     |
 | Al entregar las fotos (≤ 31/01) | Admin    | `pnpm copia:cifrada`, borrar todas las copias y Panel → Edición → **Cerrar la edición** (purga). Vercel vuelve a Hobby y se da de baja Resend Pro.         |
 

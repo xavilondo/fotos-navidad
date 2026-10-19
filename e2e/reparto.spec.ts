@@ -72,8 +72,10 @@ test("reparto de principio a fin: cierre, cálculo, hora a mano y publicación d
   // Agenda del fotógrafo (la sesión de admin sigue abierta).
   const pdf = await page.request.get("/admin/exportar/agenda.pdf");
   expect(pdf.headers()["content-type"]).toBe("application/pdf");
-  const tesoreria = await page.request.get("/admin/exportar/tesoreria.csv");
-  expect(await tesoreria.text()).toContain("Total");
+  const lotes = await page.request.get("/admin/exportar/lotes.xlsx");
+  expect(lotes.headers()["content-type"]).toContain("spreadsheetml");
+  // Un .xlsx es un zip: empieza por «PK».
+  expect((await lotes.body()).subarray(0, 2).toString()).toBe("PK");
 
   ejecutar("pnpm -s edicion:ensayo abierta --borrar");
 });

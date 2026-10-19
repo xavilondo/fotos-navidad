@@ -110,11 +110,12 @@ export const PRIVACIDAD: Record<
           "Las personas de la junta que organizan las fotos (una o dos), desde un panel con usuario " +
             "y contraseña.",
           "El fotógrafo recibe la agenda de cada día: hora, apellido, nombre y clase de cada peque, " +
-            "cuántos hermanos vienen y los lotes. Sin email, teléfono ni observaciones. Antes firma " +
-            "un compromiso de confidencialidad, de usarla solo para la sesión y de borrarla al " +
-            "entregar las fotos. La agenda nunca se envía por email.",
-          "La tesorería del AFA recibe la lista de lotes para cobrarlos: nombre del adulto, si sois " +
-            "socios, lotes, archivo digital y total.",
+            "cuántos hermanos vienen y los lotes, sin teléfono ni observaciones. También recibe la " +
+            "lista de lotes (abajo) para preparar y entregar los pedidos. Antes firma un compromiso " +
+            "de confidencialidad, de usarlas solo para la sesión y de borrarlas al entregar las " +
+            "fotos. Nunca se envían por email.",
+          "La tesorería del AFA y el fotógrafo reciben la lista de lotes: nombre y email del " +
+            "adulto, si sois socios, lotes, archivo digital y el importe de cada cosa.",
         ],
       },
       {
@@ -159,7 +160,8 @@ export const PRIVACIDAD: Record<
             "teléfonos.",
           "Las copias de seguridad (una cifrada antes de publicar el reparto y otra al cierre) se " +
             "borran con todo lo demás.",
-          "El fotógrafo borra la agenda al entregar las fotos. El AFA borra sus listas al cerrar la " +
+          "El fotógrafo borra la agenda y la lista de lotes al entregar las fotos. El AFA borra sus " +
+            "listas al cerrar la " +
             "edición, salvo los datos de contabilidad que necesite, sin nombres de peques.",
           "La clave de compensación, solo si marcasteis la casilla: hasta que se aplica en la " +
             "edición siguiente y 13 meses como máximo.",
@@ -340,11 +342,12 @@ export const PRIVACIDAD: Record<
           "Les persones de la junta que organitzen les fotos (una o dues), des d'un panell amb " +
             "usuari i contrasenya.",
           "El fotògraf rep l'agenda de cada dia: hora, cognom, nom i classe de cada xiquet o " +
-            "xiqueta, quants germans hi vénen i els lots. Sense correu, telèfon ni observacions. " +
-            "Abans signa un compromís de confidencialitat, d'usar-la només per a la sessió i " +
-            "d'esborrar-la en entregar les fotos. L'agenda mai s'envia per correu.",
-          "La tresoreria de l'AFA rep la llista de lots per a cobrar-los: nom de la persona adulta, " +
-            "si sou socis, lots, arxiu digital i total.",
+            "xiqueta, quants germans hi vénen i els lots, sense telèfon ni observacions. També rep " +
+            "la llista de lots (davall) per a preparar i entregar les comandes. Abans signa un " +
+            "compromís de confidencialitat, d'usar-les només per a la sessió i d'esborrar-les en " +
+            "entregar les fotos. Mai s'envien per correu.",
+          "La tresoreria de l'AFA i el fotògraf reben la llista de lots: nom i correu de la " +
+            "persona adulta, si sou socis, lots, arxiu digital i l'import de cada cosa.",
         ],
       },
       {
@@ -389,7 +392,8 @@ export const PRIVACIDAD: Record<
           "El registre de canvis s'anonimitza en tancar l'edició: sense noms, correus ni telèfons.",
           "Les còpies de seguretat (una xifrada abans de publicar el repartiment i una altra al " +
             "tancament) s'esborren amb tota la resta.",
-          "El fotògraf esborra l'agenda en entregar les fotos. L'AFA esborra les seues llistes en " +
+          "El fotògraf esborra l'agenda i la llista de lots en entregar les fotos. L'AFA esborra les " +
+            "seues llistes en " +
             "tancar l'edició, llevat de les dades de comptabilitat que necessite, sense noms de " +
             "xiquets.",
           "La clau de compensació, només si vau marcar la casella: fins que s'aplica en l'edició " +
@@ -496,7 +500,7 @@ export const TABLA_PRIVACIDAD: Record<"es" | "va", { epigrafe: string; texto: st
     {
       epigrafe: "Destinatarios",
       texto:
-        "El fotógrafo (agenda) y proveedores técnicos con contrato, algunos en EE. UU. con cláusulas tipo de la UE.",
+        "El fotógrafo (agenda y lotes) y proveedores técnicos con contrato, algunos en EE. UU. con cláusulas tipo de la UE.",
     },
     {
       epigrafe: "Derechos",
@@ -518,7 +522,7 @@ export const TABLA_PRIVACIDAD: Record<"es" | "va", { epigrafe: string; texto: st
     {
       epigrafe: "Destinataris",
       texto:
-        "El fotògraf (agenda) i proveïdors tècnics amb contracte, alguns als EUA amb clàusules tipus de la UE.",
+        "El fotògraf (agenda i lots) i proveïdors tècnics amb contracte, alguns als EUA amb clàusules tipus de la UE.",
     },
     {
       epigrafe: "Drets",

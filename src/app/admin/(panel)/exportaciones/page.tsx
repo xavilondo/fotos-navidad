@@ -43,13 +43,15 @@ export default async function PaginaExportaciones() {
             <Aviso>Estará disponible cuando se publiquen las horas.</Aviso>
           )}
         </Seccion>
-        <Seccion titulo="Tesorería">
+        <Seccion titulo="Lotes (tesorería y fotógrafo)">
           <p className="mb-3 text-sm text-muted-ink">
-            Familia (adulto de contacto), socia, lotes, archivo digital y total orientativo en €. La
-            app no marca pagos.
+            Familia (adulto de contacto), email, socia, lotes y archivo digital, con el importe
+            desglosado: precio y total de los lotes, archivos digitales (uno por lote) y total en €.
+            La app no marca pagos. Lleva el email: entregadlo al fotógrafo igual que la agenda,
+            después de que firme el compromiso de confidencialidad.
           </p>
-          <a href="/admin/exportar/tesoreria.csv" className={claseBotonAdmin} download>
-            Descargar CSV
+          <a href="/admin/exportar/lotes.xlsx" className={claseBotonAdmin} download>
+            Descargar Excel
           </a>
         </Seccion>
       </div>
