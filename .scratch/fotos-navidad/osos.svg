@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 392" width="280" height="392">
+  <!-- Mascota de la clase Osos: un oso pardo sentado, en el estilo de las demás mascotas del dossier. -->
+  <defs>
+    <radialGradient id="pelo" cx="45%" cy="35%" r="70%">
+      <stop offset="0" stop-color="#a86a3a"/>
+      <stop offset="1" stop-color="#83491f"/>
+    </radialGradient>
+    <radialGradient id="cabeza" cx="45%" cy="38%" r="65%">
+      <stop offset="0" stop-color="#ad6f3e"/>
+      <stop offset="1" stop-color="#8a4f24"/>
+    </radialGradient>
+  </defs>
+  <g stroke="#3a2213" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Cuerpo -->
+    <path d="M140 172 C 70 172 42 238 46 300 C 49 350 88 378 140 378 C 192 378 231 350 234 300 C 238 238 210 172 140 172 Z" fill="url(#pelo)"/>
+    <!-- Barriga -->
+    <ellipse cx="140" cy="292" rx="58" ry="68" fill="#f1d2a2" stroke="none"/>
+    <!-- Pies -->
+    <ellipse cx="88" cy="352" rx="40" ry="28" fill="url(#pelo)"/>
+    <ellipse cx="192" cy="352" rx="40" ry="28" fill="url(#pelo)"/>
+    <ellipse cx="88" cy="356" rx="22" ry="15" fill="#f1d2a2" stroke="none"/>
+    <ellipse cx="192" cy="356" rx="22" ry="15" fill="#f1d2a2" stroke="none"/>
+    <circle cx="74" cy="338" r="5" fill="#f1d2a2" stroke="none"/>
+    <circle cx="88" cy="334" r="5" fill="#f1d2a2" stroke="none"/>
+    <circle cx="102" cy="338" r="5" fill="#f1d2a2" stroke="none"/>
+    <circle cx="178" cy="338" r="5" fill="#f1d2a2" stroke="none"/>
+    <circle cx="192" cy="334" r="5" fill="#f1d2a2" stroke="none"/>
+    <circle cx="206" cy="338" r="5" fill="#f1d2a2" stroke="none"/>
+    <!-- Brazos -->
+    <path d="M62 222 C 46 252 48 292 66 312 C 78 324 96 318 98 302 C 100 280 94 250 84 228 C 78 214 68 212 62 222 Z" fill="url(#pelo)"/>
+    <path d="M218 222 C 234 252 232 292 214 312 C 202 324 184 318 182 302 C 180 280 186 250 196 228 C 202 214 212 212 218 222 Z" fill="url(#pelo)"/>
+    <!-- Orejas -->
+    <circle cx="70" cy="66" r="31" fill="url(#cabeza)"/>
+    <circle cx="210" cy="66" r="31" fill="url(#cabeza)"/>
+    <circle cx="72" cy="68" r="16" fill="#e2a878" stroke="none"/>
+    <circle cx="208" cy="68" r="16" fill="#e2a878" stroke="none"/>
+    <!-- Cabeza -->
+    <path d="M140 40 C 86 40 52 78 52 124 C 52 172 92 200 140 200 C 188 200 228 172 228 124 C 228 78 194 40 140 40 Z" fill="url(#cabeza)"/>
+    <!-- Hocico -->
+    <ellipse cx="140" cy="158" rx="44" ry="32" fill="#f1d2a2"/>
+  </g>
+  <!-- Mofletes -->
+  <ellipse cx="84" cy="150" rx="15" ry="9" fill="#f29b98" opacity="0.75"/>
+  <ellipse cx="196" cy="150" rx="15" ry="9" fill="#f29b98" opacity="0.75"/>
+  <!-- Ojos -->
+  <ellipse cx="102" cy="118" rx="13" ry="16" fill="#2a170b"/>
+  <ellipse cx="178" cy="118" rx="13" ry="16" fill="#2a170b"/>
+  <circle cx="106" cy="111" r="5.5" fill="#fff"/>
+  <circle cx="182" cy="111" r="5.5" fill="#fff"/>
+  <circle cx="98" cy="124" r="2.5" fill="#fff"/>
+  <circle cx="174" cy="124" r="2.5" fill="#fff"/>
+  <!-- Nariz -->
+  <path d="M124 140 C 124 132 156 132 156 140 C 156 150 146 156 140 156 C 134 156 124 150 124 140 Z" fill="#2a170b"/>
+  <ellipse cx="134" cy="139" rx="5" ry="2.8" fill="#fff" opacity="0.7"/>
+  <!-- Boca -->
+  <path d="M140 156 L140 165" stroke="#3a2213" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M124 166 C 130 184 150 184 156 166 C 150 170 130 170 124 166 Z" fill="#c4473e" stroke="#3a2213" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M132 174 C 136 180 144 180 148 174" fill="#f08a80" stroke="none"/>
+  <!-- Brillo del pelo -->
+  <path d="M96 64 C 110 54 128 50 146 52" stroke="#c88a55" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.6"/>
+</svg>
