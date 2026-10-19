@@ -49,8 +49,8 @@ test.describe("accesibilidad", () => {
     await sinInfracciones(page);
   });
 
-  test("sorteo y privacidad", async ({ page }) => {
-    await page.goto("/sorteo");
+  test("reparto y privacidad", async ({ page }) => {
+    await page.goto("/reparto");
     await sinInfracciones(page);
     await page.goto("/privacidad");
     await sinInfracciones(page);

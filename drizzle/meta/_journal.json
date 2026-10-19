@@ -29,6 +29,13 @@
       "when": 1791932414938,
       "tag": "0003_registros-del-afa",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792403686626,
+      "tag": "0004_sin-sorteo",
+      "breakpoints": true
     }
   ]
 }

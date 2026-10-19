@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { registrarError } from "@/servidor/registro";
-import { valido, zId, zIdioma, zNumeroOnce, zSeccion, zTexto } from "@/servidor/validacion";
+import { valido, zHora, zId, zIdioma, zSeccion, zTexto } from "@/servidor/validacion";
 import { z } from "zod";
 import { registrarAuditoria } from "@/servidor/auditoria/registrar";
 import { redirect } from "next/navigation";
@@ -19,8 +19,8 @@ import {
   reintentarEmails,
 } from "@/servidor/admin/inscripciones";
 import { requerirAdmin } from "@/servidor/admin/sesion";
-import { moverComoAdmin } from "@/servidor/resultado/horas";
-import { lanzarSorteo, marcarVerificado, simularSorteo } from "@/servidor/sorteo/lanzar";
+import { asignarHoraExtra, moverComoAdmin } from "@/servidor/resultado/horas";
+import { calcularReparto, publicarReparto } from "@/servidor/reparto/reparto";
 import {
   actualizarIncidente,
   cambiarBloqueoHueco,
@@ -31,7 +31,6 @@ import {
 } from "@/servidor/edicion/cierre";
 import { revalidatePath } from "next/cache";
 import { guardarConfiguracion } from "@/servidor/edicion/configuracion";
-import type { EstadisticasReparto } from "@/dominio/reparto";
 import { enviarPendientes } from "@/servidor/correo/outbox";
 import { db } from "@/servidor/db";
 import { consumirLimite } from "@/servidor/seguridad/limites";
@@ -181,7 +180,7 @@ export async function reintentarEmailsAdmin(ids: string[]): Promise<RespuestaAdm
 export async function moverInscripcion(
   id: string,
   huecoId: string,
-): Promise<RespuestaAdmin | { estado: "ocupado" | "sin_hora" }> {
+): Promise<RespuestaAdmin | { estado: "ocupado" | "sin_hora" | "hora_invalida" }> {
   const admin = await requerirAdmin();
   if (!valido([zId, id], [zId, huecoId])) return { estado: "no_encontrada" };
   return proteger(async () => {
@@ -192,41 +191,54 @@ export async function moverInscripcion(
   });
 }
 
-export async function simular(
-  numero: string,
-): Promise<
-  | { estado: "ok"; estadisticas: EstadisticasReparto; huellaResultado: string; congelada: boolean }
-  | { estado: string }
-> {
-  await requerirAdmin();
-  if (!valido([zNumeroOnce, numero])) return { estado: "numero_invalido" };
-  return proteger(async () => {
-    const r = await simularSorteo(db, numero.trim());
-    if (r.estado !== "ok") return r;
-    return {
-      estado: "ok" as const,
-      estadisticas: r.resultado.estadisticas,
-      huellaResultado: r.resultado.huellaResultado,
-      congelada: r.congelada,
-    };
-  });
-}
-
-export async function lanzar(numero: string): Promise<{ estado: string }> {
+export async function ponerAHora(
+  id: string,
+  franja: string,
+  hora: string,
+): Promise<RespuestaAdmin | { estado: "ocupado" | "sin_hora" | "hora_invalida" }> {
   const admin = await requerirAdmin();
-  if (!valido([zNumeroOnce, numero])) return { estado: "numero_invalido" };
+  if (!valido([zId, id], [zTexto(40).min(1), franja])) return { estado: "no_encontrada" };
+  if (!valido([zHora, hora])) return { estado: "hora_invalida" };
   return proteger(async () => {
-    const r = await lanzarSorteo(db, admin, numero, await urlApp());
+    const r = await asignarHoraExtra(db, admin, id, franja, hora, await urlApp());
     if (r.estado !== "ok") return r;
     enviarDespues(r.outbox);
-    return { estado: "ok" };
+    return { estado: "ok" as const };
   });
 }
 
-export async function verificar(nombre: string): Promise<{ estado: string }> {
+export type RespuestaReparto =
+  | { estado: "ok" }
+  | {
+      estado:
+        | "no_cerrada"
+        | "ya_publicado"
+        | "no_cabe"
+        | "sin_calcular"
+        | "sin_hora"
+        | "sin_edicion"
+        | "error";
+    };
+
+export async function calcular(): Promise<RespuestaReparto> {
   const admin = await requerirAdmin();
-  if (!valido([zTexto(100).min(1), nombre])) return { estado: "sin_nombre" };
-  return proteger(() => marcarVerificado(db, admin, nombre));
+  return proteger(async () => {
+    const r = await calcularReparto(db, admin);
+    if (r.estado !== "ok") return r;
+    revalidatePath("/admin", "layout");
+    return { estado: "ok" as const };
+  });
+}
+
+export async function publicar(): Promise<RespuestaReparto> {
+  const admin = await requerirAdmin();
+  return proteger(async () => {
+    const r = await publicarReparto(db, admin, await urlApp());
+    if (r.estado !== "ok") return r;
+    enviarDespues(r.outbox);
+    revalidatePath("/admin", "layout");
+    return { estado: "ok" as const };
+  });
 }
 
 export async function cerrarEdicion(

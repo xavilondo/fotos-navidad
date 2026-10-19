@@ -7,8 +7,7 @@ import * as schema from "@/servidor/db/schema";
 import type { BaseDatos } from "@/servidor/db/tipos";
 import { crearInscripcion } from "@/servidor/inscripciones/operaciones";
 import { cambiarseAHuecoLibre, listarHuecosLibres } from "@/servidor/resultado/horas";
-import { asegurarHuella } from "@/servidor/sorteo/huella";
-import { lanzarSorteo } from "@/servidor/sorteo/lanzar";
+import { calcularReparto, publicarReparto } from "@/servidor/reparto/reparto";
 import { edicionEn, INSCRIPCION_VALIDA, moverEdicion } from "./ayuda/bd";
 
 /**
@@ -35,8 +34,9 @@ describe.skipIf(!URL)("concurrencia", () => {
       );
     }
     await moverEdicion(db, "cerrada");
-    await asegurarHuella(db);
-    await lanzarSorteo(db, { id: "x", usuario: "marta", nombre: "Marta" }, "48213", "https://x");
+    const admin = { id: "x", usuario: "marta", nombre: "Marta" };
+    await calcularReparto(db, admin);
+    await publicarReparto(db, admin, "https://x");
     const enlaces = (await db.select().from(schema.emailOutbox))
       .filter((e) => e.tipo === "resultado")
       .map((e) => (e.datos as { enlace: string }).enlace.split("/i/")[1]);

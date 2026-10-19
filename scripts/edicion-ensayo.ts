@@ -8,7 +8,7 @@ import { cargarEntorno, exigirBaseLocal } from "./entorno";
 /**
  * Pone la edición de ensayo en el estado pedido moviendo sus fechas respecto a ahora:
  *   pnpm edicion:ensayo antes|abierta|cerrada|publicada|terminada [--borrar]
- * `--borrar` la vacía antes (inscripciones, sorteo…). Solo para desarrollo y vistas previas.
+ * `--borrar` la vacía antes (inscripciones, reparto…). Solo para desarrollo y vistas previas.
  */
 const ESTADOS = ["antes", "abierta", "cerrada", "publicada", "terminada"] as const;
 type Estado = (typeof ESTADOS)[number];
@@ -51,6 +51,18 @@ try {
     // Se carga con sus fechas de archivo (aún no abierta) y luego se mueven.
     await cargarEdicion(db, ensayo);
   }
+  // Antes del cierre no puede haber reparto: si se vuelve atrás, se quita con sus horas.
+  if (estado === "antes" || estado === "abierta") {
+    await db.execute(
+      sql`delete from asignacion where inscripcion_id in (select i.id from inscripcion i join edicion e on e.id = i.edicion_id where e.slug = 'ensayo')`,
+    );
+    await db.execute(
+      sql`delete from hueco where extra and franja_id in (select f.id from franja f join edicion e on e.id = f.edicion_id where e.slug = 'ensayo')`,
+    );
+    await db.execute(
+      sql`delete from reparto where edicion_id = (select id from edicion where slug = 'ensayo')`,
+    );
+  }
   const [abre, cierra, cambios] = marcas[estado].map((d) => new Date(ahora + d));
   await db
     .update(t.edicion)
@@ -67,7 +79,7 @@ try {
   );
   if (estado === "publicada" || estado === "terminada") {
     console.log(
-      "Para «publicada» hace falta además lanzar el sorteo de ensayo desde el panel (fase 3).",
+      "Para «publicada» hace falta además calcular y publicar el reparto de ensayo desde el panel.",
     );
   }
   console.log("Recordad EDICION_ACTUAL=ensayo en .env.local para que la app la use.");

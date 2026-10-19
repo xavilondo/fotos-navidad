@@ -36,7 +36,7 @@ export type DatosFormulario = {
   clases: { slug: SlugClase; nombre: string; imagen: string; color: string }[];
   dias: { clave: string; nombre: string; numero: string; mes: string }[];
   franjas: { codigo: string; dia: string; inicio: string; fin: string }[];
-  textos: { diaSorteo: string; cierre: string };
+  textos: { diaReparto: string; cierre: string };
   turnstile: string | null;
 };
 

@@ -145,7 +145,7 @@ describe("borrar una edición", () => {
       .values({ inscripcionId: ins.id, franjaId: fr.id, tipo: "favorita", posicion: 1 });
     await db
       .insert(schema.asignacion)
-      .values({ inscripcionId: ins.id, huecoId: hu.id, nivel: 1, origen: "sorteo" });
+      .values({ inscripcionId: ins.id, huecoId: hu.id, nivel: 1, origen: "reparto" });
     await db.delete(schema.edicion).where(eq(schema.edicion.id, ed.id));
     expect((await db.select({ n: count() }).from(schema.preferencia))[0].n).toBe(0);
   });

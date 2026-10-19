@@ -22,7 +22,7 @@ export const EJEMPLOS: { [T in TipoEmail]: Extract<DatosEmail, { tipo: T }> } = 
     archivoDigital: true,
     total: 54,
     cierraEn: "2026-10-27T20:00:00Z",
-    diaSorteo: "2026-10-28T09:00:00Z",
+    diaReparto: "2026-10-28T09:00:00Z",
     caducaEn: "2026-11-01T19:00:00Z",
   },
   ya_inscritos: { ...comun, tipo: "ya_inscritos", enlace, cierraEn: "2026-10-27T20:00:00Z" },

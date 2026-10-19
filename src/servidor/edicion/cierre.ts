@@ -23,8 +23,8 @@ export type ResultadoPurga =
 
 /**
  * «Cerrar la edición» (como máximo el 31 de enero): borra inscripciones, peques, preferencias,
- * asignaciones, outbox, sesiones y límites; anonimiza la auditoría; conserva las estadísticas y los
- * datos del sorteo sin la lista canónica; y guarda las claves de compensación de quien dio permiso.
+ * asignaciones, outbox, sesiones y límites; anonimiza la auditoría; conserva las estadísticas del
+ * reparto; y guarda las claves de compensación de quien dio permiso.
  */
 export async function purgarEdicion(
   db: BaseDatos,
@@ -89,7 +89,7 @@ export async function purgarEdicion(
       accion: "edicion.purgada",
       detalle: { inscripciones: ids.length, compensaciones: conPermiso.length },
     });
-    // Auditoría anonimizada: fuera motivos escritos a mano y nombres de la persona verificadora.
+    // Auditoría anonimizada: fuera motivos escritos a mano y nombres.
     await tx
       .update(t.auditoria)
       .set({ detalle: sql`${t.auditoria.detalle} - 'motivo' - 'verificadoPor' - 'usuario'` })
@@ -103,16 +103,14 @@ export async function purgarEdicion(
       })
       .where(sql`${t.auditoria.actor} like 'admin:%' or ${t.auditoria.edicionId} is null`);
 
-    // El sorteo se queda con sus cifras, sin la lista ni los motivos de las exclusiones.
+    // El reparto se queda con sus cifras, sin quién lo calculó ni lo publicó.
     await tx
-      .update(t.sorteo)
+      .update(t.reparto)
       .set({
-        listaCanonica: null,
-        exclusiones: sql`(select coalesce(jsonb_agg(jsonb_build_object('id', e->>'id', 'motivo', '')), '[]'::jsonb) from jsonb_array_elements("sorteo"."exclusiones") e)`,
-        verificadoPor: sql`case when ${t.sorteo.verificadoPor} is null then null else 'persona verificadora' end`,
-        lanzadoPor: sql`case when ${t.sorteo.lanzadoPor} is null then null else 'admin' end`,
+        calculadoPor: "admin",
+        publicadoPor: sql`case when ${t.reparto.publicadoPor} is null then null else 'admin' end`,
       })
-      .where(eq(t.sorteo.edicionId, edicionId));
+      .where(eq(t.reparto.edicionId, edicionId));
 
     await tx
       .update(t.edicion)

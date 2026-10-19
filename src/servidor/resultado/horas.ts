@@ -1,10 +1,11 @@
 import { and, asc, eq, isNull, sql } from "drizzle-orm";
+import { instanteLocal } from "@/dominio/edicion/tiempo";
 import { nivelEn } from "@/dominio/reparto";
 import { registrarAuditoria } from "@/servidor/auditoria/registrar";
 import { encolarEmail } from "@/servidor/correo/outbox";
 import * as t from "@/servidor/db/schema";
 import type { BaseDatos } from "@/servidor/db/tipos";
-import { edicionActual } from "@/servidor/edicion/repositorio";
+import { edicionActual, type FilaEdicion } from "@/servidor/edicion/repositorio";
 import {
   buscarPorToken,
   comunEmail,
@@ -18,8 +19,9 @@ import type { Admin } from "@/servidor/admin/auth";
 export type HuecoLibre = { id: string; inicio: Date; fin: Date; franja: string };
 
 /**
- * Horas libres ahora: el sobrante del sorteo y lo que dejan las cancelaciones. Solo existen
- * cuando la edición está publicada.
+ * Horas libres ahora: el sobrante del reparto y lo que dejan las cancelaciones. Las familias solo
+ * las ven cuando la edición está publicada. Los huecos extra nunca se ofrecen: el admin los crea
+ * para una familia concreta.
  */
 export async function listarHuecosLibres(
   db: BaseDatos | Tx,
@@ -34,6 +36,7 @@ export async function listarHuecosLibres(
       and(
         eq(t.franja.edicionId, edicionId),
         eq(t.hueco.bloqueado, false),
+        eq(t.hueco.extra, false),
         isNull(t.asignacion.inscripcionId),
       ),
     )
@@ -56,6 +59,20 @@ async function preferenciasDe(tx: Tx, inscripcionId: string) {
 type ResultadoCambio =
   | { estado: "ok"; inicio: Date; outbox: string[] }
   | { estado: "ocupado" | "cerrada" | "no_encontrada" | "sin_hora" };
+type ResultadoCambioAdmin = ResultadoCambio | { estado: "hora_invalida" };
+
+/** Un hueco extra que se queda sin familia desaparece: solo existía para ella. */
+export async function borrarHuecoExtraLibre(tx: Tx, huecoId: string) {
+  await tx
+    .delete(t.hueco)
+    .where(
+      and(
+        eq(t.hueco.id, huecoId),
+        eq(t.hueco.extra, true),
+        sql`not exists (select 1 from asignacion a where a.hueco_id = ${t.hueco.id})`,
+      ),
+    );
+}
 
 /**
  * Mueve una inscripción a un hueco libre dentro de una transacción. El hueco se bloquea con
@@ -102,6 +119,7 @@ async function moverA(
     .update(t.asignacion)
     .set({ huecoId, nivel, origen, actualizadaEn: sql`now()` })
     .where(eq(t.asignacion.inscripcionId, inscripcionId));
+  await borrarHuecoExtraLibre(tx, actual.huecoId);
   return { estado: "ok", inicio: hueco.inicio, de: actual.inicio };
 }
 
@@ -145,8 +163,9 @@ export async function cambiarseAHuecoLibre(
 }
 
 /**
- * El admin mueve a una familia (también después del fin de los cambios). Queda en la auditoría y
- * la familia recibe el email «El AFA ha cambiado vuestra hora» con un enlace nuevo y el .ics.
+ * El admin mueve a una familia: mientras revisa el reparto (antes de publicarlo) y después, también
+ * pasado el fin de los cambios. Queda en la auditoría. Si el reparto ya está publicado, la familia
+ * recibe el email «El AFA ha cambiado vuestra hora» con un enlace nuevo y el .ics.
  */
 export async function moverComoAdmin(
   db: BaseDatos,
@@ -154,7 +173,63 @@ export async function moverComoAdmin(
   inscripcionId: string,
   huecoId: string,
   urlApp: string,
-): Promise<ResultadoCambio> {
+): Promise<ResultadoCambioAdmin> {
+  return comoAdmin(db, admin, inscripcionId, urlApp, async () => huecoId);
+}
+
+/**
+ * Para resolver un conflicto, el admin pone a la familia en una hora que él elige dentro de una
+ * franja, aunque no haya hueco: se crea un hueco extra solo para ella. `hora` es `HH:MM` en la zona
+ * de la edición, el día de la franja.
+ */
+export async function asignarHoraExtra(
+  db: BaseDatos,
+  admin: Admin,
+  inscripcionId: string,
+  codigoFranja: string,
+  hora: string,
+  urlApp: string,
+): Promise<ResultadoCambioAdmin> {
+  return comoAdmin(db, admin, inscripcionId, urlApp, async (tx, edicion) => {
+    const [franja] = await tx
+      .select({ id: t.franja.id, fecha: t.diaSesion.fecha })
+      .from(t.franja)
+      .innerJoin(t.diaSesion, eq(t.diaSesion.id, t.franja.diaId))
+      .where(and(eq(t.franja.codigo, codigoFranja), eq(t.franja.edicionId, edicion.id)));
+    if (!franja) return { estado: "no_encontrada" };
+    let inicio: Date;
+    try {
+      inicio = instanteLocal(`${franja.fecha}T${hora}`, edicion.zona);
+    } catch {
+      return { estado: "hora_invalida" };
+    }
+    const [nuevo] = await tx
+      .insert(t.hueco)
+      .values({
+        franjaId: franja.id,
+        inicio,
+        fin: new Date(inicio.getTime() + edicion.minutosHueco * 60_000),
+        extra: true,
+      })
+      .onConflictDoNothing()
+      .returning({ id: t.hueco.id });
+    // Ya hay un hueco que empieza a esa hora en la franja: que el admin elija otra o mueva ahí.
+    if (!nuevo) return { estado: "ocupado" };
+    return nuevo.id;
+  });
+}
+
+async function comoAdmin(
+  db: BaseDatos,
+  admin: Admin,
+  inscripcionId: string,
+  urlApp: string,
+  /** El hueco al que va la familia, o por qué no se puede. */
+  destino: (
+    tx: Tx,
+    edicion: FilaEdicion,
+  ) => Promise<string | { estado: "no_encontrada" | "ocupado" | "hora_invalida" }>,
+): Promise<ResultadoCambioAdmin> {
   return db.transaction(async (tx) => {
     const [ins] = await tx
       .select()
@@ -164,8 +239,9 @@ export async function moverComoAdmin(
     if (!ins) return { estado: "no_encontrada" };
     const actual = await edicionActual(tx, { bloquear: true });
     if (!actual || actual.edicion.id !== ins.edicionId) return { estado: "no_encontrada" };
-    if (actual.estado !== "publicada" && actual.estado !== "terminada")
-      return { estado: "cerrada" };
+    if (actual.estado === "antes" || actual.estado === "abierta") return { estado: "cerrada" };
+    const huecoId = await destino(tx, actual.edicion);
+    if (typeof huecoId !== "string") return huecoId;
     const r = await moverA(tx, ins.id, huecoId, "admin", ins.edicionId);
     if (r.estado !== "ok") return r;
     await registrarAuditoria(tx, {
@@ -175,8 +251,9 @@ export async function moverComoAdmin(
       inscripcionId: ins.id,
       detalle: { de: r.de.toISOString(), a: r.inicio.toISOString(), origen: "admin" },
     });
+    // Antes de publicar, la familia todavía no conoce su hora: no hay nada que avisar.
     const outbox: string[] = [];
-    if (!esEmailFicticio(ins.email)) {
+    if (actual.estado !== "cerrada" && !esEmailFicticio(ins.email)) {
       const token = await enlaceAdicional(tx, ins.id, "movidos");
       outbox.push(
         await encolarEmail(tx, {

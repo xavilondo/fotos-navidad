@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  calcularHuella,
   construirListaCanonica,
-  jsonCanonico,
   ListaInvalida,
   validarListaCanonica,
   type EntradaLista,
@@ -17,25 +15,6 @@ const entrada = (inscripciones: EntradaLista["inscripciones"]): EntradaLista => 
   edicion: "navidad-2026",
   franjas: FRANJAS,
   inscripciones,
-});
-
-describe("jsonCanonico", () => {
-  it("ordena las claves, sin espacios, y respeta el orden de los arrays", () => {
-    expect(jsonCanonico({ b: [3, 1, { z: 1, a: "x" }], a: null, c: true })).toBe(
-      '{"a":null,"b":[3,1,{"a":"x","z":1}],"c":true}',
-    );
-  });
-
-  it("ordena por unidades de código UTF-16 y escapa como JSON", () => {
-    expect(jsonCanonico({ a: 1, B: 2, á: 3, _: 4 })).toBe('{"B":2,"_":4,"a":1,"á":3}');
-    expect(jsonCanonico('di "hola"\n')).toBe('"di \\"hola\\"\\n"');
-  });
-
-  it("omite undefined y rechaza lo que no es JSON", () => {
-    expect(jsonCanonico({ a: undefined, b: 1 })).toBe('{"b":1}');
-    expect(() => jsonCanonico(Number.NaN)).toThrow();
-    expect(() => jsonCanonico(1n)).toThrow();
-  });
 });
 
 describe("construirListaCanonica", () => {
@@ -69,15 +48,6 @@ describe("construirListaCanonica", () => {
       ],
     });
     expect(validarListaCanonica(lista)).toEqual(lista);
-  });
-
-  it("la huella no depende del orden de entrada", () => {
-    const x = { id: "x", favoritas: ["lun-1500"], imposibles: ["lun-1530", "mar-1500"] };
-    const y = { id: "y", favoritas: [], imposibles: [] };
-    const a = construirListaCanonica(entrada([x, y]));
-    const b = construirListaCanonica(entrada([y, { ...x, imposibles: ["mar-1500", "lun-1530"] }]));
-    expect(calcularHuella(a)).toBe(calcularHuella(b));
-    expect(calcularHuella(a)).toMatch(/^[0-9a-f]{64}$/);
   });
 
   it("rechaza datos incoherentes", () => {

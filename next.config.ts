@@ -5,6 +5,10 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  // La página de transparencia se llamaba /sorteo hasta que se quitó el sorteo (ADR 0002).
+  redirects() {
+    return [{ source: "/sorteo", destination: "/reparto", permanent: true }];
+  },
   partialPrefetching: true,
   experimental: {
     // Toda la app depende de la petición (idioma por cookie, estado con now() de Postgres):

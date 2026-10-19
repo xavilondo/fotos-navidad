@@ -25,6 +25,7 @@ Un spec en `.scratch/fotos-navidad/spec.md` para que Claude Code construya la ap
 
 ## Decisions so far
 
+- **Sin sorteo** (19-10-2026, [ADR 0002](../../docs/adr/0002-sin-sorteo-revision-y-asignacion-a-mano.md)): el reparto leximin se calcula en borrador al cerrar, con una regla fija en vez del azar; el AFA revisa los conflictos (familias en una hora imposible), habla con ellas y las pone a mano en una hora extra; luego lo publica. Fuera huella, ONCE y persona verificadora; `/sorteo` pasa a `/reparto`. Sustituye en parte las decisiones de [Reglas de preferencias y del sorteo](issues/05-reglas-de-preferencias-y-del-sorteo.md) y de privacidad sobre la verificación.
 - [Simulación de familias por horarios](issues/18-simulacion-de-familias-por-horarios.md): el 14-10-2026 se cargan 107 ficticias, conservando 3 previas, para dejar 10 huecos sobrantes. Semilla `20261014`, restricciones laborales y extraescolares, simulación web y local verificadas sin publicar el sorteo. Supuestos y resultados en [simulacion-horarios.md](../../docs/simulacion-horarios.md).
 
 <!-- one line per closed ticket -->

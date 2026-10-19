@@ -4,33 +4,31 @@ import { connection } from "next/server";
 import { getLocale, getTranslations } from "next-intl/server";
 import { db } from "@/servidor/db";
 import { edicionActual } from "@/servidor/edicion/repositorio";
-import { asegurarHuella } from "@/servidor/sorteo/huella";
-import { datosPublicosSorteo } from "@/servidor/sorteo/lanzar";
+import { datosPublicosReparto } from "@/servidor/reparto/reparto";
 import { formateadorFechas } from "@/ui/fechas";
 import { Tarjeta } from "@/ui/marca/Tarjeta";
 import { Pegar } from "@/ui/movimiento/Pegar";
-import { Barras } from "@/ui/sorteo/Barras";
+import { Barras } from "@/ui/reparto/Barras";
 import { SelectorIdioma } from "@/ui/marca/SelectorIdioma";
 
 export const instant = false;
 const UN_DIA = 86_400_000;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("sorteo.meta");
+  const t = await getTranslations("reparto.meta");
   return { title: t("titulo"), description: t("descripcion") };
 }
 
-export default async function PaginaSorteo() {
+export default async function PaginaReparto() {
   await connection();
-  const t = await getTranslations("sorteo");
+  const t = await getTranslations("reparto");
   const actual = await edicionActual(db);
-  if (actual && actual.estado !== "antes" && actual.estado !== "abierta") await asegurarHuella(db);
-  const datos = actual ? await datosPublicosSorteo(db, actual.edicion.id) : null;
+  const datos = actual ? await datosPublicosReparto(db, actual.edicion.id) : null;
   const f = actual ? formateadorFechas(await getLocale(), actual.edicion.zona) : null;
   const cierre = actual?.edicion.cierraEn;
-  const diaSorteo = cierre ? new Date(cierre.getTime() + UN_DIA) : null;
+  const diaReparto = cierre ? new Date(cierre.getTime() + UN_DIA) : null;
   const b = (c: React.ReactNode) => <b className="font-extrabold">{c}</b>;
-  const e = datos?.lanzadoEn ? datos.estadisticas : null;
+  const e = datos?.estadisticas ?? null;
   const texto = "mt-1.5 text-[15.5px] leading-normal";
 
   return (
@@ -72,20 +70,20 @@ export default async function PaginaSorteo() {
         <Tarjeta cinta="sp" cintaLado="derecha" className="mt-5">
           <h2 className="mb-2 text-[21px]">{t("pasos.titulo")}</h2>
           <ol className="mt-1.5 grid gap-3.5">
-            {([1, 2, 3, 4] as const).map((n, i) => (
+            {([1, 2, 3] as const).map((n, i) => (
               <li
                 key={n}
                 className="grid grid-cols-[46px_1fr] gap-3 rounded-[20px] bg-cream py-3.5 pr-3.5 pl-3"
-                style={{ rotate: `${[-1, 0.8, -0.6, 1][i]}deg` }}
+                style={{ rotate: `${[-1, 0.8, -0.6][i]}deg` }}
               >
                 <span className="grid size-[46px] place-items-center rounded-full bg-su font-heading text-[22px] font-bold shadow-[0_4px_0_-1px_rgb(52_66_18/0.2)]">
                   {n}
                 </span>
                 <div>
-                  {cierre && f && diaSorteo && (
+                  {cierre && f && diaReparto && (
                     <small className="block text-xs font-extrabold tracking-[0.04em] text-muted-ink uppercase">
                       {t(`pasos.${n}.cuando`, {
-                        dia: f.dia(n <= 2 ? cierre : diaSorteo),
+                        dia: f.dia(n === 1 ? cierre : diaReparto),
                         hora: f.hora(cierre),
                       })}
                     </small>
@@ -94,14 +92,14 @@ export default async function PaginaSorteo() {
                     {t(`pasos.${n}.titulo`)}
                   </b>
                   <p className="text-[14.5px] leading-[1.45]">{t(`pasos.${n}.texto`)}</p>
-                  {n === 3 && (
+                  {n === 2 && (
                     <ul className="mt-2 grid gap-1 text-sm font-bold">
                       {(["n1", "n2", "n3"] as const).map((k, j) => (
                         <li key={k} className="flex items-center gap-2">
                           <i className="grid size-[22px] flex-none place-items-center rounded-[7px] bg-paper font-heading text-xs not-italic shadow-pegatina">
                             {j + 1}
                           </i>
-                          {t(`pasos.3.${k}`)}
+                          {t(`pasos.2.${k}`)}
                         </li>
                       ))}
                     </ul>
@@ -160,72 +158,23 @@ export default async function PaginaSorteo() {
             </>
           ) : (
             <p className="text-[15px] text-muted-ink italic">
-              {t("cifras.antes", { dia: diaSorteo && f ? f.dia(diaSorteo) : "" })}
+              {t("cifras.antes", { dia: diaReparto && f ? f.dia(diaReparto) : "" })}
             </p>
           )}
         </Tarjeta>
       </Pegar>
 
-      <Pegar indice={4}>
-        <Tarjeta cinta="su" className="mt-5">
-          <h2 className="mb-2 text-[21px]">{t("comprobar.titulo")}</h2>
-          <p className={texto}>{t("comprobar.texto")}</p>
-          <dl className="mt-2 text-sm leading-normal">
-            <Dato
-              titulo={t("comprobar.huella", {
-                cuando: cierre && f ? `${f.dia(cierre)}, ${f.hora(cierre)}` : "",
-              })}
-            >
-              {datos?.huella ?? <Pendiente>{t("comprobar.pendienteHuella")}</Pendiente>}
-            </Dato>
-            <Dato
-              titulo={t("comprobar.once", { cuando: cierre && f ? `${f.dia(cierre)}, 21:25` : "" })}
-            >
-              {datos?.numeroOnce ?? <Pendiente>{t("comprobar.pendienteOnce")}</Pendiente>}
-            </Dato>
-            <Dato titulo={t("comprobar.version")}>{datos?.version ?? "reparto-v1.0"}</Dato>
-            {datos?.huellaResultado && (
-              <Dato titulo={t("comprobar.resultado")}>{datos.huellaResultado}</Dato>
-            )}
-          </dl>
-          {datos && datos.exclusiones > 0 && (
-            <p className="mt-2 text-sm text-muted-ink">
-              {t("comprobar.exclusiones", { n: datos.exclusiones })}
-            </p>
-          )}
-          {datos?.verificadoEn && f && (
-            <p className="mt-3.5 rounded-[18px] border-[2.5px] border-green-d px-3 py-3 text-center text-[14.5px] font-extrabold text-green-d">
-              {t("comprobar.sello", { fecha: f.dia(datos.verificadoEn) })}
-            </p>
-          )}
-          {process.env.URL_REPOSITORIO && (
-            <a
-              href={process.env.URL_REPOSITORIO}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mx-auto mt-2 block min-h-11 w-fit py-2.5 text-center text-[14.5px] font-extrabold text-green-d underline"
-            >
-              {t("comprobar.codigo")}
-            </a>
-          )}
-        </Tarjeta>
-      </Pegar>
+      {process.env.URL_REPOSITORIO && (
+        <a
+          href={process.env.URL_REPOSITORIO}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mx-auto mt-4 block min-h-11 w-fit py-2.5 text-center text-[14.5px] font-extrabold text-green-d underline"
+        >
+          {t("codigo")}
+        </a>
+      )}
       <p className="mt-5 text-center text-[13px] text-muted-ink">{t("nunca")}</p>
     </main>
   );
-}
-
-function Dato({ titulo, children }: { titulo: string; children: React.ReactNode }) {
-  return (
-    <>
-      <dt className="mt-2.5 text-xs font-extrabold tracking-[0.04em] text-muted-ink uppercase">
-        {titulo}
-      </dt>
-      <dd className="mt-0.5 font-mono text-[13.5px] break-all">{children}</dd>
-    </>
-  );
-}
-
-function Pendiente({ children }: { children: React.ReactNode }) {
-  return <span className="font-sans text-muted-ink italic">{children}</span>;
 }

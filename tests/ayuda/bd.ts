@@ -49,12 +49,20 @@ export async function moverEdicion(db: BaseDatos, estado: EstadoPrueba) {
     .set({ enlaceCaducaEn: sql`(select max(fin) from dia_sesion)` });
   if (estado === "publicada" || estado === "terminada") {
     const [ed] = await db.select().from(schema.edicion);
+    const publicado = {
+      version: "reparto-v2.0",
+      estadisticas: {},
+      calculadoPor: "admin",
+      calculadoEn: sql`now()`,
+      publicadoPor: "admin",
+      publicadoEn: sql`now()`,
+    };
     await db
-      .insert(schema.sorteo)
-      .values({ edicionId: ed.id, huella: "x".repeat(64), lanzadoEn: sql`now()` })
-      .onConflictDoUpdate({ target: schema.sorteo.edicionId, set: { lanzadoEn: sql`now()` } });
+      .insert(schema.reparto)
+      .values({ edicionId: ed.id, ...publicado })
+      .onConflictDoUpdate({ target: schema.reparto.edicionId, set: publicado });
   } else {
-    await db.delete(schema.sorteo);
+    await db.delete(schema.reparto);
   }
 }
 

@@ -64,7 +64,7 @@ test.describe("el panel no enseña nada sin sesión", () => {
     "/admin",
     "/admin/inscripciones",
     "/admin/horas",
-    "/admin/sorteo",
+    "/admin/reparto",
     "/admin/auditoria",
     "/admin/edicion",
   ];

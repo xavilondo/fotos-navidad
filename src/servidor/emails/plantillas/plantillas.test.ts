@@ -58,16 +58,16 @@ describe("fechas en hora de Madrid", () => {
     expect(va.html).toContain("Dilluns 2 de novembre");
   });
 
-  it("alta: cierre, sorteo y caducidad", async () => {
+  it("alta: cierre, día del reparto y caducidad", async () => {
     const es = await renderizarEmail("es", EJEMPLOS.alta);
     expect(es.texto).toContain("hasta el martes 27 a las 21:00");
-    expect(es.texto).toContain("El miércoles 28 sorteamos las horas");
+    expect(es.texto).toContain("El miércoles 28 os escribimos con la vuestra");
     expect(es.texto).toContain("caduca el 1 de noviembre a las 20:00");
     expect(es.texto).toMatch(/Total orientativo: 54\s€/);
 
     const va = await renderizarEmail("va", EJEMPLOS.alta);
     expect(va.texto).toContain("fins al dimarts 27 a les 21:00");
-    expect(va.texto).toContain("El dimecres 28 sortegem les hores");
+    expect(va.texto).toContain("El dimecres 28 us escriurem amb la vostra");
     expect(va.texto).toContain("caduca l'1 de novembre a les 20:00");
   });
 
@@ -114,7 +114,7 @@ describe("contenido según los datos", () => {
     expect((await r("favorita", null)).texto).toContain("¡Una de vuestras favoritas!");
     expect((await r("nos_va_bien", null)).texto).toContain("no ha podido ser ninguna");
     expect((await r("imposible", null)).texto).toContain(
-      "No ha sido posible evitar una de vuestras horas imposibles: había más familias que huecos posibles.",
+      "No ha habido forma de evitar una de vuestras horas imposibles: había más familias que huecos posibles. Si no podéis venir, escribid al AFA y lo hablamos.",
     );
     expect((await r("sin_favoritas", null)).texto).toContain("no marcasteis favoritas");
     expect((await r("nos_va_bien", null)).texto).not.toContain("favorita!");

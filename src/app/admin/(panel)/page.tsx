@@ -11,7 +11,7 @@ import {
   resumen,
 } from "@/servidor/admin/panel";
 import { edicionActual } from "@/servidor/edicion/repositorio";
-import { asegurarHuella } from "@/servidor/sorteo/huella";
+import { exclusionesDe } from "@/servidor/reparto/reparto";
 import { formateadorFechas, mayuscula } from "@/ui/fechas";
 import { MapaCalor } from "@/ui/admin/MapaCalor";
 import { NOMBRE_ESTADO } from "@/ui/admin/estados";
@@ -32,8 +32,7 @@ export default async function PaginaPanel() {
     );
   }
   const { edicion, estado } = actual;
-  const sorteo = await asegurarHuella(db);
-  const exclusiones = (sorteo?.exclusiones ?? []).map((e) => e.id);
+  const exclusiones = await exclusionesDe(db, edicion.id);
   const [r, clases, dem, dup, sinEntregar, diag] = await Promise.all([
     resumen(db, edicion.id),
     porClase(db, edicion.id),
@@ -60,7 +59,7 @@ export default async function PaginaPanel() {
       <div className="grid gap-4">
         {sobran < 0 && (
           <Aviso tono="alerta">
-            Hay {-sobran} inscripciones más que huecos libres: el sorteo no se podrá lanzar hasta
+            Hay {-sobran} inscripciones más que huecos libres: el reparto no se podrá calcular hasta
             resolver duplicados o bajas.
           </Aviso>
         )}
@@ -99,8 +98,8 @@ export default async function PaginaPanel() {
           <Seccion
             titulo="Diagnóstico del reparto"
             accion={
-              <Link href="/admin/sorteo" className="text-sm font-extrabold text-green-d underline">
-                Ir al sorteo
+              <Link href="/admin/reparto" className="text-sm font-extrabold text-green-d underline">
+                Ir al reparto
               </Link>
             }
           >

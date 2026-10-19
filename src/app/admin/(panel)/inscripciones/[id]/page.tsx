@@ -25,7 +25,7 @@ export default async function PaginaFicha({ params }: PageProps<"/admin/inscripc
         .map((i) => ({ id: i.id, nombre: i.nombreAdulto, peque: `${g.peque} (${g.clase})` })),
     );
   const libres =
-    ficha.estado === "publicada" || ficha.estado === "terminada"
+    ficha.estado === "cerrada" || ficha.estado === "publicada" || ficha.estado === "terminada"
       ? await listarHuecosLibres(db, ficha.edicion.id)
       : [];
   return (

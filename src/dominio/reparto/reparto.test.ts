@@ -4,8 +4,6 @@ import { nivelEn, type Nivel } from "./niveles";
 import { costeMinimoIngenuo, entradaAleatoria, generador, repartoFuerzaBruta } from "./referencia";
 import { diagnosticar, repartir, RepartoImposible, type ResultadoReparto } from "./reparto";
 
-const ONCE = "48213";
-
 const lista = (
   franjas: [string, number][],
   inscripciones: [string, string[], string[]?][],
@@ -67,10 +65,9 @@ describe("repartir contra fuerza bruta", () => {
         concentradas: s % 2 === 0,
       });
       const l = construirListaCanonica(entrada);
-      const numero = String(s * 7919).padStart(5, "0");
-      const res = repartir(l, numero);
+      const res = repartir(l);
       comprobarReparto(l, res);
-      const bruta = repartoFuerzaBruta(l, numero);
+      const bruta = repartoFuerzaBruta(l);
       expect(vector(res)).toEqual(bruta.vector);
       expect(res.asignaciones.map((a) => a.franja)).toEqual(bruta.franjas);
       if (bruta.optimos > 1) conEmpates++;
@@ -85,9 +82,9 @@ describe("repartir contra fuerza bruta", () => {
         entradaAleatoria(s, { franjas: 3, inscripciones: 7, maxHuecos: 2 }),
       );
       const exclusiones = l.inscripciones.filter((_, k) => k % 3 === 1).map((i) => i.id);
-      const res = repartir(l, ONCE, { exclusiones });
+      const res = repartir(l, { exclusiones });
       comprobarReparto(l, res, exclusiones);
-      const bruta = repartoFuerzaBruta(l, ONCE, exclusiones);
+      const bruta = repartoFuerzaBruta(l, exclusiones);
       expect(vector(res)).toEqual(bruta.vector);
       expect(res.asignaciones.map((a) => a.franja)).toEqual(bruta.franjas);
     }
@@ -99,31 +96,39 @@ describe("determinismo", () => {
     entradaAleatoria(42, { franjas: 8, inscripciones: 30, maxHuecos: 6, concentradas: true }),
   );
 
-  it("misma lista y mismo número dan el mismo resultado", () => {
-    const a = repartir(l, ONCE);
-    const b = repartir(structuredClone(l), ONCE);
+  it("la misma lista da siempre el mismo resultado", () => {
+    const a = repartir(l);
+    const b = repartir(structuredClone(l));
     expect({ ...b, ms: 0 }).toEqual({ ...a, ms: 0 });
   });
 
-  it("cambiar el número de la ONCE cambia el resultado", () => {
-    const a = repartir(l, ONCE);
-    const b = repartir(l, "48214");
-    expect(b.semilla).not.toBe(a.semilla);
-    expect(b.huellaResultado).not.toBe(a.huellaResultado);
-    expect(vector(b)).toEqual(vector(a));
-  });
-
-  it("cambiar un bit de la huella (una inscripción distinta) cambia semilla y resultado", () => {
-    const a = repartir(l, ONCE);
-    const otra = construirListaCanonica({
+  it("no depende del orden en que llegan las inscripciones", () => {
+    const desordenada = construirListaCanonica({
       edicion: l.edicion,
       franjas: l.franjas,
-      inscripciones: l.inscripciones.map((i, k) => (k === 0 ? { ...i, id: `${i.id}x` } : i)),
+      inscripciones: [...l.inscripciones].reverse(),
     });
-    const b = repartir(otra, ONCE);
-    expect(b.huella).not.toBe(a.huella);
-    expect(b.semilla).not.toBe(a.semilla);
-    expect(b.huellaResultado).not.toBe(a.huellaResultado);
+    expect({ ...repartir(desordenada), ms: 0 }).toEqual({ ...repartir(l), ms: 0 });
+  });
+
+  it("en un empate elige primero la inscripción de menor id y, a igual nivel, la franja más temprana", () => {
+    const r = repartir(
+      lista(
+        [
+          ["x", 1],
+          ["y", 1],
+          ["z", 2],
+        ],
+        [
+          ["b", ["x", "y"]],
+          ["a", ["x", "y"]],
+          ["c", []],
+        ],
+      ),
+    );
+    expect(franjaDe(r, "a")).toBe("x");
+    expect(franjaDe(r, "b")).toBe("y");
+    expect(r.asignaciones.find((a) => a.id === "c")!.hueco).toBe("z.0");
   });
 });
 
@@ -132,7 +137,7 @@ describe("horas imposibles", () => {
     for (let s = 1; s <= 200; s++) {
       const e = entradaAleatoria(s, { franjas: 6, inscripciones: 15, maxHuecos: 4 });
       const l = construirListaCanonica(e);
-      const r = repartir(l, ONCE);
+      const r = repartir(l);
       // Mínimo de familias en una imposible, con un flujo independiente: coste 1 por imposible.
       const asignables = l.franjas.filter((f) => f.huecos > 0);
       const minimo = costeMinimoIngenuo(
@@ -158,8 +163,8 @@ describe("horas imposibles", () => {
         ["b", ["x"], ["y"]],
       ],
     );
-    for (const n of ["00000", "11111", "22222", "33333"]) {
-      const r = repartir(l, n);
+    {
+      const r = repartir(l);
       expect(franjaDe(r, "b")).toBe("x");
       expect(r.estadisticas.porPreferencia.imposible).toBe(0);
     }
@@ -179,7 +184,7 @@ describe("horas imposibles", () => {
         ["d", ["lun-1530"]],
       ],
     );
-    const r = repartir(l, ONCE);
+    const r = repartir(l);
     expect(r.estadisticas.porPreferencia.imposible).toBe(1);
     expect(franjaDe(r, "d")).toBe("lun-1500");
     expect(diagnosticar(l).enImposible).toBe(1);
@@ -196,24 +201,21 @@ describe("regla antitruco", () => {
         ["F6", ["X", ...bloqueadas]],
       ],
     );
-    for (let s = 0; s < 50; s++) {
-      const r = repartir(l, String(s).padStart(5, "0"));
-      expect(franjaDe(r, "F6")).toBe("X");
-      expect(franjaDe(r, "F1")).toBe("Y");
-      expect(r.asignaciones.map((a) => a.nivel)).toEqual([2, 1]);
-    }
+    const r = repartir(l);
+    expect(franjaDe(r, "F6")).toBe("X");
+    expect(franjaDe(r, "F1")).toBe("Y");
+    expect(r.asignaciones.map((a) => a.nivel)).toEqual([2, 1]);
   });
 });
 
 describe("casos límite", () => {
   it("sin inscripciones", () => {
     const l = lista([["x", 6]], []);
-    const r = repartir(l, ONCE);
+    const r = repartir(l);
     expect(r.asignaciones).toEqual([]);
     expect(r.estadisticas.total).toBe(0);
-    expect(r.huellaResultado).toMatch(/^[0-9a-f]{64}$/);
     expect(diagnosticar(l)).toMatchObject({ total: 0, cabe: true, todasConFavorita: true });
-    expect(repartir(lista([], []), ONCE).asignaciones).toEqual([]);
+    expect(repartir(lista([], [])).asignaciones).toEqual([]);
   });
 
   it("todas pidiendo la misma franja: se llena y el resto, a su siguiente nivel", () => {
@@ -225,20 +227,12 @@ describe("casos límite", () => {
       ],
       ["1", "2", "3", "4", "5"].map((id): [string, string[]] => [id, ["a"]]),
     );
-    const r = repartir(l, ONCE);
+    const r = repartir(l);
     comprobarReparto(l, r);
     expect(r.asignaciones.filter((a) => a.franja === "a")).toHaveLength(2);
     expect(r.estadisticas.porNivel).toMatchObject({ 1: 2, 2: 3 });
-    // Quién se queda la franja lo decide π: con otro número cambian las afortunadas.
-    const quienes = new Set(
-      ["00001", "00002", "00003", "00004", "00005", "00006"].map((n) =>
-        repartir(l, n)
-          .asignaciones.filter((a) => a.franja === "a")
-          .map((a) => a.id)
-          .join(),
-      ),
-    );
-    expect(quienes.size).toBeGreaterThan(1);
+    // Quién se queda la franja lo decide el orden de id.
+    expect(r.asignaciones.filter((a) => a.franja === "a").map((a) => a.id)).toEqual(["1", "2"]);
   });
 
   it("más inscripciones que huecos libres: RepartoImposible", () => {
@@ -252,7 +246,7 @@ describe("casos límite", () => {
         ["b", []],
       ],
     );
-    expect(() => repartir(l, ONCE)).toThrow(RepartoImposible);
+    expect(() => repartir(l)).toThrow(RepartoImposible);
     expect(diagnosticar(l)).toEqual({
       total: 2,
       huecosLibres: 1,
@@ -262,7 +256,7 @@ describe("casos límite", () => {
       enImposible: 0,
     });
     // Con una exclusión, ya caben.
-    expect(repartir(l, ONCE, { exclusiones: ["b"] }).asignaciones).toHaveLength(1);
+    expect(repartir(l, { exclusiones: ["b"] }).asignaciones).toHaveLength(1);
   });
 
   it("los huecos bloqueados reducen la capacidad y nunca se asignan", () => {
@@ -273,8 +267,8 @@ describe("casos límite", () => {
       ],
       ["1", "2", "3", "4"].map((id): [string, string[]] => [id, ["x"]]),
     );
-    for (let s = 0; s < 30; s++) {
-      const r = repartir(l, String(s));
+    {
+      const r = repartir(l);
       comprobarReparto(l, r);
       const enX = r.asignaciones.filter((a) => a.franja === "x");
       expect(enX).toHaveLength(2);
@@ -295,7 +289,7 @@ describe("casos límite", () => {
         ["c", []],
       ],
     );
-    const r = repartir(l, ONCE);
+    const r = repartir(l);
     expect(franjaDe(r, "b")).toBe("y");
     expect(franjaDe(r, "a")).toBe("x");
     expect(franjaDe(r, "c")).toBe("z");
@@ -310,7 +304,7 @@ describe("casos límite", () => {
     expect(r.estadisticas.conAlgunaFavorita).toBe(1);
   });
 
-  it("las exclusiones se quitan antes de todo, pero la huella es la de la lista completa", () => {
+  it("las exclusiones se quitan antes de todo", () => {
     const l = lista(
       [["x", 1]],
       [
@@ -318,10 +312,9 @@ describe("casos límite", () => {
         ["b", ["x"]],
       ],
     );
-    const sin = repartir(l, ONCE, { exclusiones: ["a"] });
-    expect(sin.huella).toBe(repartir(l, ONCE, { exclusiones: ["b"] }).huella);
+    const sin = repartir(l, { exclusiones: ["a"] });
     expect(sin.asignaciones).toEqual([{ id: "b", franja: "x", hueco: "x.0", nivel: 1 }]);
-    expect(() => repartir(l, ONCE, { exclusiones: ["zzz"] })).toThrow(/no está en la lista/);
+    expect(() => repartir(l, { exclusiones: ["zzz"] })).toThrow(/no está en la lista/);
   });
 
   it("exige una lista en forma canónica", () => {
@@ -332,7 +325,7 @@ describe("casos límite", () => {
         ["b", []],
       ],
     );
-    expect(() => repartir({ ...l, inscripciones: [...l.inscripciones].reverse() }, ONCE)).toThrow(
+    expect(() => repartir({ ...l, inscripciones: [...l.inscripciones].reverse() })).toThrow(
       /ordenadas/,
     );
   });
@@ -344,7 +337,7 @@ describe("huecos", () => {
       const l = construirListaCanonica(
         entradaAleatoria(s, { franjas: 10, inscripciones: 40, maxHuecos: 6, concentradas: true }),
       );
-      comprobarReparto(l, repartir(l, ONCE));
+      comprobarReparto(l, repartir(l));
     }
   });
 });
@@ -365,7 +358,7 @@ describe("estadísticas", () => {
         ["d", [], []],
       ],
     );
-    const r = repartir(l, ONCE);
+    const r = repartir(l);
     comprobarReparto(l, r);
     const { porPreferencia, conFavorita, conAlgunaFavorita } = r.estadisticas;
     expect(conAlgunaFavorita).toBe(3);
@@ -377,13 +370,13 @@ describe("estadísticas", () => {
 });
 
 describe("diagnosticar", () => {
-  it("coincide con las cuentas del sorteo y no depende del número", () => {
+  it("coincide con las cuentas del reparto", () => {
     for (let s = 1; s <= 50; s++) {
       const l = construirListaCanonica(
         entradaAleatoria(s, { franjas: 6, inscripciones: 20, maxHuecos: 5, concentradas: true }),
       );
       const d = diagnosticar(l);
-      const r = repartir(l, ONCE);
+      const r = repartir(l);
       expect(d.porNivel).toEqual(r.estadisticas.porNivel);
       expect(d.total).toBe(20);
       expect(d.huecosLibres).toBe(l.franjas.reduce((a, f) => a + f.huecos, 0));
@@ -413,7 +406,7 @@ describe("diagnosticar", () => {
     const d = diagnosticar(l);
     expect(d.todasConFavorita).toBe(true);
     expect(d.porNivel[2]).toBe(2);
-    const r = repartir(l, ONCE);
+    const r = repartir(l);
     expect(franjaDe(r, "F2")).toBe("Y");
     expect(franjaDe(r, "F1")).not.toBe("Y");
   });
@@ -446,7 +439,7 @@ describe("rendimiento", () => {
 
   const medir = (entrada: EntradaLista) => {
     const l = construirListaCanonica(entrada);
-    const r = repartir(l, ONCE);
+    const r = repartir(l);
     comprobarReparto(l, r);
     console.info(`reparto de ${l.inscripciones.length} inscripciones: ${r.ms.toFixed(0)} ms`);
     return r;

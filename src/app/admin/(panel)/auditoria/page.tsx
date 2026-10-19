@@ -17,6 +17,11 @@ const ACCIONES: Record<string, string> = {
   "inscripcion.cancelada": "Cancelada por la familia",
   "inscripcion.enlace_reenviado": "Enlace nuevo enviado",
   "inscripcion.exportada": "Ficha exportada",
+  "reparto.calculado": "Reparto calculado (borrador)",
+  "reparto.publicado": "Reparto publicado",
+  "reparto.exclusion": "Excluida del reparto",
+  "reparto.exclusion_quitada": "Exclusión quitada",
+  // De ediciones anteriores, cuando había sorteo.
   "sorteo.huella": "Lista cerrada y huella calculada",
   "sorteo.exclusion": "Excluida del sorteo",
   "sorteo.exclusion_quitada": "Exclusión quitada",

@@ -62,8 +62,6 @@ describe("retirarFicticias", () => {
       },
       { clave: claveAnonima("alta", "203.0.113.7"), ventana: new Date() },
     ]);
-    const [ed] = await db.select().from(schema.edicion);
-    await db.insert(schema.sorteo).values({ edicionId: ed.id, huella: "x".repeat(64) });
   });
 
   const total = async (
@@ -74,7 +72,6 @@ describe("retirarFicticias", () => {
       | typeof schema.enlaceAcceso
       | typeof schema.emailOutbox
       | typeof schema.limiteUso
-      | typeof schema.sorteo
       | typeof schema.auditoria,
   ) => (await db.select({ n: count() }).from(tabla))[0].n;
   const foto = async () => ({
@@ -84,7 +81,6 @@ describe("retirarFicticias", () => {
     enlaces: await total(schema.enlaceAcceso),
     outbox: await total(schema.emailOutbox),
     limites: await total(schema.limiteUso),
-    sorteo: await total(schema.sorteo),
     auditoria: await total(schema.auditoria),
     edicion: (await db.select().from(schema.edicion))[0],
   });
@@ -103,7 +99,6 @@ describe("retirarFicticias", () => {
       asignaciones: 0,
       outbox: 2,
       limites: 1,
-      huellaVaciada: true,
       restantes: 2,
       restantesAntesDeAbrir: 2,
     });
@@ -122,7 +117,6 @@ describe("retirarFicticias", () => {
       enlaces: 0,
       outbox: 2,
       limites: 1,
-      sorteo: 0,
       auditoria: antes.auditoria + 1,
     });
     const quedan = await db.select({ id: schema.inscripcion.id }).from(schema.inscripcion);
@@ -135,7 +129,7 @@ describe("retirarFicticias", () => {
       .from(schema.auditoria)
       .where(eq(schema.auditoria.accion, "inscripciones.ficticias_retiradas"));
     expect(linea).toMatchObject({ actor: "admin:afa" });
-    expect(linea.detalle).toMatchObject({ inscripciones: 2, huellaVaciada: true, idsTambien: [] });
+    expect(linea.detalle).toMatchObject({ inscripciones: 2, idsTambien: [] });
     expect(JSON.stringify(linea.detalle)).not.toContain("@");
 
     // Idempotente: la segunda vez no queda nada que hacer ni se audita de nuevo.
@@ -160,8 +154,15 @@ describe("retirarFicticias", () => {
     expect(quedan).toEqual([{ id: ids.real }]);
   });
 
-  it("no toca nada si el sorteo ya está lanzado", async () => {
-    await db.update(schema.sorteo).set({ lanzadoEn: new Date() });
+  it("no toca nada si ya hay un reparto calculado", async () => {
+    const [ed] = await db.select().from(schema.edicion);
+    await db.insert(schema.reparto).values({
+      edicionId: ed.id,
+      version: "reparto-v2.0",
+      estadisticas: {},
+      calculadoPor: "afa",
+      calculadoEn: new Date(),
+    });
     const antes = await foto();
     await expect(retirarFicticias(db, CONFIG, { aplicar: true })).rejects.toThrow(
       RetiradaRechazada,

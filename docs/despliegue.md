@@ -37,6 +37,8 @@ El mismo día se cargan de una vez 107 familias ficticias con semilla `20261014`
 
 Estado de producción comprobado el 19-10-2026 con una consulta de solo lectura: `abreEn` sigue adelantado a `2026-10-14T00:00` (la inscripción está abierta), `cierraEn` y `cambiosHasta` coinciden con la config y no hay huella ni sorteo. Hay 111 inscripciones: las 107 de la tanda, con 130 peques y 1132 preferencias, sin enlaces, asignaciones ni emails; y 4 sin marca de simulación.
 
+El 19-10-2026 el usuario confirma que este despliegue sigue siendo **de pruebas**: todavía no hay nada en producción real y lo que se suba se tiene que probar. La inscripción **se deja abierta** para seguir probando; no se aplica la retirada hasta preparar la apertura real. El mismo día se quita el sorteo ([ADR 0002](adr/0002-sin-sorteo-revision-y-asignacion-a-mano.md)): antes de desplegar ese cambio hay que aplicar la migración `0004_sin-sorteo` a esta base (`pnpm db:migrar` con su URL), o la web falla al no encontrar la tabla `reparto`.
+
 De esas 4, tres son pruebas del 14-10:
 
 | Id                                     | Alta                            |
@@ -52,7 +54,7 @@ La cuarta, del 14-10 por la tarde, tiene un email y un nombre que parecen de una
 - Solo cuenta como ficticia una inscripción con las tres marcas de `scripts/semilla-horarios.ts`: email `sim-horarios-<semilla>-<NNN>@example.com`, adulto `SIM …` y observaciones que empiezan por `[SIMULACIÓN`. Otras pruebas solo se borran nombrándolas por su id con `--tambien`.
 - Borra también sus peques, preferencias, enlaces, asignaciones, emails en cola y límites del enlace perdido.
 - Devuelve `abreEn`, `cierraEn` y `cambiosHasta` a `config/ediciones/<edición>.ts`.
-- Vacía la huella si se llegó a calcular. Se niega si el sorteo ya está lanzado o si la huella es posterior al cierre real.
+- Se niega si ya hay un reparto calculado. (Hasta el 19-10-2026 vaciaba la huella; el sorteo se quitó con el ADR 0002.)
 - Registra `inscripciones.ficticias_retiradas` en la auditoría, con recuentos e ids, sin emails.
 - Por defecto va en seco: abre una transacción de solo lectura, sin bloqueos, e imprime lo que haría. `--aplicar` escribe. Repetirlo no hace nada más.
 

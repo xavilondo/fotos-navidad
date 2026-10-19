@@ -52,7 +52,7 @@ export async function datosFormulario(
         fin: hora(f.fin),
       })),
     textos: {
-      diaSorteo: fechas.dia(new Date(edicion.cierraEn.getTime() + UN_DIA)),
+      diaReparto: fechas.dia(new Date(edicion.cierraEn.getTime() + UN_DIA)),
       cierre: t("franja", {
         dia: fechas.dia(edicion.cierraEn),
         hora: fechas.hora(edicion.cierraEn),

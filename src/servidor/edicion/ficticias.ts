@@ -38,7 +38,6 @@ export type InformeRetirada = {
   asignaciones: number;
   outbox: number;
   limites: number;
-  huellaVaciada: boolean;
   fechas: { antes: Fechas; despues: Fechas };
   /** Inscripciones que se quedan; las creadas antes de la apertura de la config, aparte. */
   restantes: number;
@@ -49,7 +48,7 @@ export type InformeRetirada = {
  * Retira las familias ficticias de una edición y devuelve sus fechas a las de la config. En seco
  * (por defecto) solo cuenta lo que haría. Con `aplicar` lo hace todo en una transacción: borra las
  * ficticias (y las de `tambien`) con sus peques, preferencias, enlaces, asignaciones, emails y
- * límites; vacía la huella si se llegó a calcular y deja constancia en la auditoría. Idempotente.
+ * límites, y deja constancia en la auditoría. Idempotente.
  */
 export async function retirarFicticias(
   db: BaseDatos,
@@ -68,20 +67,18 @@ export async function retirarFicticias(
     if (!opciones.aplicar) await tx.execute(sql`set transaction read only`);
     else await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${"edicion:" + config.slug}))`);
     const consulta = tx
-      .select({ edicion: t.edicion, ahora: sql`now()`.mapWith(t.edicion.abreEn) })
+      .select({ edicion: t.edicion })
       .from(t.edicion)
       .where(eq(t.edicion.slug, config.slug));
     const [fila] = opciones.aplicar ? await consulta.for("update") : await consulta;
     if (!fila || fila.edicion.purgadaEn) throw new RetiradaRechazada("Edición no disponible");
-    const { edicion, ahora } = fila;
+    const { edicion } = fila;
 
-    const [sorteo] = await tx.select().from(t.sorteo).where(eq(t.sorteo.edicionId, edicion.id));
-    if (sorteo?.lanzadoEn)
-      throw new RetiradaRechazada("El sorteo ya está lanzado: no se retira nada");
-    if (sorteo && ahora >= deseadas.cierraEn)
-      throw new RetiradaRechazada(
-        "La huella es posterior al cierre real de la config: no se vacía ni se retira nada",
-      );
+    const [reparto] = await tx
+      .select({ id: t.reparto.id })
+      .from(t.reparto)
+      .where(eq(t.reparto.edicionId, edicion.id));
+    if (reparto) throw new RetiradaRechazada("Ya hay un reparto calculado: no se retira nada");
 
     const ficticias = await tx
       .select({ id: t.inscripcion.id, emailNorm: t.inscripcion.emailNorm })
@@ -167,7 +164,7 @@ export async function retirarFicticias(
     });
     const fechas = { antes: iso(edicion), despues: iso(deseadas) };
     const cambiaFechas = JSON.stringify(fechas.antes) !== JSON.stringify(fechas.despues);
-    const cambios = ids.length > 0 || cambiaFechas || Boolean(sorteo);
+    const cambios = ids.length > 0 || cambiaFechas;
     const informe: InformeRetirada = {
       aplicado: false,
       cambios,
@@ -179,7 +176,6 @@ export async function retirarFicticias(
       asignaciones,
       outbox,
       limites,
-      huellaVaciada: Boolean(sorteo),
       fechas,
       restantes: quedan.total,
       restantesAntesDeAbrir: quedan.antes,
@@ -195,7 +191,6 @@ export async function retirarFicticias(
       await tx.delete(t.peque).where(inArray(t.peque.inscripcionId, ids));
       await tx.delete(t.inscripcion).where(inArray(t.inscripcion.id, ids));
     }
-    if (sorteo) await tx.delete(t.sorteo).where(eq(t.sorteo.id, sorteo.id));
     if (cambiaFechas)
       await tx
         .update(t.edicion)
@@ -214,7 +209,6 @@ export async function retirarFicticias(
         asignaciones,
         outbox,
         limites,
-        huellaVaciada: informe.huellaVaciada,
         fechas,
       },
     });

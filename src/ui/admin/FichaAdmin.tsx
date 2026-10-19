@@ -9,6 +9,7 @@ import {
   fusionar,
   guardarSeccionAdmin,
   moverInscripcion,
+  ponerAHora,
   reenviarEnlaceAdmin,
 } from "@/app/admin/acciones";
 import type { EstadoEdicion } from "@/dominio/edicion/estado";
@@ -84,6 +85,8 @@ export function FichaAdmin({
   const [avisar, setAvisar] = useState(false);
   const [confirmarBorrado, setConfirmarBorrado] = useState(false);
   const [huecoDestino, setHuecoDestino] = useState("");
+  const [franjaExtra, setFranjaExtra] = useState("");
+  const [horaExtra, setHoraExtra] = useState("");
   const v = ficha.formulario;
   const fecha = (iso: string) =>
     new Intl.DateTimeFormat("es-ES", {
@@ -94,7 +97,16 @@ export function FichaAdmin({
       hour: "2-digit",
       minute: "2-digit",
     }).format(new Date(iso));
-  const despuesDelSorteo = ficha.estado === "publicada" || ficha.estado === "terminada";
+  const publicado = ficha.estado === "publicada" || ficha.estado === "terminada";
+  // Mientras se revisa el reparto (cerrada) y después de publicarlo.
+  const puedeMover = !!ficha.asignacion && (ficha.estado === "cerrada" || publicado);
+  /** Qué es cada franja para esta familia. */
+  const preferencia = (codigo: string) => {
+    const p = v.favoritas.indexOf(codigo);
+    if (p >= 0) return `${p + 1}ª favorita`;
+    if (v.imposibles.includes(codigo)) return "imposible";
+    return v.favoritas.length ? "nos va bien" : "sin favoritas";
+  };
 
   const ejecutar = (
     accion: () => Promise<{ estado: string; errores?: ErroresCampo }>,
@@ -119,6 +131,7 @@ export function FichaAdmin({
             no_encontrada: "La inscripción ya no existe.",
             ocupado: "Esa hora acaba de ocuparse. Elegid otra.",
             sin_hora: "Esta familia no tiene hora asignada.",
+            hora_invalida: "Esa hora no es válida.",
           }[r.estado] ?? "Algo ha fallado. Probad otra vez.",
         );
       }
@@ -220,7 +233,7 @@ export function FichaAdmin({
       <div className="grid gap-4 lg:grid-cols-[1.6fr_1fr]">
         <div className="grid content-start gap-4">
           {ficha.excluidaMotivo && (
-            <Aviso tono="alerta">Excluida del sorteo: {ficha.excluidaMotivo}</Aviso>
+            <Aviso tono="alerta">Excluida del reparto: {ficha.excluidaMotivo}</Aviso>
           )}
           {caja(
             1,
@@ -276,14 +289,15 @@ export function FichaAdmin({
             <Caja titulo="Hora asignada">
               <p className="font-heading text-xl text-olive">{fecha(ficha.asignacion.inicio)}</p>
               <p className="text-sm text-muted-ink">
-                Nivel {ficha.asignacion.nivel} ·{" "}
-                {ficha.asignacion.origen === "sorteo"
-                  ? "del sorteo"
+                {preferencia(ficha.asignacion.franja)} ·{" "}
+                {ficha.asignacion.origen === "reparto"
+                  ? "del reparto"
                   : ficha.asignacion.origen === "admin"
-                    ? "movida por el AFA"
+                    ? "puesta por el AFA"
                     : "cambiada a una hora libre"}
+                {!publicado && " · borrador, la familia aún no la ve"}
               </p>
-              {despuesDelSorteo && (
+              {puedeMover && (
                 <div className="mt-3 grid gap-2">
                   <label
                     htmlFor="destino"
@@ -311,12 +325,74 @@ export function FichaAdmin({
                     onClick={() =>
                       ejecutar(
                         () => moverInscripcion(ficha.id, huecoDestino),
-                        "Familia movida. Le llegará un email con su nueva hora.",
+                        publicado
+                          ? "Familia movida. Le llegará un email con su nueva hora."
+                          : "Familia movida.",
                         () => setHuecoDestino(""),
                       )
                     }
                   >
-                    Mover y avisar por email
+                    {publicado ? "Mover y avisar por email" : "Mover"}
+                  </button>
+                </div>
+              )}
+              {puedeMover && (
+                <div className="mt-4 grid gap-2 border-t border-border pt-3">
+                  <label
+                    htmlFor="franja-extra"
+                    className="text-xs font-extrabold text-muted-ink uppercase"
+                  >
+                    Poner a una hora concreta (hueco extra)
+                  </label>
+                  <p className="text-xs text-muted-ink">
+                    Para resolver un conflicto tras hablar con la familia: se crea un hueco solo
+                    para ella, aunque la franja esté llena.
+                  </p>
+                  <select
+                    id="franja-extra"
+                    value={franjaExtra}
+                    onChange={(e) => {
+                      setFranjaExtra(e.target.value);
+                      setHoraExtra(
+                        datos.franjas.find((x) => x.codigo === e.target.value)?.inicio ?? "",
+                      );
+                    }}
+                    className="min-h-10 rounded-xl border border-border bg-paper px-2 text-sm font-bold"
+                  >
+                    <option value="">Elegid una franja…</option>
+                    {datos.franjas.map((x) => (
+                      <option key={x.codigo} value={x.codigo}>
+                        {x.dia} {x.inicio}–{x.fin} · {preferencia(x.codigo)}
+                      </option>
+                    ))}
+                  </select>
+                  <label htmlFor="hora-extra" className="sr-only">
+                    Hora
+                  </label>
+                  <input
+                    id="hora-extra"
+                    type="time"
+                    step={60}
+                    value={horaExtra}
+                    onChange={(e) => setHoraExtra(e.target.value)}
+                    disabled={!franjaExtra}
+                    className="min-h-10 rounded-xl border border-border bg-paper px-3 text-sm font-bold"
+                  />
+                  <button
+                    type="button"
+                    className={claseBotonAdmin}
+                    disabled={!franjaExtra || !horaExtra || pendiente}
+                    onClick={() =>
+                      ejecutar(
+                        () => ponerAHora(ficha.id, franjaExtra, horaExtra),
+                        publicado
+                          ? "Hora puesta. Le llegará un email con su nueva hora."
+                          : "Hora puesta.",
+                        () => setFranjaExtra(""),
+                      )
+                    }
+                  >
+                    {publicado ? "Poner a esta hora y avisar por email" : "Poner a esta hora"}
                   </button>
                 </div>
               )}
@@ -383,10 +459,10 @@ export function FichaAdmin({
           </Caja>
 
           {ficha.estado === "cerrada" ? (
-            <Caja titulo="Excluir del sorteo">
+            <Caja titulo="Excluir del reparto">
               <p className="mb-2 text-sm text-muted-ink">
                 Tras el cierre no se borra nada: si es un duplicado o una baja, se excluye con su
-                motivo. La huella no cambia y la persona verificadora recibe las exclusiones.
+                motivo y se queda sin hora.
               </p>
               {ficha.excluidaMotivo ? (
                 <button
@@ -414,11 +490,11 @@ export function FichaAdmin({
                     onClick={() =>
                       ejecutar(
                         () => cambiarExclusion(ficha.id, motivo, true),
-                        "Excluida del sorteo.",
+                        "Excluida del reparto.",
                       )
                     }
                   >
-                    Excluir del sorteo
+                    Excluir del reparto
                   </button>
                 </div>
               )}
@@ -427,8 +503,8 @@ export function FichaAdmin({
             <Caja titulo="Borrar la inscripción">
               <p className="mb-2 text-sm text-muted-ink">
                 Para duplicados o bajas pedidas por teléfono. Se borran todos sus datos
-                {despuesDelSorteo ? " y su hora queda libre" : ""}; en la auditoría queda una línea
-                sin datos personales.
+                {publicado ? " y su hora queda libre" : ""}; en la auditoría queda una línea sin
+                datos personales.
               </p>
               {!confirmarBorrado ? (
                 <button

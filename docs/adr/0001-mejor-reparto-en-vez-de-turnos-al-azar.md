@@ -1,5 +1,7 @@
 # El sorteo busca el mejor reparto y el azar solo desempata
 
+> **Sustituido en parte por el [ADR 0002](0002-sin-sorteo-revision-y-asignacion-a-mano.md) (19-10-2026):** ya no hay sorteo, semilla pública ni huella. Sigue vigente el reparto leximin con la regla antitruco; el desempate es una regla fija y el admin revisa el reparto antes de publicarlo.
+
 El encargo proponía turnos al azar (_random serial dictatorship_): se ordena a las familias al azar y cada una se lleva su mejor opción libre. Lo descartamos porque, con 120 huecos para hasta 119 familias, a quien le toca el final de la lista puede quedarle lo peor aunque exista otro reparto en el que todas tengan una favorita. En su lugar, el sorteo calcula el **reparto leximin** sobre niveles de satisfacción (favorita 1ª…6ª, «nos va bien», imposible): primero minimiza cuántas familias quedan en el peor nivel, después en el siguiente, y así sucesivamente. La semilla pública (huella de la lista al cierre + número de la ONCE) solo desempata entre repartos igual de buenos y elige el hueco de 5 minutos dentro de la franja.
 
 ## Consequences

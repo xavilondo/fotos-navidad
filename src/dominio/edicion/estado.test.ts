@@ -27,7 +27,7 @@ describe("calcularEstado", () => {
     expect(calcularEstado(marcas.cierraEn, marcas)).toBe("cerrada");
   });
 
-  it("sigue cerrada hasta que se publica el sorteo, aunque pase la fecha de cambios", () => {
+  it("sigue cerrada hasta que se publica el reparto, aunque pase la fecha de cambios", () => {
     expect(calcularEstado(ms(marcas.cambiosHasta, 1), marcas)).toBe("cerrada");
   });
 

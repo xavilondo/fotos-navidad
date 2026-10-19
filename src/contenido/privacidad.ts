@@ -67,7 +67,7 @@ export const PRIVACIDAD: Record<
       {
         titulo: "Para qué los usamos",
         parrafos: [
-          "Solo para organizar la sesión de fotos de Navidad: la inscripción, el sorteo de las " +
+          "Solo para organizar la sesión de fotos de Navidad: la inscripción, el reparto de las " +
             "horas, los cambios de hora y los avisos por email. Con ellos preparamos también la " +
             "agenda del fotógrafo y la lista de lotes que cobra la tesorería del AFA.",
           "No los usamos para nada más: ni publicidad, ni listas de correo, ni los cedemos a nadie. " +
@@ -88,7 +88,7 @@ export const PRIVACIDAD: Record<
         titulo: "Compensación para el año que viene (opcional)",
         parrafos: [
           "En el último paso hay una segunda casilla, opcional y sin marcar, para que guardemos " +
-            "vuestro resultado de este año y compensaros en el sorteo del año que viene si no os toca " +
+            "vuestro resultado de este año y compensaros en el reparto del año que viene si no os toca " +
             "ninguna favorita. Es una finalidad aparte y solo la usamos si la marcáis.",
           "Si la marcáis, al cerrar la edición guardamos solo tres cosas: una clave sacada de " +
             "vuestro email con una clave secreta del AFA (un HMAC, que no permite recuperar el " +
@@ -115,8 +115,6 @@ export const PRIVACIDAD: Record<
             "entregar las fotos. La agenda nunca se envía por email.",
           "La tesorería del AFA recibe la lista de lotes para cobrarlos: nombre del adulto, si sois " +
             "socios, lotes, archivo digital y total.",
-          "La persona verificadora (de la junta, sin acceso al panel) recibe los datos del sorteo " +
-            "sin nombres, repite el cálculo y certifica que el resultado es correcto.",
         ],
       },
       {
@@ -159,29 +157,27 @@ export const PRIVACIDAD: Record<
             "registro de cambios.",
           "El registro de cambios se anonimiza al cerrar la edición: sin nombres, emails ni " +
             "teléfonos.",
-          "Las copias de seguridad (una cifrada antes del sorteo y otra al cierre) se borran con " +
-            "todo lo demás.",
+          "Las copias de seguridad (una cifrada antes de publicar el reparto y otra al cierre) se " +
+            "borran con todo lo demás.",
           "El fotógrafo borra la agenda al entregar las fotos. El AFA borra sus listas al cerrar la " +
             "edición, salvo los datos de contabilidad que necesite, sin nombres de peques.",
           "La clave de compensación, solo si marcasteis la casilla: hasta que se aplica en la " +
             "edición siguiente y 13 meses como máximo.",
-          "Las cifras del sorteo (cuántas familias tuvieron cada preferencia) se guardan sin límite, " +
+          "Las cifras del reparto (cuántas familias tuvieron cada preferencia) se guardan sin límite, " +
             "porque no identifican a nadie.",
         ],
       },
       {
-        titulo: "El sorteo",
+        titulo: "El reparto de las horas",
         parrafos: [
-          "Las horas se reparten con un sorteo automático: un programa calcula el mejor reparto " +
-            "posible según las preferencias de todas las familias y usa la suerte solo para " +
-            "desempatar, con el número del Cupón Diario de la ONCE como semilla pública. Todas las " +
-            "familias tienen hora: el sorteo solo decide cuál. Da igual cuándo os apuntéis.",
-          "Antes de conocer el número publicamos la huella de la lista de inscripciones, para que " +
-            "nadie pueda cambiarla después. Una persona verificadora de la junta, que no administra " +
-            "la web, repite el sorteo con los datos sin nombres y certifica el resultado. El código " +
-            "del reparto es público.",
+          "Al cerrar la inscripción, un programa calcula el mejor reparto posible según las " +
+            "preferencias de todas las familias. No hay sorteo y da igual cuándo os apuntéis. " +
+            "Todas las familias tienen hora. El código del reparto es público.",
+          "El AFA revisa el resultado antes de publicarlo. Si una familia solo puede ir a horas que " +
+            "ya están llenas, la llama o le escribe para buscarle un hueco en una hora que le vaya " +
+            "bien.",
           "Lo explicamos paso a paso, con las cifras de cada año, en «¿Cómo repartimos las horas?» " +
-            "(/sorteo).",
+            "(/reparto).",
         ],
       },
       {
@@ -300,7 +296,7 @@ export const PRIVACIDAD: Record<
       {
         titulo: "Per a què les fem servir",
         parrafos: [
-          "Només per a organitzar la sessió de fotos de Nadal: la inscripció, el sorteig de les " +
+          "Només per a organitzar la sessió de fotos de Nadal: la inscripció, el repartiment de les " +
             "hores, els canvis d'hora i els avisos per correu. Amb elles preparem també l'agenda del " +
             "fotògraf i la llista de lots que cobra la tresoreria de l'AFA.",
           "No les fem servir per a res més: ni publicitat, ni llistes de correu, ni les cedim a " +
@@ -322,7 +318,7 @@ export const PRIVACIDAD: Record<
         titulo: "Compensació per a l'any que ve (opcional)",
         parrafos: [
           "En l'últim pas hi ha una segona casella, opcional i sense marcar, perquè guardem el " +
-            "vostre resultat d'enguany i us compensem en el sorteig de l'any que ve si no us toca cap " +
+            "vostre resultat d'enguany i us compensem en el repartiment de l'any que ve si no us toca cap " +
             "favorita. És una finalitat a banda i només la fem servir si la marqueu.",
           "Si la marqueu, en tancar l'edició guardem només tres coses: una clau traguda del vostre " +
             "correu amb una clau secreta de l'AFA (un HMAC, que no permet recuperar el correu), " +
@@ -349,8 +345,6 @@ export const PRIVACIDAD: Record<
             "d'esborrar-la en entregar les fotos. L'agenda mai s'envia per correu.",
           "La tresoreria de l'AFA rep la llista de lots per a cobrar-los: nom de la persona adulta, " +
             "si sou socis, lots, arxiu digital i total.",
-          "La persona verificadora (de la junta, sense accés al panell) rep les dades del sorteig " +
-            "sense noms, repetix el càlcul i certifica que el resultat és correcte.",
         ],
       },
       {
@@ -393,30 +387,28 @@ export const PRIVACIDAD: Record<
           "Si cancel·leu la inscripció, s'esborra en el moment. Només queda una línia anònima en el " +
             "registre de canvis.",
           "El registre de canvis s'anonimitza en tancar l'edició: sense noms, correus ni telèfons.",
-          "Les còpies de seguretat (una xifrada abans del sorteig i una altra al tancament) " +
-            "s'esborren amb tota la resta.",
+          "Les còpies de seguretat (una xifrada abans de publicar el repartiment i una altra al " +
+            "tancament) s'esborren amb tota la resta.",
           "El fotògraf esborra l'agenda en entregar les fotos. L'AFA esborra les seues llistes en " +
             "tancar l'edició, llevat de les dades de comptabilitat que necessite, sense noms de " +
             "xiquets.",
           "La clau de compensació, només si vau marcar la casella: fins que s'aplica en l'edició " +
             "següent i 13 mesos com a màxim.",
-          "Les xifres del sorteig (quantes famílies van tindre cada preferència) es guarden sense " +
+          "Les xifres del repartiment (quantes famílies van tindre cada preferència) es guarden sense " +
             "límit, perquè no identifiquen ningú.",
         ],
       },
       {
-        titulo: "El sorteig",
+        titulo: "El repartiment de les hores",
         parrafos: [
-          "Les hores es repartixen amb un sorteig automàtic: un programa calcula el millor " +
-            "repartiment possible segons les preferències de totes les famílies i usa la sort només " +
-            "per a desempatar, amb el número del Cupó Diari de l'ONCE com a llavor pública. Totes " +
-            "les famílies tenen hora: el sorteig només decidix quina. És igual quan us apunteu.",
-          "Abans de conéixer el número publiquem l'empremta de la llista d'inscripcions, perquè " +
-            "ningú la puga canviar després. Una persona verificadora de la junta, que no administra " +
-            "la web, repetix el sorteig amb les dades sense noms i certifica el resultat. El codi " +
-            "del repartiment és públic.",
+          "En tancar la inscripció, un programa calcula el millor repartiment possible segons les " +
+            "preferències de totes les famílies. No hi ha sorteig i és igual quan us apunteu. " +
+            "Totes les famílies tenen hora. El codi del repartiment és públic.",
+          "L'AFA revisa el resultat abans de publicar-lo. Si una família només pot anar a hores que " +
+            "ja estan plenes, la crida o li escriu per a buscar-li un lloc en una hora que li vaja " +
+            "bé.",
           "Ho expliquem pas a pas, amb les xifres de cada any, en «Com repartim les hores?» " +
-            "(/sorteo).",
+            "(/reparto).",
         ],
       },
       {
@@ -494,7 +486,7 @@ export const TABLA_PRIVACIDAD: Record<"es" | "va", { epigrafe: string; texto: st
     { epigrafe: "Responsable", texto: "AFA CEI Las Palmeras ([NIF]) · [email del AFA]." },
     {
       epigrafe: "Finalidad",
-      texto: "Organizar la sesión de fotos: inscripción, sorteo de horas, cambios y avisos.",
+      texto: "Organizar la sesión de fotos: inscripción, reparto de horas, cambios y avisos.",
     },
     {
       epigrafe: "Legitimación",
@@ -516,7 +508,7 @@ export const TABLA_PRIVACIDAD: Record<"es" | "va", { epigrafe: string; texto: st
     { epigrafe: "Responsable", texto: "AFA CEI Las Palmeras ([NIF]) · [email del AFA]." },
     {
       epigrafe: "Finalitat",
-      texto: "Organitzar la sessió de fotos: inscripció, sorteig d'hores, canvis i avisos.",
+      texto: "Organitzar la sessió de fotos: inscripció, repartiment d'hores, canvis i avisos.",
     },
     {
       epigrafe: "Legitimació",

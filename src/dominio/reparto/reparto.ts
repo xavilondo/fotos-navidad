@@ -1,17 +1,9 @@
-import { FlujoAzar, calcularSemilla } from "./azar";
-import {
-  calcularHuella,
-  jsonCanonico,
-  ListaInvalida,
-  sha256Hex,
-  validarListaCanonica,
-} from "./canonico";
-import type { ListaCanonica } from "./canonico";
+import { ListaInvalida, validarListaCanonica, type ListaCanonica } from "./canonico";
 import { contarPorNivel, costeDeNivel, nivelEn, NIVEL_IMPOSIBLE, type Nivel } from "./niveles";
 import { RepartoOptimo } from "./optimo";
 
 /** Versión del algoritmo. Cambia si cambia cualquier detalle que altere el resultado. */
-export const VERSION_REPARTO = "reparto-v1.0";
+export const VERSION_REPARTO = "reparto-v2.0";
 
 /** `hueco` = `${codigoFranja}.${i}`: el i-ésimo (desde 0) hueco libre de la franja, en orden cronológico. */
 export type Asignacion = { id: string; franja: string; hueco: string; nivel: number };
@@ -37,14 +29,10 @@ export type EstadisticasReparto = {
 
 export type ResultadoReparto = {
   version: typeof VERSION_REPARTO;
-  huella: string;
-  semilla: string;
   /** Ordenadas por id. */
   asignaciones: Asignacion[];
   estadisticas: EstadisticasReparto;
-  /** SHA-256 hex del JSON canónico de `[{id, hueco}]` ordenado por id. */
-  huellaResultado: string;
-  /** Milisegundos de cálculo. No entra en ninguna huella. */
+  /** Milisegundos de cálculo. */
   ms: number;
 };
 
@@ -52,7 +40,7 @@ export type Diagnostico = {
   total: number;
   huecosLibres: number;
   cabe: boolean;
-  /** Cuentas por nivel del óptimo leximin (paso 1), sin desempate. */
+  /** Cuentas por nivel del óptimo leximin (paso 1). */
   porNivel: Record<Nivel, number>;
   /** Existe un reparto en el que toda familia con favoritas tiene una. */
   todasConFavorita: boolean;
@@ -118,21 +106,16 @@ function optimoLeximin(p: Problema): RepartoOptimo {
 const rango = (n: number) => Array.from({ length: n }, (_, i) => i);
 
 /**
- * El sorteo completo (§5.3 y §5.4). Determinista: depende solo de la lista, del número de la ONCE
- * y de las exclusiones.
+ * El reparto completo (§5.3). Determinista y sin azar: depende solo de la lista y de las exclusiones.
  *
- * Las exclusiones se quitan antes de todo (antes de π): las excluidas no consumen aleatoriedad ni
- * cuentan en B. La huella sigue siendo la de la lista completa, la que se publicó al cierre.
+ * Entre los repartos igual de buenos decide una regla fija: las inscripciones eligen en orden de id
+ * (aleatorio desde que se crean, así que apuntarse antes no da ventaja) y, a igual nivel, gana la
+ * franja más temprana. El admin revisa el resultado antes de publicarlo y puede mover a cualquier
+ * familia a mano.
  */
-export function repartir(
-  lista: ListaCanonica,
-  numeroOnce: string,
-  opciones: OpcionesReparto = {},
-): ResultadoReparto {
+export function repartir(lista: ListaCanonica, opciones: OpcionesReparto = {}): ResultadoReparto {
   const inicio = performance.now();
   validarListaCanonica(lista);
-  const huella = calcularHuella(lista);
-  const semilla = calcularSemilla(huella, numeroOnce);
   const p = plantear(lista, opciones.exclusiones);
   const n = p.inscripciones.length;
   if (n > p.huecosLibres) {
@@ -141,29 +124,20 @@ export function repartir(
     );
   }
 
-  // El flujo de aleatoriedad se usa siempre en este orden: π, σ y los huecos de cada franja.
-  const azar = new FlujoAzar(semilla);
-  const pi = azar.permutar(rango(n));
-  const sigma = azar.permutar(rango(lista.franjas.length));
-  const barajados = new Map<number, number[]>();
-  for (const k of p.asignables) barajados.set(k, azar.permutar(rango(lista.franjas[k].huecos)));
-
-  // Paso 1: óptimo leximin. Paso 2: desempate en orden π, franjas por (nivel, posición en σ).
+  // Paso 1: óptimo leximin. Paso 2: desempate en orden de id (el de la lista), franjas por
+  // (nivel, orden cronológico).
   const optimo = optimoLeximin(p);
-  const posicionSigma = new Map(sigma.map((k, pos) => [k, pos]));
-  for (const i of pi) {
+  for (let i = 0; i < n; i++) {
     const candidatas = rango(p.asignables.length).sort(
-      (x, y) =>
-        p.niveles[i][x] - p.niveles[i][y] ||
-        posicionSigma.get(p.asignables[x])! - posicionSigma.get(p.asignables[y])!,
+      (x, y) => p.niveles[i][x] - p.niveles[i][y] || x - y,
     );
     optimo.fijarPrimeraPosible(i, candidatas);
   }
 
-  // Paso 3: los huecos barajados de cada franja se dan a sus inscripciones en orden π.
+  // Paso 3: los huecos de cada franja, en orden cronológico, se dan a sus inscripciones en orden de id.
   const usados = new Map<number, number>();
   const asignaciones: Asignacion[] = Array(n);
-  for (const i of pi) {
+  for (let i = 0; i < n; i++) {
     const g = optimo.asignacion[i];
     const k = p.asignables[g];
     const u = usados.get(k) ?? 0;
@@ -172,28 +146,34 @@ export function repartir(
     asignaciones[i] = {
       id: p.inscripciones[i].id,
       franja: codigo,
-      hueco: `${codigo}.${barajados.get(k)![u]}`,
+      hueco: `${codigo}.${u}`,
       nivel: p.niveles[i][g],
     };
   }
 
   return {
     version: VERSION_REPARTO,
-    huella,
-    semilla,
     asignaciones,
     estadisticas: calcularEstadisticas(p.inscripciones, asignaciones),
-    huellaResultado: calcularHuellaResultado(asignaciones),
     ms: performance.now() - inicio,
   };
 }
 
-/** SHA-256 hex del JSON canónico de `[{id, hueco}]`, ordenado por id. */
-export function calcularHuellaResultado(asignaciones: readonly Asignacion[]): string {
-  const pares = asignaciones
-    .map(({ id, hueco }) => ({ id, hueco }))
-    .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
-  return sha256Hex(jsonCanonico(pares));
+/**
+ * Las estadísticas de un reparto que ya existe (el calculado más los ajustes a mano del admin): por
+ * lo que le ha tocado a cada inscripción con hora, según sus preferencias de la lista.
+ */
+export function evaluarReparto(
+  lista: ListaCanonica,
+  horas: readonly { id: string; franja: string }[],
+): EstadisticasReparto {
+  const franjaDe = new Map(horas.map((h) => [h.id, h.franja]));
+  const conHora = lista.inscripciones.filter((i) => franjaDe.has(i.id));
+  const asignaciones = conHora.map((ins) => {
+    const franja = franjaDe.get(ins.id)!;
+    return { id: ins.id, franja, hueco: franja, nivel: nivelEn(ins, franja) };
+  });
+  return calcularEstadisticas(conHora, asignaciones);
 }
 
 function calcularEstadisticas(
@@ -223,7 +203,7 @@ function calcularEstadisticas(
 }
 
 /**
- * Diagnóstico para el panel (§5.5): el paso 1 sobre los datos actuales, sin semilla.
+ * Diagnóstico para el panel (§5.4): el paso 1 sobre los datos actuales.
  *
  * Si no caben (más inscripciones que huecos libres), no hay reparto posible: `cabe` es `false`,
  * `porNivel` y `enImposible` van a cero y `todasConFavorita` es `false`.

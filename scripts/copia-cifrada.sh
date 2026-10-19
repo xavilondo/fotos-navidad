@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copia cifrada de la base de datos (antes del sorteo y al cierre). Se borra con la purga.
+# Copia cifrada de la base de datos (antes de publicar el reparto y al cierre). Se borra con la purga.
 #   pnpm copia:cifrada            → copias/fotos-AAAAMMDD-HHMM.sql.gz.gpg
 # Pide una contraseña (guardadla en el gestor de contraseñas del AFA, NUNCA junto a la copia).
 # Para restaurar: gpg -d copias/<archivo>.gpg | gunzip | psql "$DATABASE_URL"

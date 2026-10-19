@@ -2,8 +2,7 @@
  * Implementaciones de referencia del reparto, lentas pero obvias. Solo las usan los tests para
  * comprobar que `repartir` hace exactamente lo que dice el spec. No las uses en la app.
  */
-import { FlujoAzar, calcularSemilla } from "./azar";
-import { calcularHuella, type ListaCanonica } from "./canonico";
+import type { ListaCanonica } from "./canonico";
 import { costeDeNivel, nivelEn, type Nivel } from "./niveles";
 
 type Planteado = {
@@ -11,30 +10,22 @@ type Planteado = {
   asignables: number[];
   capacidades: number[];
   niveles: Nivel[][];
-  pi: number[];
-  /** Candidatas de cada inscripción (índices de asignables) por (nivel, posición en σ). */
+  /** Candidatas de cada inscripción (índices de asignables) por (nivel, orden cronológico). */
   candidatas: number[][];
 };
 
-/** Prepara el problema y saca π y σ del flujo exactamente como dice el spec. */
-function plantear(lista: ListaCanonica, numeroOnce: string, exclusiones: string[]): Planteado {
+/** Prepara el problema exactamente como dice el spec: las inscripciones eligen en orden de id. */
+function plantear(lista: ListaCanonica, exclusiones: string[]): Planteado {
   const inscripciones = lista.inscripciones.filter((i) => !exclusiones.includes(i.id));
   const asignables = lista.franjas.flatMap((f, k) => (f.huecos > 0 ? [k] : []));
   const capacidades = asignables.map((k) => lista.franjas[k].huecos);
   const niveles = inscripciones.map((ins) =>
     asignables.map((k) => nivelEn(ins, lista.franjas[k].codigo)),
   );
-  const azar = new FlujoAzar(calcularSemilla(calcularHuella(lista), numeroOnce));
-  const pi = azar.permutar(inscripciones.map((_, i) => i));
-  const sigma = azar.permutar(lista.franjas.map((_, k) => k));
   const candidatas = niveles.map((fila) =>
-    asignables
-      .map((_, g) => g)
-      .sort(
-        (x, y) => fila[x] - fila[y] || sigma.indexOf(asignables[x]) - sigma.indexOf(asignables[y]),
-      ),
+    asignables.map((_, g) => g).sort((x, y) => fila[x] - fila[y] || x - y),
   );
-  return { inscripciones, asignables, capacidades, niveles, pi, candidatas };
+  return { inscripciones, asignables, capacidades, niveles, candidatas };
 }
 
 export type ResultadoReferencia = {
@@ -63,14 +54,13 @@ function compararVectores(a: number[], b: number[]): number {
 /**
  * Fuerza bruta: enumera todos los repartos posibles por franjas, se queda con los de mejor vector
  * leximin (comparando vectores, sin costes) y aplica el desempate al pie de la letra: para cada
- * inscripción en orden π, la primera candidata que aparece en algún reparto óptimo superviviente.
+ * inscripción en orden de id, la primera candidata que aparece en algún reparto óptimo superviviente.
  */
 export function repartoFuerzaBruta(
   lista: ListaCanonica,
-  numeroOnce: string,
   exclusiones: string[] = [],
 ): ResultadoFuerzaBruta {
-  const p = plantear(lista, numeroOnce, exclusiones);
+  const p = plantear(lista, exclusiones);
   const n = p.inscripciones.length;
   const ocupacion = p.capacidades.map(() => 0);
   const actual: number[] = [];
@@ -101,7 +91,7 @@ export function repartoFuerzaBruta(
   if (mejorVector === null) throw new Error("No caben");
   const optimos = mejores.length;
 
-  for (const i of p.pi) {
+  for (let i = 0; i < n; i++) {
     const f = p.candidatas[i].find((g) => mejores.some((r) => r[i] === g))!;
     mejores = mejores.filter((r) => r[i] === f);
   }
@@ -185,21 +175,20 @@ export function costeMinimoIngenuo(
 }
 
 /**
- * La versión ingenua del paso 2: para cada inscripción en orden π y cada candidata, recalcula un
+ * La versión ingenua del paso 2: para cada inscripción en orden de id y cada candidata, recalcula un
  * flujo de coste mínimo completo con esa franja forzada y se queda con la primera que alcanza C*.
  */
 export function repartoIngenuo(
   lista: ListaCanonica,
-  numeroOnce: string,
   exclusiones: string[] = [],
 ): ResultadoReferencia & { costeOptimo: bigint } {
-  const p = plantear(lista, numeroOnce, exclusiones);
+  const p = plantear(lista, exclusiones);
   const base = BigInt(p.inscripciones.length + 1);
   const costes = p.niveles.map((fila) => fila.map((n) => costeDeNivel(n, base)));
   const optimo = costeMinimoIngenuo(costes, p.capacidades);
   if (optimo === null) throw new Error("No caben");
   const forzadas = new Map<number, number>();
-  for (const i of p.pi) {
+  for (let i = 0; i < p.inscripciones.length; i++) {
     for (const g of p.candidatas[i]) {
       forzadas.set(i, g);
       if (costeMinimoIngenuo(costes, p.capacidades, forzadas) === optimo) break;

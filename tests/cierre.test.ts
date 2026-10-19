@@ -5,8 +5,7 @@ import * as schema from "@/servidor/db/schema";
 import { claveCompensacion, purgarEdicion } from "@/servidor/edicion/cierre";
 import { edicionActual } from "@/servidor/edicion/repositorio";
 import { crearInscripcion } from "@/servidor/inscripciones/operaciones";
-import { asegurarHuella } from "@/servidor/sorteo/huella";
-import { lanzarSorteo } from "@/servidor/sorteo/lanzar";
+import { calcularReparto, publicarReparto } from "@/servidor/reparto/reparto";
 import { baseDeDatos, edicionEn, INSCRIPCION_VALIDA, moverEdicion } from "./ayuda/bd";
 
 const ADMIN = { id: "x", usuario: "marta", nombre: "Marta" };
@@ -31,8 +30,8 @@ describe("cerrar la edición", () => {
       CTX,
     );
     await moverEdicion(db, "cerrada");
-    await asegurarHuella(db);
-    await lanzarSorteo(db, ADMIN, "48213", CTX.urlApp);
+    await calcularReparto(db, ADMIN);
+    await publicarReparto(db, ADMIN, CTX.urlApp);
 
     expect((await purgarEdicion(db, ADMIN, ed.id, "navidad-2026")).estado).toBe("no_terminada");
     await db.update(schema.edicion).set({ cambiosHasta: sql`now() - interval '1 minute'` });
@@ -59,9 +58,9 @@ describe("cerrar la edición", () => {
     const [c] = await db.select().from(schema.compensacion);
     expect(c.hmac).toBe(claveCompensacion("si@example.com", process.env.CLAVE_COMPENSACION));
     expect(c.caducaEn.getTime() - Date.now()).toBeGreaterThan(390 * 86_400_000);
-    const [s] = await db.select().from(schema.sorteo);
-    expect(s.listaCanonica).toBeNull();
-    expect(s.estadisticas).not.toBeNull();
+    const [reparto] = await db.select().from(schema.reparto);
+    expect(reparto).toMatchObject({ calculadoPor: "admin", publicadoPor: "admin" });
+    expect(reparto.estadisticas).not.toBeNull();
     const auditoria = JSON.stringify(await db.select().from(schema.auditoria));
     expect(auditoria).not.toMatch(/example\.com|Marta García|admin:marta/);
     expect(await edicionActual(db)).toBeNull();

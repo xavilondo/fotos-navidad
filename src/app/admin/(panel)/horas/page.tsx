@@ -21,6 +21,7 @@ export default async function PaginaHoras() {
       id: t.hueco.id,
       inicio: t.hueco.inicio,
       bloqueado: t.hueco.bloqueado,
+      extra: t.hueco.extra,
       franja: t.franja.codigo,
       inscripcionId: t.asignacion.inscripcionId,
       nivel: t.asignacion.nivel,
@@ -36,16 +37,17 @@ export default async function PaginaHoras() {
     .orderBy(asc(t.hueco.inicio));
   const f = formateadorFechas("es-ES", edicion.zona);
   const dias = [...new Set(huecos.map((h) => mayuscula(f.dia(h.inicio))))];
-  const libres = huecos.filter((h) => !h.bloqueado && !h.inscripcionId).length;
-  const sinSorteo = actual.estado !== "publicada" && actual.estado !== "terminada";
+  const libres = huecos.filter((h) => !h.bloqueado && !h.extra && !h.inscripcionId).length;
+  const conHoras = huecos.some((h) => h.inscripcionId);
+  const borrador = actual.estado === "cerrada" && conHoras;
 
   return (
     <>
       <TituloPagina
         descripcion={
-          sinSorteo
-            ? "Las horas se asignan al lanzar el sorteo. De momento se ven los huecos de la edición."
-            : `${libres} huecos libres. Para mover a una familia, abrid su ficha.`
+          !conHoras
+            ? "Las horas se asignan al calcular el reparto. De momento se ven los huecos de la edición."
+            : `${borrador ? "Reparto en borrador: las familias aún no lo ven. " : ""}${libres} huecos libres. Para mover a una familia, abrid su ficha.`
         }
       >
         Horas
@@ -66,7 +68,10 @@ export default async function PaginaHoras() {
                   .filter((h) => mayuscula(f.dia(h.inicio)) === dia)
                   .map((h) => (
                     <tr key={h.id} className={h.bloqueado ? "text-muted-ink" : undefined}>
-                      <td className={`${claseTd} font-mono`}>{f.hora(h.inicio)}</td>
+                      <td className={`${claseTd} font-mono`}>
+                        {f.hora(h.inicio)}
+                        {h.extra && <span className="ml-1 font-sans text-xs">(extra)</span>}
+                      </td>
                       <td className={claseTd}>
                         {h.bloqueado ? (
                           <i>bloqueado</i>
@@ -78,9 +83,9 @@ export default async function PaginaHoras() {
                             >
                               {h.nombre}
                             </Link>
-                            {h.origen !== "sorteo" && (
+                            {h.origen !== "reparto" && (
                               <span className="ml-1 text-xs text-muted-ink">
-                                ({h.origen === "admin" ? "movida" : "cambiada"})
+                                ({h.origen === "admin" ? "puesta por el AFA" : "cambiada"})
                               </span>
                             )}
                           </>

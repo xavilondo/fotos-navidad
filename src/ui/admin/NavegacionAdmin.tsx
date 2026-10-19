@@ -11,7 +11,7 @@ import { NOMBRE_ESTADO } from "./estados";
 const ENLACES = [
   { href: "/admin", texto: "Panel" },
   { href: "/admin/inscripciones", texto: "Inscripciones" },
-  { href: "/admin/sorteo", texto: "Sorteo" },
+  { href: "/admin/reparto", texto: "Reparto" },
   { href: "/admin/horas", texto: "Horas" },
   { href: "/admin/exportaciones", texto: "Exportaciones" },
   { href: "/admin/auditoria", texto: "Auditoría" },

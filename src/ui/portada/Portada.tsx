@@ -8,8 +8,7 @@ import { Cabecera } from "@/ui/marca/Cabecera";
 import { Tarjeta } from "@/ui/marca/Tarjeta";
 import { Pegar } from "@/ui/movimiento/Pegar";
 import { CuentaAtras } from "./CuentaAtras";
-import { CopiarHuella } from "./CopiarHuella";
-import type { DatosPublicosSorteo } from "@/servidor/sorteo/lanzar";
+import type { DatosPublicosReparto } from "@/servidor/reparto/reparto";
 import { AvisoBorrador, CtaInscripcion } from "./CtaInscripcion";
 import { EnlacePerdido } from "./EnlacePerdido";
 
@@ -45,10 +44,10 @@ const UN_DIA = 86_400_000;
 
 export async function Portada({
   edicion,
-  sorteo,
+  reparto,
 }: {
   edicion: EdicionActual;
-  sorteo: DatosPublicosSorteo | null;
+  reparto: DatosPublicosReparto | null;
 }) {
   const turnstile = process.env.TURNSTILE_SECRET_KEY
     ? (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? null)
@@ -125,11 +124,11 @@ export async function Portada({
         )}
 
         <Pegar indice={8}>
-          <TarjetaEstado edicion={edicion} sorteo={sorteo} />
+          <TarjetaEstado edicion={edicion} reparto={reparto} />
         </Pegar>
 
         <Link
-          href="/sorteo"
+          href="/reparto"
           className="mx-auto mt-5 block min-h-11 w-fit py-2.5 text-center text-[14.5px] font-extrabold text-green-d underline underline-offset-[3px]"
         >
           {t("comoRepartimos")}
@@ -157,16 +156,16 @@ export async function Portada({
 
 async function TarjetaEstado({
   edicion,
-  sorteo,
+  reparto,
 }: {
   edicion: EdicionActual;
-  sorteo: DatosPublicosSorteo | null;
+  reparto: DatosPublicosReparto | null;
 }) {
   const t = await getTranslations("portada.estado");
   const fechas = formateadorFechas(await getLocale(), edicion.zona);
   const { estado, abreEn, cierraEn, cambiosHasta, ahora } = edicion;
   const b = (c: React.ReactNode) => <b className="font-extrabold">{c}</b>;
-  const diaSorteo = new Date(cierraEn.getTime() + UN_DIA);
+  const diaReparto = new Date(cierraEn.getTime() + UN_DIA);
   const texto = "mt-1.5 text-[14.5px] leading-[1.45]";
 
   switch (estado) {
@@ -194,7 +193,7 @@ async function TarjetaEstado({
             {t("abierta.pastilla")}
           </Pastilla>
           <CuentaAtras objetivo={cierraEn.toISOString()} ahoraServidor={ahora.toISOString()} />
-          <p className={texto}>{t.rich("abierta.texto", { b, dia: fechas.dia(diaSorteo) })}</p>
+          <p className={texto}>{t.rich("abierta.texto", { b, dia: fechas.dia(diaReparto) })}</p>
           <span className="absolute right-4 -bottom-4 -rotate-6 font-mano text-2xl font-bold text-burg">
             {t("abierta.nota")}
           </span>
@@ -204,21 +203,10 @@ async function TarjetaEstado({
       return (
         <Tarjeta fondo="bg-su-s" cinta="sp" cintaLado="derecha" giro={0.8} className="mt-[18px]">
           <Pastilla color="bg-olive">{t("cerrada.pastilla")}</Pastilla>
-          {sorteo && (
-            <>
-              <p className={texto}>
-                {t.rich("cerrada.texto", { b, n: sorteo.inscripciones - sorteo.exclusiones })}
-              </p>
-              <CopiarHuella huella={sorteo.huella} />
-            </>
+          {reparto && (
+            <p className={texto}>{t.rich("cerrada.texto", { b, n: reparto.inscripciones })}</p>
           )}
-          <p className={texto}>
-            {t.rich("cerrada.sorteo", {
-              b,
-              dia: fechas.dia(diaSorteo),
-              diaCierre: fechas.dia(cierraEn),
-            })}
-          </p>
+          <p className={texto}>{t.rich("cerrada.reparto", { b, dia: fechas.dia(diaReparto) })}</p>
         </Tarjeta>
       );
     case "publicada":
@@ -232,15 +220,16 @@ async function TarjetaEstado({
               hora: fechas.hora(cambiosHasta),
             })}
           </p>
-          {sorteo?.estadisticas && (
+          {reparto?.estadisticas && (
             <div className="mt-3 grid grid-cols-3 gap-2">
               {[
-                [sorteo.estadisticas.porPreferencia.favorita[0], t("publicada.cifras.primera")],
+                [reparto.estadisticas.porPreferencia.favorita[0], t("publicada.cifras.primera")],
                 [
-                  sorteo.estadisticas.conFavorita - sorteo.estadisticas.porPreferencia.favorita[0],
+                  reparto.estadisticas.conFavorita -
+                    reparto.estadisticas.porPreferencia.favorita[0],
                   t("publicada.cifras.otra"),
                 ],
-                [sorteo.estadisticas.porPreferencia.imposible, t("publicada.cifras.imposible")],
+                [reparto.estadisticas.porPreferencia.imposible, t("publicada.cifras.imposible")],
               ].map(([n, etiqueta]) => (
                 <div
                   key={etiqueta as string}

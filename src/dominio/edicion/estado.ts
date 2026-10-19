@@ -5,7 +5,7 @@ export type MarcasEdicion = {
   abreEn: Date;
   cierraEn: Date;
   cambiosHasta: Date;
-  /** Cuándo se lanzó el sorteo; `null` mientras no se haya publicado el resultado. */
+  /** Cuándo se publicó el reparto; `null` mientras no se haya publicado. */
   publicadaEn: Date | null;
 };
 

@@ -10,7 +10,7 @@ import {
 import * as t from "@/servidor/db/schema";
 import type { BaseDatos } from "@/servidor/db/tipos";
 import { clasesDe, franjasDe } from "@/servidor/edicion/repositorio";
-import { listaActual } from "@/servidor/sorteo/lista";
+import { listaActual } from "@/servidor/reparto/lista";
 
 export type Resumen = {
   inscripciones: number;
@@ -197,7 +197,7 @@ export async function outboxPendiente(db: BaseDatos) {
 }
 
 export type DiagnosticoPanel = Diagnostico & {
-  /** Un reparto de prueba (semilla fija): orientativo, para ver cuántas tendrían su 1ª, otra favorita… */
+  /** El reparto que saldría ahora: orientativo, para ver cuántas tendrían su 1ª, otra favorita… */
   simulacion: EstadisticasReparto | null;
 };
 
@@ -214,7 +214,7 @@ export async function diagnosticoEnVivo(
   const d = diagnosticar(lista, { exclusiones: validas });
   let simulacion: EstadisticasReparto | null = null;
   try {
-    simulacion = d.cabe ? repartir(lista, "00000", { exclusiones: validas }).estadisticas : null;
+    simulacion = d.cabe ? repartir(lista, { exclusiones: validas }).estadisticas : null;
   } catch (e) {
     if (!(e instanceof RepartoImposible)) throw e;
   }

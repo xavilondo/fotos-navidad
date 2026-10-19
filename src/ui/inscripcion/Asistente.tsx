@@ -162,7 +162,7 @@ export default function Asistente({ datos }: { datos: DatosFormulario }) {
             editando={false}
             onAtras={atras}
             titulo={t(`pasos.${paso}.titulo`)}
-            nota={t(`pasos.${paso}.nota`, { diaSorteo: datos.textos.diaSorteo })}
+            nota={t(`pasos.${paso}.nota`, { diaReparto: datos.textos.diaReparto })}
           />
           <ContenidoPaso
             paso={paso}

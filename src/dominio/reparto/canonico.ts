@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { z } from "zod";
 
 /** Máximo de favoritas y de horas imposibles por inscripción. */
@@ -6,7 +5,7 @@ export const MAX_FAVORITAS = 6;
 export const MAX_IMPOSIBLES = 10;
 
 /**
- * La lista canónica (§5.2 del spec): lo único que entra en el sorteo. Sin nombres ni emails,
+ * La lista canónica (§5.2 del spec): lo único que entra en el reparto. Sin nombres ni emails,
  * solo un id aleatorio por inscripción y sus preferencias.
  *
  * - `franjas`, en orden cronológico; `huecos` cuenta solo los huecos **no** bloqueados.
@@ -64,7 +63,7 @@ export function construirListaCanonica(entrada: EntradaLista): ListaCanonica {
 
 /**
  * Comprueba que `valor` ya es una lista canónica (forma, coherencia y orden) y la devuelve tipada.
- * El reparto la exige: si la lista no estuviera en su forma canónica, la huella no sería la publicada.
+ * El reparto la exige: el orden de las inscripciones es el del desempate.
  */
 export function validarListaCanonica(valor: unknown): ListaCanonica {
   const lista = analizar(listaSchema, valor) as ListaCanonica;
@@ -113,42 +112,4 @@ function comprobarCoherencia(lista: ListaCanonica): void {
       vistas.add(c);
     }
   }
-}
-
-/**
- * JSON canónico: claves de los objetos ordenadas por unidades de código UTF-16 y sin espacios.
- * Cadenas y números se escriben como `JSON.stringify`. Coincide con RFC 8785 (JCS) para los datos
- * del reparto (cadenas y enteros) y, con claves ASCII, con
- * `json.dumps(v, sort_keys=True, separators=(",", ":"), ensure_ascii=False)` de Python.
- * Las propiedades `undefined` se omiten, como en JSON; números no finitos y otros tipos, error.
- */
-export function jsonCanonico(valor: unknown): string {
-  if (valor === null || typeof valor === "boolean" || typeof valor === "string") {
-    return JSON.stringify(valor);
-  }
-  if (typeof valor === "number") {
-    if (!Number.isFinite(valor)) throw new TypeError("JSON canónico: número no finito");
-    return JSON.stringify(valor);
-  }
-  if (Array.isArray(valor)) return `[${valor.map(jsonCanonico).join(",")}]`;
-  if (typeof valor === "object") {
-    const claves = Object.keys(valor)
-      .filter((k) => (valor as Record<string, unknown>)[k] !== undefined)
-      .sort();
-    const partes = claves.map(
-      (k) => `${JSON.stringify(k)}:${jsonCanonico((valor as Record<string, unknown>)[k])}`,
-    );
-    return `{${partes.join(",")}}`;
-  }
-  throw new TypeError(`JSON canónico: tipo no admitido (${typeof valor})`);
-}
-
-/** SHA-256 en hexadecimal (minúsculas) de los bytes UTF-8 de un texto. */
-export function sha256Hex(texto: string): string {
-  return createHash("sha256").update(texto, "utf8").digest("hex");
-}
-
-/** La huella: SHA-256 hex de los bytes UTF-8 del JSON canónico de la lista. */
-export function calcularHuella(lista: ListaCanonica): string {
-  return sha256Hex(jsonCanonico(lista));
 }

@@ -78,7 +78,7 @@ export async function enviarPendientes(
   let enviados = 0;
   let fallidos = 0;
   for (const [i, fila] of filas.entries()) {
-    // Resend admite 2 envíos por segundo: tras el sorteo salen ~120 emails seguidos.
+    // Resend admite 2 envíos por segundo: al publicar el reparto salen ~120 emails seguidos.
     if (i > 0 && process.env.RESEND_API_KEY) await new Promise((r) => setTimeout(r, 550));
     const datos = fila.datos as DatosEmail;
     try {

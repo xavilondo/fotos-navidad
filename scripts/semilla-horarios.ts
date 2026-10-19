@@ -2,13 +2,13 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { eq, sql } from "drizzle-orm";
 import { fechaHoraEnZona } from "@/dominio/edicion/tiempo";
-import { calcularHuella, construirListaCanonica, diagnosticar, repartir } from "@/dominio/reparto";
+import { construirListaCanonica, diagnosticar, repartir } from "@/dominio/reparto";
 import { registrarAuditoria } from "@/servidor/auditoria/registrar";
 import { conectar } from "@/servidor/db/conexion";
 import * as t from "@/servidor/db/schema";
 import { marcaObservaciones, rechazoSemillaRemota } from "@/servidor/edicion/ficticias";
 import { clasesDe, finUltimaSesion, franjasDe } from "@/servidor/edicion/repositorio";
-import { listaActual } from "@/servidor/sorteo/lista";
+import { listaActual } from "@/servidor/reparto/lista";
 import { generarToken, hashToken } from "@/servidor/seguridad/tokens";
 import { cargarEntorno, exigirBaseLocal } from "./entorno";
 import { generarFamiliasHorarios, PERFILES, VERSION_MODELO } from "./fixtures/familias-horarios";
@@ -56,11 +56,11 @@ try {
       .where(eq(t.edicion.slug, slug))
       .for("update");
     if (!edicion || edicion.purgadaEn) throw new Error("Edición no disponible");
-    const [sorteo] = await tx
-      .select({ id: t.sorteo.id })
-      .from(t.sorteo)
-      .where(eq(t.sorteo.edicionId, edicion.id));
-    if (sorteo) throw new Error("No se añaden pruebas a una edición con lista congelada o sorteo");
+    const [reparto] = await tx
+      .select({ id: t.reparto.id })
+      .from(t.reparto)
+      .where(eq(t.reparto.edicionId, edicion.id));
+    if (reparto) throw new Error("No se añaden pruebas a una edición con el reparto calculado");
     const [reloj] = await tx
       .select({ ahora: sql`clock_timestamp()`.mapWith(t.edicion.abreEn) })
       .from(t.edicion)
@@ -112,16 +112,13 @@ try {
         ...nuevas.map(({ id, favoritas, imposibles }) => ({ id, favoritas, imposibles })),
       ],
     });
-    const numeros = ["00000", "04821", "12345", "27106", "99999"];
-    const simulaciones = numeros.map((numero) => ({ numero, resultado: repartir(lista, numero) }));
-    for (const { resultado } of simulaciones) {
-      if (new Set(resultado.asignaciones.map((a) => a.hueco)).size !== objetivo)
-        throw new Error("El reparto repite huecos");
-    }
+    const resultado = repartir(lista);
+    if (new Set(resultado.asignaciones.map((a) => a.hueco)).size !== objetivo)
+      throw new Error("El reparto repite huecos");
     const porPerfil = PERFILES.map((perfil) => {
       const fs = familias.filter((f) => f.perfil === perfil);
       const ids = new Set(fs.map((f) => f.id));
-      const asignadas = simulaciones[0].resultado.asignaciones.filter((a) => ids.has(a.id));
+      const asignadas = resultado.asignaciones.filter((a) => ids.has(a.id));
       return {
         perfil,
         familias: fs.length,
@@ -194,7 +191,7 @@ try {
       ]);
       if (preferencias.length) await tx.insert(t.preferencia).values(preferencias);
       const leida = await listaActual(tx, edicion);
-      if (calcularHuella(leida) !== calcularHuella(lista))
+      if (JSON.stringify(leida) !== JSON.stringify(lista))
         throw new Error("Los datos insertados no coinciden con la simulación");
       await registrarAuditoria(tx, {
         edicionId: edicion.id,
@@ -206,7 +203,6 @@ try {
           insertadas: nuevas.length,
           total: objetivo,
           huecosLibres: libres,
-          huella: calcularHuella(lista),
         },
       });
     }
@@ -228,7 +224,7 @@ try {
         });
         return {
           total: parcial.inscripciones.length,
-          resultado: repartir(parcial, "00000").estadisticas,
+          resultado: repartir(parcial).estadisticas,
         };
       });
     return {
@@ -246,7 +242,7 @@ try {
       porPerfil,
       diagnostico: diagnosticar(lista),
       progresion,
-      simulaciones,
+      reparto: resultado,
       lista,
       familias,
     };
@@ -286,11 +282,10 @@ try {
         porPerfil: informe.porPerfil,
         diagnostico: informe.diagnostico,
         progresion: informe.progresion,
-        simulaciones: informe.simulaciones.map((s) => ({
-          numero: s.numero,
-          estadisticas: s.resultado.estadisticas,
-          ms: Math.round(s.resultado.ms),
-        })),
+        reparto: {
+          estadisticas: informe.reparto.estadisticas,
+          ms: Math.round(informe.reparto.ms),
+        },
         salida,
       },
       null,

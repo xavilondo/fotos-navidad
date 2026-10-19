@@ -7,7 +7,7 @@ import { registrarError } from "@/servidor/registro";
 
 /**
  * Las tareas del cron, también al paso: como mucho una vez por minuto, cualquier visita (después de
- * responder) calcula la huella al cierre y reintenta los emails pendientes. Así no dependen solo del
+ * responder) reintenta los emails pendientes y hace la limpieza. Así no dependen solo del
  * cron de Vercel, que en el plan Hobby solo puede ser diario.
  */
 export async function ticOportunista(db: BaseDatos) {

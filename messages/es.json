@@ -13,7 +13,7 @@
   "portada": {
     "meta": {
       "titulo": "{nombre} · AFA CEI Las Palmeras",
-      "descripcion": "Apuntaos a las fotos de Navidad de la escuela. Da igual cuándo os apuntéis: las horas se reparten con un sorteo justo y comprobable."
+      "descripcion": "Apuntaos a las fotos de Navidad de la escuela. Da igual cuándo os apuntéis: repartimos las horas según las preferencias de todas las familias."
     },
     "kicker": "¡Llega la Navidad!",
     "titulo": "Fotos de<br></br>Navidad <destacado>{anio}</destacado>",
@@ -34,16 +34,13 @@
       },
       "abierta": {
         "pastilla": "Inscripción abierta",
-        "texto": "No hace falta correr: el <b>{dia}</b> sorteamos las horas y <b>hay hueco para todas las familias</b>.",
+        "texto": "No hace falta correr: el <b>{dia}</b> repartimos las horas según vuestras preferencias y <b>hay hueco para todas las familias</b>.",
         "nota": "¡prometido!"
       },
       "cerrada": {
         "pastilla": "Inscripción cerrada",
-        "texto": "<b>{n, plural, one {# familia apuntada} other {# familias apuntadas}}.</b> Esta es la huella de la lista: a partir de ahora, si alguien la tocara, la huella cambiaría.",
-        "sorteo": "El <b>{dia}</b> sorteamos con el número de la ONCE del {diaCierre} (21:25) y os escribimos con vuestra hora.",
-        "copiar": "Copiar",
-        "copiada": "Huella copiada.",
-        "huellaAria": "Huella de la lista"
+        "texto": "<b>{n, plural, one {# familia apuntada} other {# familias apuntadas}}.</b> Ahora repartimos las horas según las preferencias de todas.",
+        "reparto": "Si alguna familia no cabe en las horas a las que puede ir, el AFA la llama para buscarle un hueco. El <b>{dia}</b> os escribimos con vuestra hora."
       },
       "publicada": {
         "pastilla": "Horas publicadas",
@@ -119,7 +116,7 @@
       },
       "4": {
         "titulo": "¿Cómo os avisamos?",
-        "nota": "para mandaros el enlace y, el {diaSorteo}, vuestra hora"
+        "nota": "para mandaros el enlace y, el {diaReparto}, vuestra hora"
       },
       "5": {
         "titulo": "¿Está todo bien?",
@@ -238,7 +235,7 @@
       "proteccion": "Protección de datos",
       "masInfo": "+ info",
       "consentimiento": "He leído la información y consiento, también como madre, padre o tutor/a de los peques, que el AFA use estos datos para organizar la sesión de fotos.",
-      "compensacion": "Guardad nuestro resultado de este año para compensarnos en el sorteo del año que viene si no nos toca ninguna favorita.",
+      "compensacion": "Guardad nuestro resultado de este año para compensarnos en el reparto del año que viene si no nos toca ninguna favorita.",
       "compensacionAyuda": "Opcional. Solo guardamos una clave de vuestro email y un número."
     },
     "errores": {
@@ -278,10 +275,10 @@
       "preferencias": "{favoritas, plural, =0 {Sin favoritas} one {# favorita} other {# favoritas}} y {imposibles, plural, =0 {ninguna imposible} one {# imposible} other {# imposibles}}",
       "email": "Os hemos enviado un email a <b>{email}</b> con vuestro enlace",
       "yAhora": "¿Y ahora?",
-      "siguiente": "El <b>{diaSorteo}</b> hacemos el sorteo y os escribimos con vuestra hora. Hasta el {cierre} podéis cambiar lo que queráis desde el enlace del email.",
+      "siguiente": "El <b>{diaReparto}</b> os escribimos con vuestra hora. Hasta el {cierre} podéis cambiar lo que queráis desde el enlace del email.",
       "noLlega": "¿No os llega? Mirad en la carpeta de spam o pedid el enlace otra vez desde la portada.",
       "avisar": "Avisar al grupo de clase",
-      "textoCompartir": "Ya nos hemos apuntado a las fotos de Navidad del AFA. No hace falta correr: las horas se sortean el {diaSorteo}. {url}",
+      "textoCompartir": "Ya nos hemos apuntado a las fotos de Navidad del AFA. No hace falta correr: las horas se reparten según las preferencias de todas las familias. {url}",
       "copiado": "Enlace copiado para pegarlo en el grupo."
     }
   },
@@ -292,11 +289,11 @@
     "titulo": "Vuestra inscripción",
     "abierta": {
       "pastilla": "Abierta",
-      "texto": "Podéis cambiar lo que queráis hasta el {cierre}. El {diaSorteo} veréis aquí vuestra hora."
+      "texto": "Podéis cambiar lo que queráis hasta el {cierre}. El {diaReparto} veréis aquí vuestra hora."
     },
     "cerrada": {
       "pastilla": "Cerrada",
-      "texto": "La inscripción está cerrada. El {diaSorteo} veréis aquí vuestra hora."
+      "texto": "La inscripción está cerrada. El {diaReparto} veréis aquí vuestra hora."
     },
     "cambiar": "Cambiar",
     "cambiarAria": "Cambiar: {seccion}",
@@ -326,10 +323,10 @@
       "texto": "Puede que hayáis pedido uno nuevo (el anterior deja de funcionar) o que haya caducado."
     }
   },
-  "sorteo": {
+  "reparto": {
     "meta": {
       "titulo": "Cómo repartimos las horas · Fotos de Navidad",
-      "descripcion": "Da igual cuándo os apuntéis: el mejor reparto posible y la suerte solo para desempatar, comprobable por cualquiera."
+      "descripcion": "Da igual cuándo os apuntéis: buscamos el mejor reparto posible con las preferencias de todas las familias y, si alguna no cabe, hablamos con ella."
     },
     "titulo": "Cómo repartimos las horas",
     "nota": "sin trampa ni cartón",
@@ -339,18 +336,13 @@
       "texto": "Las horas no se reparten por orden de llegada. Apuntarse nada más abrir o un minuto antes de cerrar da <b>exactamente igual</b>, y hay hueco para todas las familias."
     },
     "pasos": {
-      "titulo": "Cuatro pasos",
+      "titulo": "Tres pasos",
       "1": {
         "cuando": "{dia} · {hora}",
-        "titulo": "Cerramos y publicamos la huella",
-        "texto": "La huella es como una foto de la lista de inscripciones: si alguien cambiara una sola coma, la huella sería otra. La publicamos aquí y en el WhatsApp del AFA."
+        "titulo": "Cerramos la inscripción",
+        "texto": "A partir de ese momento ya no se puede cambiar nada. Da igual en qué orden os apuntarais."
       },
       "2": {
-        "cuando": "{dia} · 21:25",
-        "titulo": "Sale el número de la ONCE",
-        "texto": "Usamos el número del Cupón Diario de esa noche. Nadie lo conoce antes, tampoco el AFA."
-      },
-      "3": {
         "cuando": "{dia}",
         "titulo": "Buscamos el mejor reparto",
         "texto": "El ordenador mira las respuestas de todas las familias a la vez y busca el reparto que deja mejor a la familia que peor queda:",
@@ -358,10 +350,10 @@
         "n2": "que nadie se quede sin una favorita,",
         "n3": "que el menor número de familias acabe en su 6ª, luego en su 5ª…"
       },
-      "4": {
+      "3": {
         "cuando": "{dia}",
-        "titulo": "La suerte solo desempata",
-        "texto": "Casi siempre hay varios repartos igual de buenos. Entre ellos elige el número de la ONCE, y también qué 5 minutos os tocan dentro de la media hora."
+        "titulo": "Si alguna no cabe, hablamos con ella",
+        "texto": "Si una familia solo puede ir a horas que ya están llenas, no lo dejamos a la suerte: el AFA la llama y le busca un hueco más en una hora que le vaya bien. Después os escribimos a todas con vuestra hora."
       },
       "antitruco": "Y una regla para que nadie gane marcando menos: una hora que os «va bien» cuenta justo después de vuestra última favorita. Cuantas más favoritas marquéis, más os protege el reparto."
     },
@@ -376,19 +368,7 @@
       "imposible": "Imposible",
       "barra": "{etiqueta}: {n, plural, one {# familia} other {# familias}}"
     },
-    "comprobar": {
-      "titulo": "Comprobadlo vosotros",
-      "texto": "El programa es público. Una persona de la junta que no gestiona la app recibe los datos sin nombres, repite el reparto con la huella y el número de la ONCE, y comprueba que sale exactamente el mismo.",
-      "huella": "Huella de la lista ({cuando})",
-      "pendienteHuella": "se publica al cerrar",
-      "once": "Número de la ONCE ({cuando})",
-      "pendienteOnce": "aún no ha salido",
-      "version": "Versión del reparto",
-      "resultado": "Huella del resultado",
-      "exclusiones": "{n, plural, one {# inscripción duplicada excluida antes del sorteo} other {# inscripciones duplicadas excluidas antes del sorteo}}",
-      "sello": "✓ Comprobado por la persona verificadora del AFA el {fecha}",
-      "codigo": "Ver el programa del reparto"
-    },
+    "codigo": "Ver el programa del reparto",
     "nunca": "Nunca publicamos qué familia tiene cada hora."
   },
   "resultado": {
@@ -396,7 +376,7 @@
     "hora": "{dia} · {hora}",
     "favorita": "¡Vuestra {n}ª favorita!",
     "nos_va_bien": "No ha podido ser ninguna de vuestras favoritas, pero es una hora que os va bien.",
-    "imposible": "No ha sido posible evitar una de vuestras horas imposibles: había más familias que huecos posibles. Si no podéis venir, mirad las horas libres o escribid al AFA.",
+    "imposible": "No ha sido posible evitar una de vuestras horas imposibles: había más familias que huecos posibles. Si no podéis venir, mirad las horas libres o escribid al AFA y lo hablamos.",
     "sin_favoritas": "Os iba bien cualquier hora: esta es la vuestra.",
     "movida": "El AFA ha cambiado vuestra hora.",
     "cambiada": "Es la hora libre a la que os cambiasteis.",
@@ -418,7 +398,7 @@
       "hecho": "¡Hecho! Vuestra nueva hora es el {franja}."
     },
     "terminada": "Ya no se pueden hacer cambios. Si tenéis un problema con vuestra hora, escribid al AFA.",
-    "sinHora": "Esta inscripción no ha entrado en el sorteo. Si creéis que es un error, escribid al AFA."
+    "sinHora": "Esta inscripción no ha entrado en el reparto. Si creéis que es un error, escribid al AFA."
   },
   "calendario": {
     "titulo": "Fotos de Navidad · AFA CEI Las Palmeras",

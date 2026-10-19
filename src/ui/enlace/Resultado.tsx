@@ -19,7 +19,7 @@ export type DatosResultado = {
   etiqueta: string;
   categoria: "favorita" | "nos_va_bien" | "imposible" | "sin_favoritas";
   posicionFavorita: number | null;
-  origen: "sorteo" | "hueco_libre" | "admin";
+  origen: "reparto" | "hueco_libre" | "admin";
   publicada: boolean;
   fin: string;
   libres: { id: string; etiqueta: string }[];
@@ -38,7 +38,7 @@ export function Resultado({ r }: { r: DatosResultado }) {
   const [elegida, setElegida] = useState<{ id: string; etiqueta: string } | null>(null);
   const [cambiando, setCambiando] = useState(false);
   const [mensaje, setMensaje] = useState<string | null>(null);
-  const celebrar = r.origen === "sorteo" && r.categoria === "favorita";
+  const celebrar = r.origen !== "hueco_libre" && r.categoria === "favorita";
 
   const confirmar = async () => {
     if (!elegida) return;

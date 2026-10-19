@@ -34,7 +34,7 @@ export function CerrarEdicion({
       <p className="mb-3 text-sm text-muted-ink">
         Cuando hayáis entregado las fotos (como muy tarde el 31 de enero). Se borran las
         inscripciones, los peques, las preferencias, las horas, los emails y las sesiones. La
-        auditoría se queda sin datos personales y se conservan las cifras del sorteo. De quien dio
+        auditoría se queda sin datos personales y se conservan las cifras del reparto. De quien dio
         permiso, se guarda solo una clave de su email y su nivel durante 13 meses.{" "}
         <b>No se puede deshacer.</b> Borrad también las copias cifradas.
       </p>

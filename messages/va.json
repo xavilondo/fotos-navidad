@@ -13,7 +13,7 @@
   "portada": {
     "meta": {
       "titulo": "{nombre} · AFA CEI Las Palmeras",
-      "descripcion": "Apunteu-vos a les fotos de Nadal de l'escola. És igual quan us apunteu: les hores es repartixen amb un sorteig just i comprovable."
+      "descripcion": "Apunteu-vos a les fotos de Nadal de l'escola. És igual quan us apunteu: repartim les hores segons les preferències de totes les famílies."
     },
     "kicker": "Arriba el Nadal!",
     "titulo": "Fotos de<br></br>Nadal <destacado>{anio}</destacado>",
@@ -34,16 +34,13 @@
       },
       "abierta": {
         "pastilla": "Inscripció oberta",
-        "texto": "No cal córrer: el <b>{dia}</b> sortegem les hores i <b>hi ha lloc per a totes les famílies</b>.",
+        "texto": "No cal córrer: el <b>{dia}</b> repartim les hores segons les vostres preferències i <b>hi ha lloc per a totes les famílies</b>.",
         "nota": "promés!"
       },
       "cerrada": {
         "pastilla": "Inscripció tancada",
-        "texto": "<b>{n, plural, one {# família apuntada} other {# famílies apuntades}}.</b> Aquesta és l'empremta de la llista: a partir d'ara, si algú la tocara, l'empremta canviaria.",
-        "sorteo": "El <b>{dia}</b> sortegem amb el número de l'ONCE del {diaCierre} (21:25) i us escrivim amb la vostra hora.",
-        "copiar": "Copiar",
-        "copiada": "Empremta copiada.",
-        "huellaAria": "Empremta de la llista"
+        "texto": "<b>{n, plural, one {# família apuntada} other {# famílies apuntades}}.</b> Ara repartim les hores segons les preferències de totes.",
+        "reparto": "Si alguna família no cap en les hores a què pot anar, l'AFA la crida per a buscar-li un lloc. El <b>{dia}</b> us escrivim amb la vostra hora."
       },
       "publicada": {
         "pastilla": "Hores publicades",
@@ -119,7 +116,7 @@
       },
       "4": {
         "titulo": "Com us avisem?",
-        "nota": "per a enviar-vos l'enllaç i, el {diaSorteo}, la vostra hora"
+        "nota": "per a enviar-vos l'enllaç i, el {diaReparto}, la vostra hora"
       },
       "5": {
         "titulo": "Està tot bé?",
@@ -238,7 +235,7 @@
       "proteccion": "Protecció de dades",
       "masInfo": "+ info",
       "consentimiento": "He llegit la informació i hi consent, també com a mare, pare o tutor/a dels xiquets i xiquetes, que l'AFA use aquestes dades per a organitzar la sessió de fotos.",
-      "compensacion": "Guardeu el nostre resultat d'enguany per a compensar-nos en el sorteig de l'any que ve si no ens toca cap preferida.",
+      "compensacion": "Guardeu el nostre resultat d'enguany per a compensar-nos en el repartiment de l'any que ve si no ens toca cap preferida.",
       "compensacionAyuda": "Opcional. Només guardem una clau del vostre correu i un número."
     },
     "errores": {
@@ -278,10 +275,10 @@
       "preferencias": "{favoritas, plural, =0 {Sense preferides} one {# preferida} other {# preferides}} i {imposibles, plural, =0 {cap impossible} one {# impossible} other {# impossibles}}",
       "email": "Us hem enviat un correu a <b>{email}</b> amb el vostre enllaç",
       "yAhora": "I ara?",
-      "siguiente": "El <b>{diaSorteo}</b> fem el sorteig i us escrivim amb la vostra hora. Fins al {cierre} podeu canviar el que vulgueu des de l'enllaç del correu.",
+      "siguiente": "El <b>{diaReparto}</b> us escrivim amb la vostra hora. Fins al {cierre} podeu canviar el que vulgueu des de l'enllaç del correu.",
       "noLlega": "No us arriba? Mireu en la carpeta de correu brossa o demaneu l'enllaç una altra vegada des de la portada.",
       "avisar": "Avisar el grup de classe",
-      "textoCompartir": "Ja ens hem apuntat a les fotos de Nadal de l'AFA. No cal córrer: les hores se sortegen el {diaSorteo}. {url}",
+      "textoCompartir": "Ja ens hem apuntat a les fotos de Nadal de l'AFA. No cal córrer: les hores es repartixen segons les preferències de totes les famílies. {url}",
       "copiado": "Enllaç copiat per a enganxar-lo en el grup."
     }
   },
@@ -292,11 +289,11 @@
     "titulo": "La vostra inscripció",
     "abierta": {
       "pastilla": "Oberta",
-      "texto": "Podeu canviar el que vulgueu fins al {cierre}. El {diaSorteo} veureu ací la vostra hora."
+      "texto": "Podeu canviar el que vulgueu fins al {cierre}. El {diaReparto} veureu ací la vostra hora."
     },
     "cerrada": {
       "pastilla": "Tancada",
-      "texto": "La inscripció està tancada. El {diaSorteo} veureu ací la vostra hora."
+      "texto": "La inscripció està tancada. El {diaReparto} veureu ací la vostra hora."
     },
     "cambiar": "Canviar",
     "cambiarAria": "Canviar: {seccion}",
@@ -326,10 +323,10 @@
       "texto": "Potser n'heu demanat un de nou (l'anterior deixa de funcionar) o ha caducat."
     }
   },
-  "sorteo": {
+  "reparto": {
     "meta": {
       "titulo": "Com repartim les hores · Fotos de Nadal",
-      "descripcion": "És igual quan us apunteu: el millor repartiment possible i la sort només per a desempatar, comprovable per qualsevol."
+      "descripcion": "És igual quan us apunteu: busquem el millor repartiment possible amb les preferències de totes les famílies i, si alguna no cap, en parlem amb ella."
     },
     "titulo": "Com repartim les hores",
     "nota": "sense trampa ni cartó",
@@ -339,18 +336,13 @@
       "texto": "Les hores no es repartixen per ordre d'arribada. Apuntar-se només obrir o un minut abans de tancar és <b>exactament igual</b>, i hi ha lloc per a totes les famílies."
     },
     "pasos": {
-      "titulo": "Quatre passos",
+      "titulo": "Tres passos",
       "1": {
         "cuando": "{dia} · {hora}",
-        "titulo": "Tanquem i publiquem l'empremta",
-        "texto": "L'empremta és com una foto de la llista d'inscripcions: si algú canviara una sola coma, l'empremta seria una altra. La publiquem ací i en el WhatsApp de l'AFA."
+        "titulo": "Tanquem la inscripció",
+        "texto": "A partir d'aquell moment ja no es pot canviar res. És igual en quin ordre us apuntàreu."
       },
       "2": {
-        "cuando": "{dia} · 21:25",
-        "titulo": "Ix el número de l'ONCE",
-        "texto": "Fem servir el número del Cupó Diari d'aquella nit. Ningú no el coneix abans, tampoc l'AFA."
-      },
-      "3": {
         "cuando": "{dia}",
         "titulo": "Busquem el millor repartiment",
         "texto": "L'ordinador mira les respostes de totes les famílies alhora i busca el repartiment que deixa millor la família que pitjor queda:",
@@ -358,10 +350,10 @@
         "n2": "que ningú no es quede sense una preferida,",
         "n3": "que el menor nombre de famílies acabe en la seua 6a, després en la 5a…"
       },
-      "4": {
+      "3": {
         "cuando": "{dia}",
-        "titulo": "La sort només desempata",
-        "texto": "Quasi sempre hi ha diversos repartiments igual de bons. Entre ells tria el número de l'ONCE, i també quins 5 minuts us toquen dins de la mitja hora."
+        "titulo": "Si alguna no cap, en parlem amb ella",
+        "texto": "Si una família només pot anar a hores que ja estan plenes, no ho deixem a la sort: l'AFA la crida i li busca un lloc més en una hora que li vaja bé. Després us escrivim a totes amb la vostra hora."
       },
       "antitruco": "I una regla perquè ningú no guanye marcant-ne menys: una hora que «us va bé» compta just després de la vostra última preferida. Com més preferides marqueu, més us protegix el repartiment."
     },
@@ -376,19 +368,7 @@
       "imposible": "Impossible",
       "barra": "{etiqueta}: {n, plural, one {# família} other {# famílies}}"
     },
-    "comprobar": {
-      "titulo": "Comproveu-ho vosaltres",
-      "texto": "El programa és públic. Una persona de la junta que no gestiona l'aplicació rep les dades sense noms, repetix el repartiment amb l'empremta i el número de l'ONCE, i comprova que ix exactament el mateix.",
-      "huella": "Empremta de la llista ({cuando})",
-      "pendienteHuella": "es publica en tancar",
-      "once": "Número de l'ONCE ({cuando})",
-      "pendienteOnce": "encara no ha eixit",
-      "version": "Versió del repartiment",
-      "resultado": "Empremta del resultat",
-      "exclusiones": "{n, plural, one {# inscripció duplicada exclosa abans del sorteig} other {# inscripcions duplicades excloses abans del sorteig}}",
-      "sello": "✓ Comprovat per la persona verificadora de l'AFA el {fecha}",
-      "codigo": "Veure el programa del repartiment"
-    },
+    "codigo": "Veure el programa del repartiment",
     "nunca": "Mai no publiquem quina família té cada hora."
   },
   "resultado": {
@@ -396,7 +376,7 @@
     "hora": "{dia} · {hora}",
     "favorita": "La vostra {n}a preferida!",
     "nos_va_bien": "No ha pogut ser cap de les vostres preferides, però és una hora que us va bé.",
-    "imposible": "No ha estat possible evitar una de les vostres hores impossibles: hi havia més famílies que buits possibles. Si no podeu vindre, mireu les hores lliures o escriviu a l'AFA.",
+    "imposible": "No ha estat possible evitar una de les vostres hores impossibles: hi havia més famílies que buits possibles. Si no podeu vindre, mireu les hores lliures o escriviu a l'AFA i ho parlem.",
     "sin_favoritas": "Us anava bé qualsevol hora: aquesta és la vostra.",
     "movida": "L'AFA ha canviat la vostra hora.",
     "cambiada": "És l'hora lliure a la qual us vau canviar.",
@@ -418,7 +398,7 @@
       "hecho": "Fet! La vostra hora nova és el {franja}."
     },
     "terminada": "Ja no es poden fer canvis. Si teniu un problema amb la vostra hora, escriviu a l'AFA.",
-    "sinHora": "Aquesta inscripció no ha entrat en el sorteig. Si creieu que és un error, escriviu a l'AFA."
+    "sinHora": "Aquesta inscripció no ha entrat en el repartiment. Si creieu que és un error, escriviu a l'AFA."
   },
   "calendario": {
     "titulo": "Fotos de Nadal · AFA CEI Las Palmeras",

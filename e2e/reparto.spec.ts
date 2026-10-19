@@ -8,7 +8,7 @@ const ejecutar = (orden: string) =>
 
 test.describe.configure({ mode: "serial" });
 
-test("sorteo de principio a fin: cierre, huella, lanzamiento, resultado y horas libres", async ({
+test("reparto de principio a fin: cierre, cálculo, hora a mano, publicación y horas libres", async ({
   page,
 }) => {
   test.setTimeout(180_000);
@@ -16,29 +16,41 @@ test("sorteo de principio a fin: cierre, huella, lanzamiento, resultado y horas 
   ejecutar("pnpm -s semilla:familias 60 --semilla 7");
   ejecutar("pnpm -s edicion:ensayo cerrada");
 
-  // La portada ya enseña la huella.
   await page.goto("/");
   await expect(page.getByText("Inscripción cerrada")).toBeVisible();
   await expect(page.getByText(/60 familias apuntadas/)).toBeVisible();
 
   await entrarComoAdmin(page);
-  await page.getByRole("link", { name: "Sorteo", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Huella de la lista" })).toBeVisible();
-
-  await page.getByLabel("Número de prueba").fill("12345");
-  await page.getByRole("button", { name: "Simular" }).click();
-  await expect(page.getByText("Con la lista cerrada.")).toBeVisible();
-
-  await page.getByLabel(/Número del Cupón Diario/).fill("48213");
-  await page.getByRole("button", { name: "Continuar" }).click();
-  await expect(page.getByText(/No se puede deshacer/)).toBeVisible();
-  await page.getByRole("button", { name: "Sí, lanzar el sorteo" }).click();
-  await expect(page.getByRole("heading", { name: "Sorteo lanzado" })).toBeVisible();
+  await page.getByRole("link", { name: "Reparto", exact: true }).click();
+  await page.getByRole("button", { name: "Calcular el reparto" }).click();
+  await expect(page.getByRole("heading", { name: "Reparto en borrador" })).toBeVisible();
 
   const asignaciones = await bd().query(
     "select count(*)::int as n, count(distinct hueco_id)::int as huecos from asignacion",
   );
   expect(asignaciones.rows[0]).toEqual({ n: 60, huecos: 60 });
+
+  // Para resolver un conflicto, el admin pone a una familia a mano en una hora extra.
+  const {
+    rows: [una],
+  } = await bd().query(
+    "select inscripcion_id as id from asignacion order by inscripcion_id limit 1",
+  );
+  await page.goto(`/admin/inscripciones/${una.id}`);
+  await page.getByLabel("Poner a una hora concreta (hueco extra)").selectOption("lun-1500");
+  await page.getByLabel("Hora", { exact: true }).fill("15:03");
+  await page.getByRole("button", { name: "Poner a esta hora", exact: true }).click();
+  await expect(page.getByText("Hora puesta.")).toBeVisible();
+  const extra = await bd().query(
+    "select count(*)::int as n from asignacion a join hueco h on h.id = a.hueco_id where h.extra",
+  );
+  expect(extra.rows[0].n).toBe(1);
+
+  await page.goto("/admin/reparto");
+  await page.getByRole("button", { name: "Publicar…" }).click();
+  await expect(page.getByText(/No se puede deshacer/)).toBeVisible();
+  await page.getByRole("button", { name: "Sí, publicar" }).click();
+  await expect(page.getByRole("heading", { name: "Reparto publicado" })).toBeVisible();
 
   // La familia ve su hora y se pasa a una hora libre.
   const { rows } = await bd().query(
@@ -56,10 +68,10 @@ test("sorteo de principio a fin: cierre, huella, lanzamiento, resultado y horas 
   await page.getByRole("button", { name: "Sí, cambiarnos" }).click();
   await expect(page.getByText(/¡Hecho! Vuestra nueva hora es el/)).toBeVisible();
 
-  // La página del sorteo publica las cifras, nunca quién tiene cada hora.
+  // La página del reparto publica las cifras, nunca quién tiene cada hora.
   await page.goto("/sorteo");
+  await expect(page).toHaveURL(/\/reparto$/);
   await expect(page.getByText(/familias tienen una de sus favoritas/)).toBeVisible();
-  await expect(page.getByText("48213")).toBeVisible();
 
   // Agenda del fotógrafo (la sesión de admin sigue abierta).
   const pdf = await page.request.get("/admin/exportar/agenda.pdf");

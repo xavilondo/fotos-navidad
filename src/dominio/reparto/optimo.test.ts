@@ -37,9 +37,8 @@ describe("desempate eficiente (paso 2) contra la versión ingenua", () => {
           concentradas: s % 3 !== 0,
         }),
       );
-      const numero = String(g.entero(0, 99999)).padStart(5, "0");
-      const rapido = repartir(l, numero);
-      const ingenuo = repartoIngenuo(l, numero);
+      const rapido = repartir(l);
+      const ingenuo = repartoIngenuo(l);
       expect(rapido.asignaciones.map((a) => a.franja)).toEqual(ingenuo.franjas);
     }
   });
@@ -54,9 +53,7 @@ describe("desempate eficiente (paso 2) contra la versión ingenua", () => {
           concentradas: true,
         }),
       );
-      expect(repartir(l, "48213").asignaciones.map((a) => a.franja)).toEqual(
-        repartoIngenuo(l, "48213").franjas,
-      );
+      expect(repartir(l).asignaciones.map((a) => a.franja)).toEqual(repartoIngenuo(l).franjas);
     }
   });
 });

@@ -52,7 +52,7 @@ export function Celebracion({
 
   const compartir = async () => {
     const url = window.location.origin;
-    const texto = t("textoCompartir", { diaSorteo: datos.textos.diaSorteo, url });
+    const texto = t("textoCompartir", { diaReparto: datos.textos.diaReparto, url });
     try {
       if (navigator.share) return await navigator.share({ text: texto });
       await navigator.clipboard.writeText(texto);
@@ -133,7 +133,7 @@ export function Celebracion({
             <p className="text-[15px] leading-[1.45]">
               {t.rich("siguiente", {
                 b: (c) => <b className="font-extrabold">{c}</b>,
-                diaSorteo: datos.textos.diaSorteo,
+                diaReparto: datos.textos.diaReparto,
                 cierre: datos.textos.cierre,
               })}
             </p>

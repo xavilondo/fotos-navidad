@@ -24,7 +24,7 @@ export type DatosEmail =
       archivoDigital: boolean;
       total: number;
       cierraEn: string;
-      diaSorteo: string;
+      diaReparto: string;
       caducaEn: string;
     } & Comun)
   | ({ tipo: "ya_inscritos"; enlace: string; cierraEn: string } & Comun)

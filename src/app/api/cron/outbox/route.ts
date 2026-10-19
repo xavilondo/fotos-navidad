@@ -15,8 +15,7 @@ function autorizado(request: Request): boolean {
 }
 
 /**
- * Cron de Vercel cada 5 minutos: reintenta los emails pendientes y hace las tareas que dependen
- * del reloj (p. ej. calcular la huella al cierre).
+ * Cron de Vercel: reintenta los emails pendientes y borra límites y compensaciones caducados.
  */
 export async function GET(request: Request) {
   if (!autorizado(request)) return new Response("No autorizado", { status: 401 });

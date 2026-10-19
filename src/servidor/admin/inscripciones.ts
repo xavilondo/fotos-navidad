@@ -235,8 +235,8 @@ export async function guardarComoAdmin(
 }
 
 /**
- * Borra una inscripción (duplicado, baja pedida por teléfono…). Antes del cierre se borra sin más;
- * después del cierre hay que excluirla, no borrarla, para no tocar la lista de la huella.
+ * Borra una inscripción (duplicado, baja pedida por teléfono…). Mientras se revisa el reparto no se
+ * borra: se excluye, y así queda constancia de quién estaba apuntado al cerrar.
  */
 export async function borrarComoAdmin(
   db: BaseDatos,
@@ -255,6 +255,10 @@ export async function borrarComoAdmin(
       .innerJoin(t.hueco, eq(t.hueco.id, t.asignacion.huecoId))
       .where(eq(t.asignacion.inscripcionId, ins.id));
     await tx.delete(t.inscripcion).where(eq(t.inscripcion.id, ins.id));
+    // Un hueco extra solo existía para esta familia: no se queda libre para otra.
+    if (asig) {
+      await tx.delete(t.hueco).where(and(eq(t.hueco.id, asig.huecoId), eq(t.hueco.extra, true)));
+    }
     await registrarAuditoria(tx, {
       edicionId: ins.edicionId,
       actor: { tipo: "admin", usuario: admin.usuario },
@@ -286,8 +290,7 @@ export async function borrarComoAdmin(
 }
 
 /**
- * Tras el cierre, un duplicado no se borra: se excluye (id + motivo). La huella no cambia, el
- * número de exclusiones se publica y la persona verificadora las recibe.
+ * Tras el cierre, un duplicado no se borra: se excluye (id + motivo) y no entra en el reparto.
  */
 export async function excluir(
   db: BaseDatos,
@@ -300,29 +303,27 @@ export async function excluir(
     const b = await bloquearInscripcion(tx, id);
     if (!b) return { estado: "no_encontrada" };
     const { ins, actual } = b;
+    // Solo mientras se revisa el reparto: después, quitar a una familia es borrarla.
     if (actual.estado !== "cerrada") return { estado: "cerrada" };
-    const [sorteo] = await tx
-      .select()
-      .from(t.sorteo)
-      .where(eq(t.sorteo.edicionId, ins.edicionId))
-      .for("update");
-    if (!sorteo || sorteo.lanzadoEn) return { estado: "cerrada" };
-    const lista = sorteo.listaCanonica as { inscripciones: { id: string }[] } | null;
-    if (!lista?.inscripciones.some((i) => i.id === ins.id)) return { estado: "no_encontrada" };
     const motivoLimpio = motivo.trim().slice(0, 200) || "Sin motivo";
-    const otras = sorteo.exclusiones.filter((e) => e.id !== ins.id);
-    await tx
-      .update(t.sorteo)
-      .set({ exclusiones: excluida ? [...otras, { id: ins.id, motivo: motivoLimpio }] : otras })
-      .where(eq(t.sorteo.id, sorteo.id));
     await tx
       .update(t.inscripcion)
       .set({ excluidaMotivo: excluida ? motivoLimpio : null, actualizadoEn: sql`now()` })
       .where(eq(t.inscripcion.id, ins.id));
+    // Una excluida no tiene hora. Al quitar la exclusión, la tendrá al volver a calcular el reparto.
+    if (excluida) {
+      const [asig] = await tx
+        .delete(t.asignacion)
+        .where(eq(t.asignacion.inscripcionId, ins.id))
+        .returning({ huecoId: t.asignacion.huecoId });
+      if (asig) {
+        await tx.delete(t.hueco).where(and(eq(t.hueco.id, asig.huecoId), eq(t.hueco.extra, true)));
+      }
+    }
     await registrarAuditoria(tx, {
       edicionId: ins.edicionId,
       actor: { tipo: "admin", usuario: admin.usuario },
-      accion: excluida ? "sorteo.exclusion" : "sorteo.exclusion_quitada",
+      accion: excluida ? "reparto.exclusion" : "reparto.exclusion_quitada",
       inscripcionId: ins.id,
       detalle: { motivo: motivoLimpio },
     });

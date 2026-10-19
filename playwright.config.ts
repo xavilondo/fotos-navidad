@@ -17,13 +17,13 @@ export default defineConfig({
   },
   // El 99 % de las familias entra desde el móvil.
   projects: [
-    { name: "iphone-13", use: { ...devices["iPhone 13"] }, testIgnore: /sorteo\.spec/ },
-    { name: "pixel-7", use: { ...devices["Pixel 7"] }, testIgnore: /sorteo\.spec/ },
-    // El sorteo cambia el estado de la edición de ensayo: va el último y en serie.
+    { name: "iphone-13", use: { ...devices["iPhone 13"] }, testIgnore: /reparto\.spec/ },
+    { name: "pixel-7", use: { ...devices["Pixel 7"] }, testIgnore: /reparto\.spec/ },
+    // El reparto cambia el estado de la edición de ensayo: va el último y en serie.
     {
-      name: "sorteo",
+      name: "reparto",
       use: { ...devices["Pixel 7"] },
-      testMatch: /sorteo\.spec/,
+      testMatch: /reparto\.spec/,
       dependencies: ["iphone-13", "pixel-7"],
       fullyParallel: false,
     },

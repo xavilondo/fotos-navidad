@@ -3,8 +3,7 @@ import { connection } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { db } from "@/servidor/db";
 import { obtenerEdicionActual } from "@/servidor/edicion/consultas";
-import { asegurarHuella } from "@/servidor/sorteo/huella";
-import { datosPublicosSorteo } from "@/servidor/sorteo/lanzar";
+import { datosPublicosReparto } from "@/servidor/reparto/reparto";
 import { Cabecera } from "@/ui/marca/Cabecera";
 import { Tarjeta } from "@/ui/marca/Tarjeta";
 import { Portada } from "@/ui/portada/Portada";
@@ -26,13 +25,11 @@ export default async function PaginaPortada() {
   await connection();
   const edicion = await obtenerEdicionActual();
   if (edicion) {
-    // La primera visita tras el cierre congela la lista y calcula la huella (si el cron no lo ha hecho ya).
-    if (edicion.estado !== "antes" && edicion.estado !== "abierta") await asegurarHuella(db);
-    const sorteo =
+    const reparto =
       edicion.estado === "antes" || edicion.estado === "abierta"
         ? null
-        : await datosPublicosSorteo(db, edicion.id);
-    return <Portada edicion={edicion} sorteo={sorteo} />;
+        : await datosPublicosReparto(db, edicion.id);
+    return <Portada edicion={edicion} reparto={reparto} />;
   }
 
   const t = await getTranslations("portada.sinEdicion");

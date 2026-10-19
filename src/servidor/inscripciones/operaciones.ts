@@ -227,7 +227,7 @@ export async function crearInscripcion(
         archivoDigital: d.archivoDigital,
         total: calcularTotal(edicion.precios, d),
         cierraEn: edicion.cierraEn.toISOString(),
-        diaSorteo: new Date(edicion.cierraEn.getTime() + UN_DIA).toISOString(),
+        diaReparto: new Date(edicion.cierraEn.getTime() + UN_DIA).toISOString(),
         caducaEn: (await finUltimaSesion(tx, edicion.id)).toISOString(),
         ...comunEmail(edicion, ctx.urlApp, d.nombreAdulto),
       },
@@ -257,7 +257,7 @@ export type VistaInscripcion = {
     inicio: Date;
     fin: Date;
     nivel: number;
-    origen: "sorteo" | "hueco_libre" | "admin";
+    origen: "reparto" | "hueco_libre" | "admin";
     franja: string;
     actualizadaEn: Date;
   } | null;
@@ -297,7 +297,10 @@ export async function leerPorEnlace(
     const actual = await edicionActual(tx);
     if (!actual || actual.edicion.id !== ins.edicionId) return null;
     if (actual.ahora.getTime() >= ins.enlaceCaducaEn.getTime()) return null;
-    return montarVista(tx, ins, actual.edicion, actual.estado, actual.ahora);
+    const vista = await montarVista(tx, ins, actual.edicion, actual.estado, actual.ahora);
+    // Hasta que se publica, el reparto es un borrador que solo ve el admin.
+    const publicado = actual.estado === "publicada" || actual.estado === "terminada";
+    return publicado ? vista : { ...vista, asignacion: null };
   });
 }
 
@@ -444,6 +447,10 @@ export async function cancelarInscripcion(
       .where(eq(t.asignacion.inscripcionId, ins.id));
 
     await tx.delete(t.inscripcion).where(eq(t.inscripcion.id, ins.id));
+    // Un hueco extra solo existía para esta familia: no se queda libre para otra.
+    if (asig) {
+      await tx.delete(t.hueco).where(and(eq(t.hueco.id, asig.huecoId), eq(t.hueco.extra, true)));
+    }
     await registrarAuditoria(tx, {
       edicionId: ins.edicionId,
       actor: { tipo: "familia" },

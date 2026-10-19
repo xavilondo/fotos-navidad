@@ -1,5 +1,7 @@
 # Simulación de familias por horarios
 
+> **Nota (19-10-2026):** el sorteo se quitó ([ADR 0002](adr/0002-sin-sorteo-revision-y-asignacion-a-mano.md)). Lo que sigue es el registro de la simulación tal como se hizo: ya no existen `reparto:verificar`, las huellas ni el número de la ONCE, y el reparto ahora es `reparto-v2.0`, sin semilla.
+
 Modelo `horarios-v1`, semilla de datos `20261014`. El objetivo solicitado es dejar **10 huecos sin ocupar**: 110 inscripciones para los 120 huecos de 2026. Las inscripciones existentes se conservan; la tanda completa se inserta en una sola transacción. Cada familia nueva se identifica como `SIM`, con apellidos `SimulaciónNNN` (primer apellido distinto para evitar falsos duplicados), email `sim-horarios-20261014-NNN@example.com` y el perfil en las observaciones.
 
 ## Supuestos

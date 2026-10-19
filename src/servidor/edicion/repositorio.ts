@@ -25,11 +25,11 @@ export async function edicionActual(
   const consulta = db
     .select({
       edicion: t.edicion,
-      publicadaEn: t.sorteo.lanzadoEn,
+      publicadaEn: t.reparto.publicadoEn,
       ahora: sql`now()`.mapWith(t.edicion.abreEn),
     })
     .from(t.edicion)
-    .leftJoin(t.sorteo, eq(t.sorteo.edicionId, t.edicion.id))
+    .leftJoin(t.reparto, eq(t.reparto.edicionId, t.edicion.id))
     .where(
       and(
         isNull(t.edicion.purgadaEn),
@@ -46,21 +46,19 @@ export async function edicionActual(
   let estado = calcularEstado(fila.ahora, { ...fila.edicion, publicadaEn: fila.publicadaEn });
   let publicadaEn = fila.publicadaEn;
   if (opciones.bloquear) {
-    // Tras conseguir el bloqueo puede haber pasado tiempo (esperando a la huella del cierre):
-    // se vuelve a mirar con una consulta nueva y con la hora real, no la del inicio de la transacción.
+    // Tras conseguir el bloqueo puede haber pasado tiempo (esperando a otra transacción): se vuelve
+    // a mirar con una consulta nueva y con la hora real, no la del inicio de la transacción.
     const [d] = await db
       .select({
-        hayHuella: sql<boolean>`exists (select 1 from sorteo s where s.edicion_id = ${fila.edicion.id})`,
-        lanzadoEn:
-          sql`(select s.lanzado_en from sorteo s where s.edicion_id = ${fila.edicion.id})`.mapWith(
-            t.sorteo.lanzadoEn,
+        publicadoEn:
+          sql`(select r.publicado_en from reparto r where r.edicion_id = ${fila.edicion.id})`.mapWith(
+            t.reparto.publicadoEn,
           ),
         reloj: sql`clock_timestamp()`.mapWith(t.edicion.abreEn),
       })
       .from(sql`(select 1) as x`);
-    publicadaEn = d.lanzadoEn ?? null;
+    publicadaEn = d.publicadoEn ?? null;
     estado = calcularEstado(d.reloj, { ...fila.edicion, publicadaEn });
-    if (estado === "abierta" && d.hayHuella) estado = "cerrada";
   }
   return { ...fila, publicadaEn, estado };
 }
@@ -73,7 +71,7 @@ export type FranjaEdicion = {
   huecosLibres: number;
 };
 
-/** Franjas de la edición en orden cronológico, con cuántos huecos no bloqueados tienen. */
+/** Franjas de la edición en orden cronológico, con cuántos huecos tienen (sin los bloqueados ni los extra). */
 export async function franjasDe(db: BaseDatos, edicionId: string): Promise<FranjaEdicion[]> {
   return db
     .select({
@@ -82,7 +80,9 @@ export async function franjasDe(db: BaseDatos, edicionId: string): Promise<Franj
       inicio: t.franja.inicio,
       fin: t.franja.fin,
       huecosLibres:
-        sql<number>`count(${t.hueco.id}) filter (where not ${t.hueco.bloqueado})`.mapWith(Number),
+        sql<number>`count(${t.hueco.id}) filter (where not ${t.hueco.bloqueado} and not ${t.hueco.extra})`.mapWith(
+          Number,
+        ),
     })
     .from(t.franja)
     .leftJoin(t.hueco, eq(t.hueco.franjaId, t.franja.id))

@@ -51,7 +51,7 @@ describe("Familias sintéticas por horarios", () => {
         expect(f.imposibles).toEqual(franjas.filter((x) => x.fin > "17:30").map((x) => x.codigo));
     }
   });
-  it("el sorteo admite esta tanda con diez imposibles y asigna huecos distintos", () => {
+  it("el reparto admite esta tanda con diez imposibles y asigna huecos distintos", () => {
     const familias = generarFamiliasHorarios(opciones);
     const lista = construirListaCanonica({
       edicion: navidad.slug,
@@ -62,10 +62,10 @@ describe("Familias sintéticas por horarios", () => {
         imposibles,
       })),
     });
-    const r = repartir(lista, "00000");
+    const r = repartir(lista);
     expect(r.estadisticas.total).toBe(107);
     expect(new Set(r.asignaciones.map((a) => a.hueco)).size).toBe(107);
-    expect(repartir(lista, "00000").huellaResultado).toBe(r.huellaResultado);
+    expect(repartir(lista).asignaciones).toEqual(r.asignaciones);
   });
   it("rechaza un calendario incompatible y restricciones que no caben en el formulario", () => {
     expect(() => generarFamiliasHorarios({ ...opciones, franjas: franjas.slice(0, 10) })).toThrow(

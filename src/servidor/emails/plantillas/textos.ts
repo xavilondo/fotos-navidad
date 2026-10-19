@@ -54,7 +54,7 @@ const ES: Textos = {
 
   alta: (d, { f, idioma }) => ({
     asunto: "Ya estáis apuntados a las fotos de Navidad",
-    previa: `El ${f.dia(d.diaSorteo)} sorteamos las horas y os escribimos con la vuestra.`,
+    previa: `El ${f.dia(d.diaReparto)} os escribimos con vuestra hora.`,
     titulo: "¡Ya estáis apuntados!",
     bloques: [
       p("Hemos recibido vuestra inscripción para las fotos de Navidad:"),
@@ -78,7 +78,12 @@ const ES: Textos = {
           ["Total orientativo: ", b(euros(idioma, d.total))],
         ],
       },
-      p("El ", b(f.dia(d.diaSorteo)), " sorteamos las horas y os escribimos con la vuestra."),
+      p(
+        "Al cerrar la inscripción repartimos las horas según las preferencias de todas las " +
+          "familias. El ",
+        b(f.dia(d.diaReparto)),
+        " os escribimos con la vuestra.",
+      ),
       boton("Ver o cambiar vuestra inscripción", d.enlace),
       nota(
         "Este enlace es solo vuestro: no lo reenviéis. Podéis cambiar o cancelar la inscripción " +
@@ -181,8 +186,9 @@ const ES: Textos = {
       ],
       imposible: [
         p(
-          "Lo sentimos mucho. No ha sido posible evitar una de vuestras horas imposibles: había " +
-            "más familias que huecos posibles.",
+          "Lo sentimos mucho. No ha habido forma de evitar una de vuestras horas imposibles: " +
+            "había más familias que huecos posibles. Si no podéis venir, escribid al AFA y lo " +
+            "hablamos.",
         ),
       ],
       sin_favoritas: [
@@ -251,7 +257,7 @@ const VA: Textos = {
 
   alta: (d, { f, idioma }) => ({
     asunto: "Ja esteu apuntats a les fotos de Nadal",
-    previa: `El ${f.dia(d.diaSorteo)} sortegem les hores i us escriurem amb la vostra.`,
+    previa: `El ${f.dia(d.diaReparto)} us escriurem amb la vostra hora.`,
     titulo: "Ja esteu apuntats!",
     bloques: [
       p("Hem rebut la vostra inscripció per a les fotos de Nadal:"),
@@ -279,7 +285,12 @@ const VA: Textos = {
           ["Total orientatiu: ", b(euros(idioma, d.total))],
         ],
       },
-      p("El ", b(f.dia(d.diaSorteo)), " sortegem les hores i us escriurem amb la vostra."),
+      p(
+        "En tancar la inscripció repartim les hores segons les preferències de totes les " +
+          "famílies. El ",
+        b(f.dia(d.diaReparto)),
+        " us escriurem amb la vostra.",
+      ),
       boton("Veure o canviar la vostra inscripció", d.enlace),
       nota(
         "Aquest enllaç és només vostre: no el reenvieu. Podeu canviar o cancel·lar la inscripció " +
@@ -382,8 +393,9 @@ const VA: Textos = {
       ],
       imposible: [
         p(
-          "Ho sentim molt. No ha sigut possible evitar una de les vostres hores impossibles: hi " +
-            "havia més famílies que hores possibles.",
+          "Ho sentim molt. No hi ha hagut manera d'evitar una de les vostres hores impossibles: " +
+            "hi havia més famílies que hores possibles. Si no podeu vindre, escriviu a l'AFA i ho " +
+            "parlem.",
         ),
       ],
       sin_favoritas: [

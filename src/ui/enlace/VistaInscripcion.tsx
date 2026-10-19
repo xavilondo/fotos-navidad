@@ -188,7 +188,7 @@ export function VistaInscripcion({
               editando
               onAtras={salir}
               titulo={ti(`pasos.${editando}.titulo`)}
-              nota={ti(`pasos.${editando}.nota`, { diaSorteo: datos.textos.diaSorteo })}
+              nota={ti(`pasos.${editando}.nota`, { diaReparto: datos.textos.diaReparto })}
             />
             <ContenidoPaso
               paso={editando}
@@ -276,9 +276,9 @@ export function VistaInscripcion({
                 {abierta
                   ? t("abierta.texto", {
                       cierre: datos.textos.cierre,
-                      diaSorteo: datos.textos.diaSorteo,
+                      diaReparto: datos.textos.diaReparto,
                     })
-                  : t("cerrada.texto", { diaSorteo: datos.textos.diaSorteo })}
+                  : t("cerrada.texto", { diaReparto: datos.textos.diaReparto })}
               </p>
             </div>
           </Pegar>

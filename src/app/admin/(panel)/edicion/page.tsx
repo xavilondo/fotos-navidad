@@ -284,7 +284,7 @@ export default async function PaginaEdicion() {
         {registros}
         <Seccion titulo="Copias de seguridad">
           <p className="text-sm text-muted-ink">
-            Una copia cifrada antes del sorteo y otra al cierre, con{" "}
+            Una copia cifrada antes de publicar el reparto y otra al cierre, con{" "}
             <code className="rounded bg-cream px-1">pnpm copia:cifrada</code> desde un ordenador con
             acceso a la base de datos. Guardadlas fuera del repositorio y borradlas al purgar.
           </p>

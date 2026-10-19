@@ -22,7 +22,7 @@ const creadoEn = () => instante("creado_en").notNull().defaultNow();
 
 export const idioma = pgEnum("idioma", ["es", "va"]);
 export const tipoPreferencia = pgEnum("tipo_preferencia", ["favorita", "imposible"]);
-export const origenAsignacion = pgEnum("origen_asignacion", ["sorteo", "hueco_libre", "admin"]);
+export const origenAsignacion = pgEnum("origen_asignacion", ["reparto", "hueco_libre", "admin"]);
 export const estadoEmail = pgEnum("estado_email", ["pendiente", "enviado", "fallido", "rebotado"]);
 export const tipoEmail = pgEnum("tipo_email", [
   "alta",
@@ -105,6 +105,8 @@ export const hueco = pgTable(
     inicio: instante("inicio").notNull(),
     fin: instante("fin").notNull(),
     bloqueado: boolean("bloqueado").notNull().default(false),
+    /** Hueco que el admin añade a mano tras el cierre para resolver un conflicto. */
+    extra: boolean("extra").notNull().default(false),
   },
   (t) => [unique().on(t.franjaId, t.inicio)],
 );
@@ -230,27 +232,25 @@ export const preferencia = pgTable(
   ],
 );
 
-// ─── Sorteo y reparto ──────────────────────────────────────────────────────────
+// ─── Reparto ───────────────────────────────────────────────────────────────────
 
-export const sorteo = pgTable("sorteo", {
+/**
+ * El reparto de la edición: se calcula tras el cierre (las asignaciones quedan en borrador, solo las
+ * ve el admin), el admin lo revisa y lo ajusta a mano, y al publicarlo las familias ven su hora.
+ */
+export const reparto = pgTable("reparto", {
   id: uuid("id").primaryKey().defaultRandom(),
   edicionId: uuid("edicion_id")
     .notNull()
     .unique()
     .references(() => edicion.id, { onDelete: "cascade" }),
-  huella: text("huella").notNull(),
-  /** Se borra en la purga; las estadísticas y la huella se conservan. */
-  listaCanonica: jsonb("lista_canonica"),
-  exclusiones: jsonb("exclusiones").$type<{ id: string; motivo: string }[]>().notNull().default([]),
-  numeroOnce: text("numero_once"),
-  semilla: text("semilla"),
-  version: text("version"),
-  estadisticas: jsonb("estadisticas"),
-  huellaResultado: text("huella_resultado"),
-  lanzadoPor: text("lanzado_por"),
-  lanzadoEn: instante("lanzado_en"),
-  verificadoPor: text("verificado_por"),
-  verificadoEn: instante("verificado_en"),
+  version: text("version").notNull(),
+  /** Las del último cálculo y, al publicar, las del reparto publicado (con los ajustes a mano). */
+  estadisticas: jsonb("estadisticas").notNull(),
+  calculadoPor: text("calculado_por").notNull(),
+  calculadoEn: instante("calculado_en").notNull(),
+  publicadoPor: text("publicado_por"),
+  publicadoEn: instante("publicado_en"),
   creadoEn: creadoEn(),
 });
 

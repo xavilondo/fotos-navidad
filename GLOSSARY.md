@@ -5,7 +5,7 @@ Inscripción y asignación justa de horarios para la sesión de fotos de Navidad
 ## Campaña y calendario
 
 **Edición**:
-Una campaña anual de fotos de Navidad, con su propia configuración, inscripciones y sorteo.
+Una campaña anual de fotos de Navidad, con su propia configuración, inscripciones y reparto.
 _Avoid_: Campaña, evento, temporada
 
 **Día de sesión**:
@@ -15,6 +15,10 @@ _Avoid_: Jornada, fecha
 **Hueco**:
 La unidad mínima de tiempo reservable dentro de un día de sesión (por defecto, 5 minutos).
 _Avoid_: Slot, turno, cita
+
+**Hueco extra**:
+Un hueco que el admin añade a mano tras el cierre, en una franja y a una hora concreta, para resolver un conflicto. Es solo para esa familia: nunca se ofrece como hora libre y desaparece si se queda vacío.
+_Avoid_: Hueco adicional, sobrecupo
 
 **Franja**:
 Agrupación de huecos consecutivos (por defecto, 30 minutos) sobre la que las familias expresan sus preferencias.
@@ -75,21 +79,13 @@ Cualquier franja que la familia no marca ni como favorita ni como imposible.
 _Avoid_: Indiferente, neutra, me da igual
 
 **Reparto**:
-La asignación de un hueco a cada inscripción de una edición.
-_Avoid_: Asignación, resultado, planning
+La asignación de un hueco a cada inscripción de una edición. Al cerrar la inscripción se calcula el mejor posible según las preferencias, sin azar; queda en borrador hasta que el admin lo revisa y lo publica.
+_Avoid_: Sorteo, asignación, resultado, planning
 
-**Sorteo**:
-El cálculo verificable que, al cerrar la inscripción, obtiene el mejor reparto posible según las preferencias, usando la suerte solo para desempatar.
-_Avoid_: Lotería, asignación automática
-
-**Huella**:
-El resumen criptográfico de la lista de inscripciones que se publica al cerrar, antes de conocer la semilla.
-_Avoid_: Hash, firma, checksum
-
-**Semilla pública**:
-El número externo e imprevisible (el del Cupón Diario de la ONCE) que, junto con la huella, fija el desempate del sorteo.
-_Avoid_: Seed, número aleatorio
+**Conflicto**:
+Una inscripción que, en el reparto calculado, cae en una de sus horas imposibles. El AFA habla con la familia y la pone a mano en otra hora, si hace falta con un hueco extra.
+_Avoid_: Incidencia, problema
 
 **Compensación**:
-La ventaja que una familia con mala suerte en una edición podrá tener en la siguiente.
+La ventaja que una familia que no consiguió ninguna de sus favoritas en una edición podrá tener en la siguiente.
 _Avoid_: Bonus, prioridad, puntos
