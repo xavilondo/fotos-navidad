@@ -138,7 +138,7 @@ Variante **A** del prototipo, sin huella ni ONCE (ADR 0002):
 4. Enlace al código del reparto en el repositorio.
 5. «Nunca publicamos qué familia tiene cada hora».
 
-### 4.6 Resultado y cambios
+### 4.6 Resultado
 
 Ver [Resultado e intercambios](issues/10-resultado-e-intercambios.md).
 - **Sin intercambios entre familias.**
@@ -148,12 +148,9 @@ Ver [Resultado e intercambios](issues/10-resultado-e-intercambios.md).
   - «Añadir al calendario» (`.ics` generado en `/i/[enlace]/cita.ics`);
   - «Llegad 5 minutos antes».
 - Si no le ha tocado una favorita, el tono es cercano. Si le ha tocado una imposible, lo explica con franqueza: «No ha sido posible evitar una de vuestras horas imposibles: había más familias que huecos posibles».
-- **No hay ningún botón para pedir otra hora**: la hora que toca es la que es.
-- **Horas libres**: una lista corta «Horas libres ahora: martes 3 · 19:55 [Cambiarnos]». El primero que la coge se la queda y su hora anterior queda libre.
-  - Transacción con `UNIQUE(asignacion.hueco_id)` y `SELECT … FOR UPDATE`. La capacidad nunca se supera.
-  - La lista solo existe cuando la edición está `publicada`.
-- **Cancelar tras la publicación**: con el aviso «Vuestra hora quedará libre para otra familia».
-- Todo esto, hasta el 1/11 a las 20:00. Después solo el admin puede mover a una familia, y eso queda en la auditoría y manda un email.
+- **La hora publicada es la definitiva** (decisión del 19-10-2026): las familias no pueden cambiarse de hora ni pedir otra. No hay lista de horas libres.
+- **Cancelar tras la publicación**, hasta el 1/11 a las 20:00, con el aviso «Vuestra hora quedará libre». Nadie más puede cogerla.
+- Solo el admin puede mover a una familia (también a una hora extra), y eso queda en la auditoría y manda un email.
 
 ## 5. Reparto
 
@@ -250,7 +247,7 @@ Ver [Presupuesto de emails en la apertura](issues/08-presupuesto-de-emails-en-la
 | **Ya inscritos** | Envío con un email existente | «Ya teníais una inscripción» · botón «Editadla aquí» |
 | **Enlace nuevo** | «Enlace perdido» | «Aquí tenéis vuestro enlace nuevo. El anterior ya no funciona» · botón |
 | **Cancelación** | Al cancelar | «Hemos cancelado vuestra inscripción y borrado vuestros datos. Si cambiáis de idea, podéis volver a apuntaros hasta el martes 27 a las 21:00» |
-| **Resultado** | Al publicar el reparto | «Ya tenéis vuestra hora: lunes 2 a las 16:35» · «¡Vuestra 2ª favorita!» (o el texto cercano o franco de §4.6) · «Llegad 5 minutos antes» · .ics adjunto · botón «Ver vuestra hora» · «Si al final no podéis venir, cancelad para dejar la hora libre» |
+| **Resultado** | Al publicar el reparto | «Ya tenéis vuestra hora: lunes 2 a las 16:35» · «¡Vuestra 2ª favorita!» (o el texto cercano o franco de §4.6) · «Llegad 5 minutos antes» · .ics adjunto · botón «Ver vuestra hora» · «Esta es vuestra hora definitiva» · «Si al final no podéis venir, cancelad desde el enlace para avisar al AFA» |
 | **Movidos por el AFA** | Admin mueve | «El AFA ha cambiado vuestra hora: ahora es …» · .ics · botón |
 
 No hay recordatorios (ni antes del cierre ni el día anterior a la sesión): solo se envían los emails de la tabla.
@@ -344,7 +341,7 @@ Las mutaciones van con server actions validadas con Zod.
 
 **Reloj**: «abierta» es `now() >= abre_en AND now() < cierra_en`, evaluado en el servidor dentro de la misma transacción que guarda. El reloj del cliente nunca decide. Si alguien envía un segundo tarde, recibe un error controlado.
 
-**Concurrencia**: restricciones únicas más `SELECT … FOR UPDATE` en transacciones (pool `pg`). Lo cubre un test de concurrencia de dos familias pidiendo la misma hora libre.
+**Concurrencia**: restricciones únicas más `SELECT … FOR UPDATE` en transacciones (pool `pg`). Lo cubre un test de concurrencia de dos movimientos a la vez hacia la misma hora libre.
 
 ## 11. Pruebas y calidad
 
@@ -371,7 +368,7 @@ Construye en este orden (sustituye al del encargo). Al terminar cada fase, resum
 | **1 · Inscripción** | §4.1–4.4, §7 (alta, ya inscritos, enlace nuevo, cancelación), §8 (consentimiento, tabla, `/privacidad`, Turnstile, límites) | **22/10** | Playwright en verde. **Prueba real**: el AFA abre el enlace desde un chat de WhatsApp en iPhone y Android, se apunta, edita, cancela y recupera el borrador. Valenciano revisado por la junta |
 | **2 · Admin básico** | §6 (acceso, panel de control con mapa de calor, inscripciones, duplicados, alta manual, emails sin entregar, auditoría) | **25/10** | Las 2 cuentas creadas; el AFA da de alta a mano una inscripción |
 | **3 · Reparto** | §5 completo, §4.5 (`/reparto`), estados `cerrada`/`publicada` de la portada | **27/10, antes de las 21:00** | Tests del reparto en verde; cálculo con el *seed* de 119 familias; un conflicto resuelto con una hora extra |
-| **4 · Resultado** | §4.6, emails de resultado y de movidos, `.ics`, horas libres, mover desde el admin, agenda del fotógrafo y CSV de tesorería | **28/10** | Resultado enviado y visible; dos familias compitiendo por una hora libre: solo una la consigue |
+| **4 · Resultado** | §4.6, emails de resultado y de movidos, `.ics`, mover desde el admin, agenda del fotógrafo y CSV de tesorería | **28/10** | Resultado enviado y visible; la hora publicada es definitiva |
 | **5 · Cierre** | Purga con botón, compensación, copias, peticiones e incidentes, configurador visual | después de las fotos (31/01 como mucho) | Purga probada en una rama de Neon |
 
 Antes del 26/10: pasar a Vercel Pro el 25/10, Resend Pro hacia el 20/10 y «calentar» Neon abriendo el panel el domingo.

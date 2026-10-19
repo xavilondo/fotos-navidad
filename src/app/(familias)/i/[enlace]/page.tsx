@@ -6,7 +6,6 @@ import { datosFormulario } from "@/servidor/inscripciones/datos-formulario";
 import { leerPorEnlace } from "@/servidor/inscripciones/operaciones";
 import { VistaInscripcion } from "@/ui/enlace/VistaInscripcion";
 import { Resultado } from "@/ui/enlace/Resultado";
-import { listarHuecosLibres } from "@/servidor/resultado/horas";
 import { formateadorFechas, mayuscula } from "@/ui/fechas";
 import { EnlacePerdido } from "@/ui/portada/EnlacePerdido";
 import { Cabecera } from "@/ui/marca/Cabecera";
@@ -44,9 +43,7 @@ export default async function PaginaEnlace({ params }: PageProps<"/i/[enlace]">)
 
   const locale = await getLocale();
   const datos = await datosFormulario(vista.edicion, locale);
-  const tr = await getTranslations("enlace");
   const f = formateadorFechas(locale, vista.edicion.zona);
-  const etiqueta = (d: Date) => tr("franja", { dia: f.dia(d), hora: f.hora(d) });
   let resultado: React.ReactNode = null;
   if (vista.estado === "publicada" || vista.estado === "terminada") {
     const a = vista.asignacion;
@@ -68,30 +65,16 @@ export default async function PaginaEnlace({ params }: PageProps<"/i/[enlace]">)
             : favoritas.length === 0
               ? "sin_favoritas"
               : "nos_va_bien";
-      // Las horas libres que mejor os vienen, primero: vuestras favoritas por orden, luego las que os
-      // van bien y las imposibles al final.
-      const nivel = (codigo: string) => {
-        const i = favoritas.indexOf(codigo);
-        return i >= 0 ? i : imposibles.includes(codigo) ? 99 : 50;
-      };
-      const libres = (
-        vista.estado === "publicada" ? await listarHuecosLibres(db, vista.edicion.id) : []
-      ).sort(
-        (x, y) => nivel(x.franja) - nivel(y.franja) || x.inicio.getTime() - y.inicio.getTime(),
-      );
       resultado = (
         <Resultado
           r={{
             token: enlace,
             dia: mayuscula(f.dia(a.inicio)),
             hora: f.hora(a.inicio),
-            etiqueta: etiqueta(a.inicio),
             categoria,
             posicionFavorita: p >= 0 ? p + 1 : null,
             origen: a.origen,
             publicada: vista.estado === "publicada",
-            fin: etiqueta(vista.edicion.cambiosHasta),
-            libres: libres.map((h) => ({ id: h.id, etiqueta: etiqueta(h.inicio) })),
           }}
         />
       );

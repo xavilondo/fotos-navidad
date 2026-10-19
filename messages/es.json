@@ -44,7 +44,7 @@
       },
       "publicada": {
         "pastilla": "Horas publicadas",
-        "texto": "<b>Mirad vuestro email:</b> ahí tenéis vuestra hora y el enlace para verla. Podéis pasaros a una hora libre o cancelar hasta el {dia} a las {hora}.",
+        "texto": "<b>Mirad vuestro email:</b> ahí tenéis vuestra hora y el enlace para verla. Es la hora definitiva; si al final no podéis venir, cancelad desde el enlace.",
         "cifras": {
           "primera": "con su 1ª",
           "otra": "con otra favorita",
@@ -308,14 +308,14 @@
     "cancelar": "Cancelar la inscripción",
     "cancelarTitulo": "¿Cancelamos vuestra inscripción?",
     "cancelarTexto": "Borraremos todos vuestros datos. Podréis volver a apuntaros mientras la inscripción siga abierta.",
-    "cancelarTextoPublicada": "Vuestra hora quedará libre para otra familia y borraremos todos vuestros datos.",
+    "cancelarTextoPublicada": "Vuestra hora quedará libre y borraremos todos vuestros datos.",
     "cancelarSi": "Sí, cancelar",
     "cancelando": "Cancelando…",
     "cancelarNo": "No, mantenerla",
     "cancelada": {
       "titulo": "Inscripción cancelada",
       "texto": "Hemos borrado vuestros datos. Si cambiáis de idea, podéis volver a apuntaros hasta el {cierre}.",
-      "textoPublicada": "Hemos borrado vuestros datos y vuestra hora ha quedado libre para otra familia."
+      "textoPublicada": "Hemos borrado vuestros datos y vuestra hora ha quedado libre."
     },
     "guardado": "Cambios guardados.",
     "noValido": {
@@ -376,33 +376,19 @@
     "hora": "{dia} · {hora}",
     "favorita": "¡Vuestra {n}ª favorita!",
     "nos_va_bien": "No ha podido ser ninguna de vuestras favoritas, pero es una hora que os va bien.",
-    "imposible": "No ha sido posible evitar una de vuestras horas imposibles: había más familias que huecos posibles. Si no podéis venir, mirad las horas libres o escribid al AFA y lo hablamos.",
+    "imposible": "No ha sido posible evitar una de vuestras horas imposibles: había más familias que huecos posibles. Si no podéis venir, escribid al AFA y lo hablamos.",
     "sin_favoritas": "Os iba bien cualquier hora: esta es la vuestra.",
     "movida": "El AFA ha cambiado vuestra hora.",
     "cambiada": "Es la hora libre a la que os cambiasteis.",
     "llegad": "Llegad 5 minutos antes.",
     "calendario": "Añadir al calendario",
-    "libres": {
-      "titulo": "Horas libres ahora",
-      "texto": "Si os viene mejor, podéis pasaros a una de estas horas hasta el {fin}. La primera familia que la coge se la queda, y vuestra hora de ahora queda libre para otra.",
-      "ninguna": "Ahora mismo no hay horas libres.",
-      "cambiar": "Cambiarnos",
-      "cambiarAria": "Cambiarnos al {franja}",
-      "mas": "Ver más horas libres",
-      "confirmar": "¿Os cambiamos al {franja}?",
-      "confirmarTexto": "Vuestra hora de ahora ({actual}) quedará libre para otra familia.",
-      "si": "Sí, cambiarnos",
-      "cambiando": "Cambiando…",
-      "no": "No, nos quedamos",
-      "ocupada": "Vaya, otra familia acaba de coger esa hora. Elegid otra.",
-      "hecho": "¡Hecho! Vuestra nueva hora es el {franja}."
-    },
-    "terminada": "Ya no se pueden hacer cambios. Si tenéis un problema con vuestra hora, escribid al AFA.",
+    "definitiva": "Esta es vuestra hora definitiva. Si al final no podéis venir, cancelad desde esta página para avisar al AFA.",
+    "terminada": "Si tenéis un problema con vuestra hora, escribid al AFA.",
     "sinHora": "Esta inscripción no ha entrado en el reparto. Si creéis que es un error, escribid al AFA."
   },
   "calendario": {
     "titulo": "Fotos de Navidad · AFA CEI Las Palmeras",
-    "descripcion": "Llegad 5 minutos antes. Si al final no podéis venir, cancelad desde vuestro enlace para dejar la hora libre a otra familia.",
+    "descripcion": "Llegad 5 minutos antes. Si al final no podéis venir, cancelad desde vuestro enlace.",
     "lugar": "CEI Las Palmeras"
   }
 }

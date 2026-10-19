@@ -207,14 +207,11 @@ const ES: Textos = {
           b("Llegad 5 minutos antes."),
           " Os adjuntamos un archivo para añadir la cita a vuestro calendario.",
         ),
-        p(
-          "Si os viene mejor otra hora, en vuestro enlace veréis las que quedan libres: podéis " +
-            `cambiaros hasta el ${f.diaYHora(d.cambiosHasta)}.`,
-        ),
+        p("Esta es vuestra hora definitiva."),
         boton("Ver vuestra hora", d.enlace),
         nota(
-          "Si al final no podéis venir, cancelad desde el enlace para dejar la hora libre a otra " +
-            "familia. Este enlace es solo vuestro: no lo reenviéis.",
+          "Si al final no podéis venir, cancelad desde el enlace para avisar al AFA. Este enlace " +
+            "es solo vuestro: no lo reenviéis.",
         ),
       ],
       motivo:
@@ -414,14 +411,11 @@ const VA: Textos = {
           b("Arribeu 5 minuts abans."),
           " Us adjuntem un arxiu per a afegir la cita al vostre calendari.",
         ),
-        p(
-          "Si us va millor una altra hora, en el vostre enllaç veureu les que queden lliures: " +
-            `podeu canviar-vos fins al ${f.diaYHora(d.cambiosHasta)}.`,
-        ),
+        p("Aquesta és la vostra hora definitiva."),
         boton("Veure la vostra hora", d.enlace),
         nota(
-          "Si al final no podeu vindre, cancel·leu des de l'enllaç per a deixar l'hora lliure a " +
-            "una altra família. Aquest enllaç és només vostre: no el reenvieu.",
+          "Si al final no podeu vindre, cancel·leu des de l'enllaç per a avisar l'AFA. Aquest " +
+            "enllaç és només vostre: no el reenvieu.",
         ),
       ],
       motivo: "Us escrivim perquè esteu apuntats amb aquest correu a les fotos de Nadal de l'AFA.",

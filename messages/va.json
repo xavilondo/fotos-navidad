@@ -44,7 +44,7 @@
       },
       "publicada": {
         "pastilla": "Hores publicades",
-        "texto": "<b>Mireu el vostre correu:</b> hi teniu la vostra hora i l'enllaç per a veure-la. Podeu canviar-vos a una hora lliure o cancel·lar fins al {dia} a les {hora}.",
+        "texto": "<b>Mireu el vostre correu:</b> hi teniu la vostra hora i l'enllaç per a veure-la. És l'hora definitiva; si al final no podeu vindre, cancel·leu des de l'enllaç.",
         "cifras": {
           "primera": "amb la 1a",
           "otra": "amb una altra preferida",
@@ -308,14 +308,14 @@
     "cancelar": "Cancel·lar la inscripció",
     "cancelarTitulo": "Cancel·lem la vostra inscripció?",
     "cancelarTexto": "Esborrarem totes les vostres dades. Podreu tornar a apuntar-vos mentre la inscripció continue oberta.",
-    "cancelarTextoPublicada": "La vostra hora quedarà lliure per a una altra família i esborrarem totes les vostres dades.",
+    "cancelarTextoPublicada": "La vostra hora quedarà lliure i esborrarem totes les vostres dades.",
     "cancelarSi": "Sí, cancel·lar",
     "cancelando": "S'està cancel·lant…",
     "cancelarNo": "No, mantindre-la",
     "cancelada": {
       "titulo": "Inscripció cancel·lada",
       "texto": "Hem esborrat les vostres dades. Si canvieu d'idea, podeu tornar a apuntar-vos fins al {cierre}.",
-      "textoPublicada": "Hem esborrat les vostres dades i la vostra hora ha quedat lliure per a una altra família."
+      "textoPublicada": "Hem esborrat les vostres dades i la vostra hora ha quedat lliure."
     },
     "guardado": "Canvis guardats.",
     "noValido": {
@@ -376,33 +376,19 @@
     "hora": "{dia} · {hora}",
     "favorita": "La vostra {n}a preferida!",
     "nos_va_bien": "No ha pogut ser cap de les vostres preferides, però és una hora que us va bé.",
-    "imposible": "No ha estat possible evitar una de les vostres hores impossibles: hi havia més famílies que buits possibles. Si no podeu vindre, mireu les hores lliures o escriviu a l'AFA i ho parlem.",
+    "imposible": "No ha estat possible evitar una de les vostres hores impossibles: hi havia més famílies que buits possibles. Si no podeu vindre, escriviu a l'AFA i ho parlem.",
     "sin_favoritas": "Us anava bé qualsevol hora: aquesta és la vostra.",
     "movida": "L'AFA ha canviat la vostra hora.",
     "cambiada": "És l'hora lliure a la qual us vau canviar.",
     "llegad": "Arribeu 5 minuts abans.",
     "calendario": "Afegir al calendari",
-    "libres": {
-      "titulo": "Hores lliures ara",
-      "texto": "Si us va millor, podeu canviar-vos a una d'aquestes hores fins al {fin}. La primera família que l'agafa se la queda, i la vostra hora d'ara queda lliure per a una altra.",
-      "ninguna": "Ara mateix no hi ha hores lliures.",
-      "cambiar": "Canviar-nos",
-      "cambiarAria": "Canviar-nos al {franja}",
-      "mas": "Veure més hores lliures",
-      "confirmar": "Us canviem al {franja}?",
-      "confirmarTexto": "La vostra hora d'ara ({actual}) quedarà lliure per a una altra família.",
-      "si": "Sí, canviar-nos",
-      "cambiando": "S'està canviant…",
-      "no": "No, ens quedem",
-      "ocupada": "Vaja, una altra família acaba d'agafar aquesta hora. Trieu-ne una altra.",
-      "hecho": "Fet! La vostra hora nova és el {franja}."
-    },
-    "terminada": "Ja no es poden fer canvis. Si teniu un problema amb la vostra hora, escriviu a l'AFA.",
+    "definitiva": "Aquesta és la vostra hora definitiva. Si al final no podeu vindre, cancel·leu des d'aquesta pàgina per a avisar l'AFA.",
+    "terminada": "Si teniu un problema amb la vostra hora, escriviu a l'AFA.",
     "sinHora": "Aquesta inscripció no ha entrat en el repartiment. Si creieu que és un error, escriviu a l'AFA."
   },
   "calendario": {
     "titulo": "Fotos de Nadal · AFA CEI Las Palmeras",
-    "descripcion": "Arribeu 5 minuts abans. Si al final no podeu vindre, cancel·leu des del vostre enllaç per a deixar l'hora lliure a una altra família.",
+    "descripcion": "Arribeu 5 minuts abans. Si al final no podeu vindre, cancel·leu des del vostre enllaç.",
     "lugar": "CEI Las Palmeras"
   }
 }

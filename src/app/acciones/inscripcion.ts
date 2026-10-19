@@ -5,7 +5,6 @@ import { registrarError } from "@/servidor/registro";
 import {
   type Proteccion,
   valido,
-  zId,
   zProteccion,
   zSeccion,
   zTexto,
@@ -23,7 +22,6 @@ import {
   pedirEnlaceNuevo,
 } from "@/servidor/inscripciones/operaciones";
 import { urlApp } from "@/servidor/url";
-import { cambiarseAHuecoLibre } from "@/servidor/resultado/horas";
 import { consumirLimite } from "@/servidor/seguridad/limites";
 import { claveAnonima, ipCliente } from "@/servidor/seguridad/peticion";
 import { verificarTurnstile } from "@/servidor/seguridad/turnstile";
@@ -115,20 +113,6 @@ export async function pedirEnlace(email: string, proteccion: Proteccion): Promis
     return { estado: "ok" };
   } catch (e) {
     registrarError("enlace perdido", e);
-    return { estado: "error" };
-  }
-}
-
-export async function cambiarnos(
-  token: string,
-  huecoId: string,
-): Promise<{ estado: "ok" | "ocupado" | "cerrada" | "no_encontrada" | "sin_hora" | "error" }> {
-  if (!valido([zToken, token], [zId, huecoId])) return { estado: "no_encontrada" };
-  try {
-    const r = await cambiarseAHuecoLibre(db, token, huecoId);
-    return { estado: r.estado };
-  } catch (e) {
-    registrarError("Error al cambiar de hora", e);
     return { estado: "error" };
   }
 }

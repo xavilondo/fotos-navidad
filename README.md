@@ -14,7 +14,7 @@ Las familias se apuntan desde el móvil y marcan sus horas **favoritas** (hasta 
 | ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | Familias      | `/`                    | Portada con cinco estados según el reloj del servidor (antes, abierta, cerrada, publicada, terminada).                         |
 |               | `/inscripcion`         | Inscripción en 5 pasos, con borrador guardado en el móvil.                                                                     |
-|               | `/i/[enlace]`          | Ver, cambiar o cancelar la inscripción. Cuando se publica el reparto: la hora, el `.ics` y las horas libres.                   |
+|               | `/i/[enlace]`          | Ver, cambiar o cancelar la inscripción. Cuando se publica el reparto: la hora definitiva y el `.ics`.                          |
 |               | `/reparto`             | Cómo se reparten las horas y las cifras del año (`/sorteo` redirige aquí).                                                     |
 |               | `/privacidad`          | Texto de privacidad.                                                                                                           |
 | Panel del AFA | `/admin`               | Panel de control, inscripciones, reparto, horas, exportaciones, auditoría y edición (configurador, registros, cierre y purga). |
@@ -64,7 +64,7 @@ Las pruebas de extremo a extremo crean su propia base de datos (`createdb fotos_
 - los errores, el borrador, el email repetido y el enlace perdido;
 - editar y cancelar con el enlace;
 - el panel: acceso, alta manual y ficha;
-- el reparto de principio a fin: cálculo, hora extra, publicación, resultado, horas libres, `.ics`, `/reparto` y la agenda en PDF;
+- el reparto de principio a fin: cálculo, hora extra, publicación, resultado definitivo, `.ics`, `/reparto` y la agenda en PDF;
 - la accesibilidad con axe (WCAG 2.2 AA) en las pantallas principales.
 
 ## Estructura
@@ -85,7 +85,7 @@ Decisiones técnicas que conviene saber:
 - El **estado de la edición no se guarda**: se calcula en cada petición con `now()` de Postgres, dentro de la misma transacción que guarda. El reloj del móvil nunca decide.
 - Los **enlaces de acceso** son tokens de 32 bytes. En la base de datos solo se guarda su SHA-256, y lo mismo con las sesiones de admin. Valen hasta el final de la última sesión de fotos. El estado de la edición decide qué se puede cambiar. Pedir un enlace nuevo invalida todos los anteriores.
 - Los **emails** se encolan en la misma transacción que la acción (outbox), salen justo después con `after()` y se reintentan desde el cron. Que falle un email nunca hace fallar la acción de la familia. Ningún email lleva nombres de peques ni observaciones.
-- **Cambiarse a una hora libre:** se hace con `SELECT … FOR UPDATE` sobre el hueco, con `UNIQUE(asignacion.hueco_id)` como garantía final. La capacidad nunca se supera, y hay un test con dos familias a la vez.
+- **La hora publicada es definitiva:** las familias no pueden cambiarse de hora; solo el AFA mueve a una familia, con `SELECT … FOR UPDATE` sobre el hueco y `UNIQUE(asignacion.hueco_id)` como garantía final. La capacidad nunca se supera.
 - El **reparto** es un módulo puro (`src/dominio/reparto`), versionado como `reparto-v2.0`, sin azar: la misma lista da siempre el mismo resultado. Se calcula en borrador; las familias solo ven su hora cuando el admin lo publica.
 
 ## Despliegue (Vercel + Neon + Resend + Turnstile)
@@ -131,7 +131,7 @@ El repositorio está en [xavilondo/fotos-navidad](https://github.com/xavilondo/f
 | Mar 27/10 21:00                 | —        | Cierra la inscripción.                                                                                                                                     |
 | Mar 27 noche                    | Admin    | `pnpm copia:cifrada`. Si hay duplicados, se **excluyen** (no se borran). Panel → Reparto → **Calcular el reparto** (queda en borrador).                    |
 | Mié 28/10                       | Admin    | Revisar los conflictos, llamar a esas familias y ponerlas a mano en una hora que les vaya bien (ficha → hora extra). **Publicar**: los emails salen solos. |
-| Hasta dom 1/11 20:00            | Familias | Cambiarse a una hora libre o cancelar.                                                                                                                     |
+| Hasta dom 1/11 20:00            | Familias | Cancelar si no pueden venir (la hora es definitiva: no hay cambios).                                                                                       |
 | Dom 1/11 noche                  | Admin    | Exportaciones → agenda del fotógrafo (PDF), después de que firme el compromiso de confidencialidad. CSV de tesorería.                                      |
 | Lun 2 y mar 3/11                | —        | Fotos.                                                                                                                                                     |
 | Al entregar las fotos (≤ 31/01) | Admin    | `pnpm copia:cifrada`, borrar todas las copias y Panel → Edición → **Cerrar la edición** (purga). Vercel vuelve a Hobby y se da de baja Resend Pro.         |

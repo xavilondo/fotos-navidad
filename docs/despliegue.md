@@ -71,6 +71,8 @@ De esas 4, tres son pruebas del 14-10:
 
 La cuarta, del 14-10 por la tarde, tiene un email y un nombre que parecen de una familia real: se inscribió con la web abierta para ensayar. **No se borra con este procedimiento.** El AFA decide si contactar con ella (su email no llegó a enviarse) y si conservarla o pedirle que se inscriba de nuevo a partir del 26-10.
 
+**Limpieza del 19-10-2026**, ya en la base del servidor propio y por petición del usuario: se retiran la tanda de 107, las 4 pruebas sin marca (las 3 de la tabla y otra del 17-10 con un email `@a.com`) y la cuarta inscripción, que el usuario confirma que también era una prueba. Se usa `--mantener-fechas`, así que la inscripción sigue abierta para seguir probando. Quedan 0 inscripciones, 0 emails en cola y 120 huecos libres. La cuenta de administración `afa` pasa a mostrarse como «AFA».
+
 `pnpm edicion:retirar-ficticias <edición>` retira la tanda y devuelve las fechas a la config, en una transacción:
 
 - Solo cuenta como ficticia una inscripción con las tres marcas de `scripts/semilla-horarios.ts`: email `sim-horarios-<semilla>-<NNN>@example.com`, adulto `SIM …` y observaciones que empiezan por `[SIMULACIÓN`. Otras pruebas solo se borran nombrándolas por su id con `--tambien`.

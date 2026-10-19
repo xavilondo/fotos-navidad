@@ -154,6 +154,17 @@ describe("retirarFicticias", () => {
     expect(quedan).toEqual([{ id: ids.real }]);
   });
 
+  it("con mantenerFechas retira las ficticias y deja la inscripción como estaba", async () => {
+    const antes = (await db.select().from(schema.edicion))[0];
+    const r = await retirarFicticias(db, CONFIG, { aplicar: true, mantenerFechas: true });
+    expect(r).toMatchObject({ aplicado: true, inscripciones: 2 });
+    expect(r.fechas.despues).toEqual(r.fechas.antes);
+    const despues = (await db.select().from(schema.edicion))[0];
+    expect(despues.abreEn).toEqual(antes.abreEn);
+    expect(despues.cierraEn).toEqual(antes.cierraEn);
+    expect(despues.cambiosHasta).toEqual(antes.cambiosHasta);
+  });
+
   it("no toca nada si ya hay un reparto calculado", async () => {
     const [ed] = await db.select().from(schema.edicion);
     await db.insert(schema.reparto).values({

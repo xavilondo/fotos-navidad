@@ -8,7 +8,7 @@ const ejecutar = (orden: string) =>
 
 test.describe.configure({ mode: "serial" });
 
-test("reparto de principio a fin: cierre, cálculo, hora a mano, publicación y horas libres", async ({
+test("reparto de principio a fin: cierre, cálculo, hora a mano y publicación definitiva", async ({
   page,
 }) => {
   test.setTimeout(180_000);
@@ -52,7 +52,7 @@ test("reparto de principio a fin: cierre, cálculo, hora a mano, publicación y 
   await page.getByRole("button", { name: "Sí, publicar" }).click();
   await expect(page.getByRole("heading", { name: "Reparto publicado" })).toBeVisible();
 
-  // La familia ve su hora y se pasa a una hora libre.
+  // La familia ve su hora, definitiva: no hay horas libres a las que cambiarse.
   const { rows } = await bd().query(
     "select datos->>'enlace' as enlace from email_outbox where tipo = 'resultado' order by creado_en desc limit 1",
   );
@@ -61,12 +61,8 @@ test("reparto de principio a fin: cierre, cálculo, hora a mano, publicación y 
   await expect(page.getByRole("link", { name: "Añadir al calendario" })).toBeVisible();
   const ics = await page.request.get(`${new URL(rows[0].enlace).pathname}/cita.ics`);
   expect(await ics.text()).toContain("BEGIN:VEVENT");
-  await page
-    .getByRole("button", { name: /^Cambiarnos al/ })
-    .first()
-    .click();
-  await page.getByRole("button", { name: "Sí, cambiarnos" }).click();
-  await expect(page.getByText(/¡Hecho! Vuestra nueva hora es el/)).toBeVisible();
+  await expect(page.getByText(/Esta es vuestra hora definitiva/)).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Cambiarnos/ })).toHaveCount(0);
 
   // La página del reparto publica las cifras, nunca quién tiene cada hora.
   await page.goto("/sorteo");

@@ -48,13 +48,16 @@ describe("fechas en hora de Madrid", () => {
     const es = await renderizarEmail("es", EJEMPLOS.resultado);
     expect(es.asunto).toContain("lunes 2 a las 16:35");
     expect(es.texto).toContain("lunes 2 a las 16:35");
-    expect(es.texto).toContain("domingo 1 a las 20:00");
+    // La hora es definitiva: el email ya no ofrece cambiarse hasta el fin de los cambios.
+    expect(es.texto).toContain("Esta es vuestra hora definitiva.");
+    expect(es.texto).not.toContain("domingo 1 a las 20:00");
     expect(es.html).toContain("16:35");
     expect(es.html).toContain("Lunes 2 de noviembre");
 
     const va = await renderizarEmail("va", EJEMPLOS.resultado);
     expect(va.asunto).toContain("dilluns 2 a les 16:35");
-    expect(va.texto).toContain("diumenge 1 a les 20:00");
+    expect(va.texto).toContain("Aquesta és la vostra hora definitiva.");
+    expect(va.texto).not.toContain("diumenge 1 a les 20:00");
     expect(va.html).toContain("Dilluns 2 de novembre");
   });
 

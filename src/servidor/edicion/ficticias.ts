@@ -48,12 +48,13 @@ export type InformeRetirada = {
  * Retira las familias ficticias de una edición y devuelve sus fechas a las de la config. En seco
  * (por defecto) solo cuenta lo que haría. Con `aplicar` lo hace todo en una transacción: borra las
  * ficticias (y las de `tambien`) con sus peques, preferencias, enlaces, asignaciones, emails y
- * límites, y deja constancia en la auditoría. Idempotente.
+ * límites, y deja constancia en la auditoría. Idempotente. Con `mantenerFechas` no toca las fechas:
+ * sirve para limpiar mientras se sigue probando con la inscripción abierta.
  */
 export async function retirarFicticias(
   db: BaseDatos,
   config: Pick<ConfigEdicion, "slug" | "zona" | "abreEn" | "cierraEn" | "cambiosHasta">,
-  opciones: { aplicar: boolean; tambien?: string[]; usuario?: string },
+  opciones: { aplicar: boolean; tambien?: string[]; usuario?: string; mantenerFechas?: boolean },
 ): Promise<InformeRetirada> {
   const tambien = [...new Set(opciones.tambien ?? [])];
   const deseadas = {
@@ -162,7 +163,10 @@ export async function retirarFicticias(
       cierraEn: f.cierraEn.toISOString(),
       cambiosHasta: f.cambiosHasta.toISOString(),
     });
-    const fechas = { antes: iso(edicion), despues: iso(deseadas) };
+    const fechas = {
+      antes: iso(edicion),
+      despues: opciones.mantenerFechas ? iso(edicion) : iso(deseadas),
+    };
     const cambiaFechas = JSON.stringify(fechas.antes) !== JSON.stringify(fechas.despues);
     const cambios = ids.length > 0 || cambiaFechas;
     const informe: InformeRetirada = {

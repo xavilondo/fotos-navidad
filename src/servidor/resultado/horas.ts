@@ -7,7 +7,6 @@ import * as t from "@/servidor/db/schema";
 import type { BaseDatos } from "@/servidor/db/tipos";
 import { edicionActual, type FilaEdicion } from "@/servidor/edicion/repositorio";
 import {
-  buscarPorToken,
   comunEmail,
   enlaceAdicional,
   enlaceDe,
@@ -19,9 +18,9 @@ import type { Admin } from "@/servidor/admin/auth";
 export type HuecoLibre = { id: string; inicio: Date; fin: Date; franja: string };
 
 /**
- * Horas libres ahora: el sobrante del reparto y lo que dejan las cancelaciones. Las familias solo
- * las ven cuando la edición está publicada. Los huecos extra nunca se ofrecen: el admin los crea
- * para una familia concreta.
+ * Horas libres ahora: el sobrante del reparto y lo que dejan las cancelaciones. Solo las usa el
+ * admin para mover a una familia (las familias no pueden cambiarse de hora). Los huecos extra no
+ * cuentan: el admin los crea para una familia concreta.
  */
 export async function listarHuecosLibres(
   db: BaseDatos | Tx,
@@ -76,14 +75,14 @@ export async function borrarHuecoExtraLibre(tx: Tx, huecoId: string) {
 
 /**
  * Mueve una inscripción a un hueco libre dentro de una transacción. El hueco se bloquea con
- * `SELECT … FOR UPDATE`: si dos familias van a por la misma hora, la segunda espera y ve que ya
+ * `SELECT … FOR UPDATE`: si dos movimientos van a por la misma hora, el segundo espera y ve que ya
  * está cogida. La restricción `UNIQUE(asignacion.hueco_id)` es la última red: la capacidad nunca se supera.
  */
 async function moverA(
   tx: Tx,
   inscripcionId: string,
   huecoId: string,
-  origen: "hueco_libre" | "admin",
+  origen: "admin",
   edicionId: string,
 ): Promise<
   { estado: "ok"; inicio: Date; de: Date } | { estado: "ocupado" | "sin_hora" | "no_encontrada" }
@@ -121,45 +120,6 @@ async function moverA(
     .where(eq(t.asignacion.inscripcionId, inscripcionId));
   await borrarHuecoExtraLibre(tx, actual.huecoId);
   return { estado: "ok", inicio: hueco.inicio, de: actual.inicio };
-}
-
-/**
- * «Cambiarnos»: la familia se pasa a una hora libre. El primero que la coge se la queda y su hora
- * anterior queda libre. Solo mientras la edición está publicada (hasta el fin de los cambios).
- */
-export async function cambiarseAHuecoLibre(
-  db: BaseDatos,
-  token: string,
-  huecoId: string,
-): Promise<ResultadoCambio> {
-  try {
-    return await db.transaction(async (tx) => {
-      const ins = await buscarPorToken(tx, token, true);
-      if (!ins) return { estado: "no_encontrada" };
-      const actual = await edicionActual(tx, { bloquear: true });
-      if (!actual || actual.edicion.id !== ins.edicionId) return { estado: "no_encontrada" };
-      if (actual.estado !== "publicada") return { estado: "cerrada" };
-      const r = await moverA(tx, ins.id, huecoId, "hueco_libre", ins.edicionId);
-      if (r.estado !== "ok") return r;
-      await registrarAuditoria(tx, {
-        edicionId: ins.edicionId,
-        actor: { tipo: "familia" },
-        accion: "asignacion.cambio",
-        inscripcionId: ins.id,
-        detalle: { de: r.de.toISOString(), a: r.inicio.toISOString(), origen: "hueco_libre" },
-      });
-      return { estado: "ok", inicio: r.inicio, outbox: [] };
-    });
-  } catch (e) {
-    // Dos transacciones a la vez sobre la misma hora: la restricción única hace de árbitro.
-    if (
-      (e as { cause?: { code?: string }; code?: string }).cause?.code === "23505" ||
-      (e as { code?: string }).code === "23505"
-    ) {
-      return { estado: "ocupado" };
-    }
-    throw e;
-  }
 }
 
 /**

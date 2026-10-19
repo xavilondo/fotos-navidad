@@ -51,7 +51,7 @@ export default async function PaginaPanel() {
   return (
     <>
       <TituloPagina
-        descripcion={`${NOMBRE_ESTADO[estado]} · abre el ${f.dia(edicion.abreEn)} a las ${f.hora(edicion.abreEn)}, cierra el ${f.dia(edicion.cierraEn)} a las ${f.hora(edicion.cierraEn)}, cambios hasta el ${f.dia(edicion.cambiosHasta)} a las ${f.hora(edicion.cambiosHasta)}.`}
+        descripcion={`${NOMBRE_ESTADO[estado]} · abre el ${f.dia(edicion.abreEn)} a las ${f.hora(edicion.abreEn)}, cierra el ${f.dia(edicion.cierraEn)} a las ${f.hora(edicion.cierraEn)}, cancelaciones hasta el ${f.dia(edicion.cambiosHasta)} a las ${f.hora(edicion.cambiosHasta)}.`}
       >
         {edicion.nombre}
       </TituloPagina>
