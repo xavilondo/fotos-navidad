@@ -47,7 +47,7 @@ pnpm semilla:familias 119 --duplicados # 119 familias ficticias, con las prefere
 CONTRASENA_ADMIN='una-contraseña-larga' pnpm admin:crear demo "Admin de desarrollo"
 ```
 
-Con `edicion:ensayo cerrada`, el reparto se calcula y se publica desde `/admin/reparto`. Sin `RESEND_API_KEY`, los emails no se envían: se escriben en la consola. `pnpm emails:vista-previa` genera los 12 emails (6 tipos en 2 idiomas) en `.scratch/emails-vista-previa/`.
+Con `edicion:ensayo cerrada`, el reparto se calcula y se publica desde `/admin/reparto`. Sin SMTP ni `RESEND_API_KEY`, los emails no se envían: se escriben en la consola. `pnpm emails:vista-previa` genera los 12 emails (6 tipos en 2 idiomas) en `.scratch/emails-vista-previa/`.
 
 ## Pruebas
 
@@ -105,6 +105,7 @@ El repositorio está en [xavilondo/fotos-navidad](https://github.com/xavilondo/f
    | `DATABASE_URL`                                                                    | Neon, cadena con _pooling_.                                                                                                                                                                                                              |
    | `URL_APP`                                                                         | `https://fotos.afalaspalmeras.es`                                                                                                                                                                                                        |
    | `RESEND_API_KEY`, `EMAIL_REMITENTE`, `EMAIL_RESPONDER_A`, `RESEND_WEBHOOK_SECRET` | Emails y rebotes (webhook de Resend → `/api/webhooks/resend`, eventos `email.bounced` y `email.complained`).                                                                                                                             |
+   | `SMTP_HOST`, `SMTP_PUERTO`, `SMTP_USUARIO`, `SMTP_CONTRASENA`                     | Envío por SMTP, con prioridad sobre Resend. Para Gmail: `smtp.gmail.com`, 465, la dirección y una contraseña de aplicación (con verificación en dos pasos). Sin webhook: los rebotes llegan a la bandeja de la cuenta.                   |
    | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`                          | Turnstile. En producción es obligatorio.                                                                                                                                                                                                 |
    | `CRON_SECRET`                                                                     | Lo manda Vercel al cron. En `vercel.json` es diario para que despliegue también en Hobby. Las tareas ya corren además con cada visita (una vez por minuto como mucho), pero con Vercel Pro podéis poner `*/5 * * * *` del 25/10 al 3/11. |
    | `NEXT_PUBLIC_AFA_NIF`, `NEXT_PUBLIC_AFA_EMAIL`                                    | NIF y email del AFA en los textos de privacidad. Mientras falten, se ven los marcadores `[NIF]` y `[email del AFA]`.                                                                                                                     |

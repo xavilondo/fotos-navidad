@@ -150,6 +150,16 @@ describe("reparto", () => {
     expect(antes.enImposible).toHaveLength(2);
     expect(antes.estadisticas?.porPreferencia.imposible).toBe(2);
     const [conflicto] = antes.enImposible;
+    // Su 1ª favorita, 12 minutos después de que empiece la franja (p. ej. lun-1730 → 17:42).
+    const [{ codigo: favorita }] = await db
+      .select({ codigo: schema.franja.codigo })
+      .from(schema.preferencia)
+      .innerJoin(schema.franja, eq(schema.franja.id, schema.preferencia.franjaId))
+      .where(
+        and(eq(schema.preferencia.inscripcionId, conflicto.id), eq(schema.preferencia.posicion, 1)),
+      );
+    const [hh, mm] = [favorita.slice(4, 6), Number(favorita.slice(6, 8)) + 12];
+    const horaExtra = `${hh}:${mm}`;
 
     expect(
       (await asignarHoraExtra(db, ADMIN, conflicto.id, "lun-1700", "25:00", CTX.urlApp)).estado,
@@ -158,10 +168,10 @@ describe("reparto", () => {
     expect(
       (await asignarHoraExtra(db, ADMIN, conflicto.id, "lun-1700", "17:00", CTX.urlApp)).estado,
     ).toBe("ocupado");
-    const r = await asignarHoraExtra(db, ADMIN, conflicto.id, "lun-1700", "17:12", CTX.urlApp);
+    const r = await asignarHoraExtra(db, ADMIN, conflicto.id, favorita, horaExtra, CTX.urlApp);
     expect(r.estado).toBe("ok");
     if (r.estado !== "ok") return;
-    expect(fechaHoraEnZona(r.inicio, ed.zona)).toMatch(/T17:12$/);
+    expect(fechaHoraEnZona(r.inicio, ed.zona)).toMatch(new RegExp(`T${horaExtra}$`));
     // Antes de publicar no se avisa a nadie.
     expect(await emailsDe(db, "movidos")).toHaveLength(0);
     const [extra] = await db.select().from(schema.hueco).where(eq(schema.hueco.extra, true));
@@ -182,7 +192,7 @@ describe("reparto", () => {
     ).toBe(0);
 
     // Volver a calcular empieza de cero: se pierden los cambios a mano y los huecos extra.
-    await asignarHoraExtra(db, ADMIN, conflicto.id, "lun-1700", "17:12", CTX.urlApp);
+    await asignarHoraExtra(db, ADMIN, conflicto.id, favorita, horaExtra, CTX.urlApp);
     await calcularReparto(db, ADMIN);
     expect((await revisarReparto(db, ed)).enImposible).toHaveLength(2);
     expect(
@@ -190,7 +200,7 @@ describe("reparto", () => {
     ).toBe(0);
 
     // Publicado con el ajuste: las cifras incluyen la hora extra y el email dice qué le ha tocado.
-    await asignarHoraExtra(db, ADMIN, conflicto.id, "lun-1700", "17:12", CTX.urlApp);
+    await asignarHoraExtra(db, ADMIN, conflicto.id, favorita, horaExtra, CTX.urlApp);
     expect((await publicarReparto(db, ADMIN, CTX.urlApp)).estado).toBe("ok");
     const [reparto] = await db.select().from(schema.reparto);
     expect((reparto.estadisticas as { conFavorita: number }).conFavorita).toBe(1);

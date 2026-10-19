@@ -12,6 +12,16 @@ Verificación de solo lectura desde la conexión local actualizada: PostgreSQL *
 
 **Migración `0004_sin-sorteo` aplicada** el 19-10-2026 a esta base, por petición del usuario y justo antes de desplegar el código del ADR 0002: la tabla `sorteo` (vacía) pasa a `reparto`, se añade `hueco.extra` y el origen `sorteo` pasa a `reparto`. Después: 5 migraciones, `navidad-2026` abierta hasta el 27-10 y 112 inscripciones sin horas. La inscripción se deja abierta para seguir probando.
 
+## Turnstile real configurado · 19-10-2026
+
+Por petición del usuario, se han subido desde `.env.vercel.local` las claves reales a Production de Vercel: `NEXT_PUBLIC_TURNSTILE_SITE_KEY` como Config y `TURNSTILE_SECRET_KEY` como Secret (tipo `sensitive`). No se han modificado Preview ni las conexiones de base de datos. Redespliegue `dpl_9BPBqL3gi82ywjdqH7yLsMUuZMfi` en estado Ready, publicado en `fotos-navidad.vercel.app` y los dominios existentes. Comprobación HTTP de portada e inscripción: ambas responden 200, incluyen la nueva clave pública y no exponen la secreta ni contienen la clave pública de prueba. No se ha enviado una inscripción para resolver el desafío.
+
+## Correo por Gmail · 19-10-2026
+
+La app envía por SMTP con la cuenta de Gmail del AFA (`afaceilaspalmeras@gmail.com`) y una contraseña de aplicación (la cuenta tiene la verificación en dos pasos). Se probó el acceso y un email a la propia cuenta antes de subir las variables a Production de Vercel: `SMTP_HOST`, `SMTP_PUERTO`, `SMTP_USUARIO` y `EMAIL_RESPONDER_A` como Config y `SMTP_CONTRASENA` como Secret. El SMTP tiene prioridad sobre Resend, que queda como alternativa. Sin webhook: los rebotes llegan a la bandeja de la cuenta y el panel no los marca. Los 5 emails antiguos de la cola están `fallido` y no se reintentan solos.
+
+Pendiente antes de admitir familias reales: decidir si se mantiene Gmail (una cuenta personal no tiene contrato de encargado de tratamiento con Google) y actualizar `/privacidad`, que nombra a Resend y a Neon.
+
 ## Configuración inicial · 14-10-2026
 
 - GitHub público: https://github.com/xavilondo/fotos-navidad.
@@ -37,7 +47,7 @@ Verificación de solo lectura desde la conexión local actualizada: PostgreSQL *
 
 Por petición del usuario el 14-10-2026, la inscripción se ha abierto adelantando `abreEn` en la base de datos a `2026-10-14T00:00` (Europe/Madrid). Se conserva la apertura original `2026-10-26T09:00` en [apertura-original.json](../.scratch/fotos-navidad/apertura-original.json) y en el archivo de configuración de 2026. El cierre sigue siendo el 27-10 a las 21:00.
 
-El usuario ha autorizado temporalmente las claves públicas de prueba de Turnstile. `NEXT_PUBLIC_TURNSTILE_SITE_KEY` y `TURNSTILE_SECRET_KEY` están configuradas en Production con los valores de prueba de `.env.example`: dejan pasar la comprobación antibot. Durante este ensayo solo deben introducirse datos ficticios. Antes de admitir familias reales hay que sustituir ambas claves por las del widget definitivo y restaurar la apertura prevista si corresponde. El correo continúa sin proveedor y permanece en cola.
+El usuario autorizó temporalmente las claves públicas de prueba de Turnstile durante el ensayo del 14-10-2026. Se sustituyeron por las claves reales el 19-10-2026, según la comprobación descrita arriba. El despliegue continúa siendo de pruebas y el correo continúa sin proveedor; los emails permanecen en cola.
 
 Prueba de los cinco pasos completada en la web: alta ficticia de `Prueba Codex`, email `prueba-codex@example.com`, peque `Peque de prueba Codex`, clase Patitos, un lote y una favorita. La inscripción queda identificada como ficticia en las observaciones para su limpieza posterior. La pantalla confirma el alta; su texto de email enviado no implica entrega, ya que el correo todavía no está configurado.
 
@@ -84,7 +94,7 @@ Procedimiento:
 2. Con la confirmación del usuario, lo mismo con `--aplicar`. La inscripción queda cerrada hasta el 26-10 a las 09:00.
 3. Repetir en seco: tiene que decir «Nada que retirar».
 4. En el panel: queda solo la inscripción no retirada y la edición figura antes de abrir.
-5. Antes del 26-10: sustituir las claves de prueba de Turnstile por las definitivas y configurar el correo.
+5. Antes del 26-10: configurar el correo. Las claves reales de Turnstile ya se subieron el 19-10-2026.
 
 `semilla-horarios --produccion-de-pruebas` ya no admite `navidad-2026` ni ninguna edición que no sea de ensayo (`EDICIONES_ENSAYO` en `config/ediciones/index.ts`), ni una cuya inscripción haya abierto según su config. Se niega antes de conectar a la base.
 
@@ -93,7 +103,6 @@ Procedimiento:
 - Corte automático del gasto Neon: **no aplicado**. El presupuesto autorizado es hasta 10 USD/mes. Se intentaron cuotas de 60 CU-h/mes y límites de datos con una clave exclusiva del proyecto. Neon respondió HTTP 404 con `action restricted; reason:"organization is managed by Vercel"`. Los ajustes del recurso y de la instalación en Vercel tampoco ofrecen cuotas por proyecto. La clave temporal fue revocada; no se solicitaron permisos más amplios. La reducción a 0,25 CU y la suspensión por inactividad no constituyen un límite mensual: si el cómputo permaneciera activo todo un mes de 31 días, serían 19,72 USD solo de cómputo antes de impuestos. Para garantizar un corte hace falta un proveedor o una cuenta Neon que permita fijar cuotas; seguimiento en [la incidencia 17](../.scratch/fotos-navidad/issues/17-limite-de-gasto-neon.md).
 - Vistas previas: deben usar una base independiente de producción. No se ha concedido acceso de Preview a la base real.
 - Correo aplazado por el usuario. La app usa actualmente Resend; si se elige una cuenta propia, el envío necesitará SMTP (IMAP solo recibe) y adaptar el proveedor. No se ha configurado la cuenta de Mundo Pétreo.
-- Turnstile definitivo pendiente: mientras se ensaya se usan claves públicas de prueba, con autorización expresa del usuario.
 - Dominio todavía por decidir: podría ser un subdominio de la escuela. Se mantiene la URL de Vercel. Faltan email de contacto y NIF del AFA para privacidad.
 
 ## Validación local
@@ -105,3 +114,9 @@ Procedimiento:
 - [Despliegue de Vercel](https://vercel.com/agenciagurumk-5316s-projects/fotos-navidad/Bz6S3TPYYqUf6fJLt3K1Cq7VHTUF): Ready, sobre `670e37a`, con los secretos y la base conectados.
 
 No se han subido `.env.local`, claves, bases de datos, copias ni el dossier.
+
+### Renovación de la credencial PostgreSQL — 19/10/2026
+
+Se renovó la contraseña de producción del rol `app_fotos_navidad` en `host.gurumk.com:6432`, con TLS verificado, y se actualizaron las variables de Vercel y los archivos privados `.env.local` y `.env.vercel.local`. La contraseña anterior ya se rechaza. Se redesplegó la versión publicada `29f07a90eaeda5a34e8c7e37268121d225dccf64` conservando el esquema vigente. La portada y `/admin/entrar` se comprobaron correctamente en `https://fotos-navidad.vercel.app`. Los accesos técnicos temporales utilizados durante la transición quedaron retirados.
+
+Esta renovación afecta a la conexión SQL. La contraseña del usuario de administración web `afa` permanece pendiente de renovación independiente. El subdominio de la escuela continúa pendiente de configurar en DNS; se mantiene la URL de Vercel.
