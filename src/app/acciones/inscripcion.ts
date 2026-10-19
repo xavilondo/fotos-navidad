@@ -2,7 +2,15 @@
 
 import { after } from "next/server";
 import { registrarError } from "@/servidor/registro";
-import { valido, zId, zSeccion, zTexto, zToken } from "@/servidor/validacion";
+import {
+  type Proteccion,
+  valido,
+  zId,
+  zProteccion,
+  zSeccion,
+  zTexto,
+  zToken,
+} from "@/servidor/validacion";
 import { getLocale } from "next-intl/server";
 import type { ErroresCampo, Seccion } from "@/dominio/inscripcion/esquema";
 import { idiomaDeLocale } from "@/i18n/idioma";
@@ -25,8 +33,6 @@ export type RespuestaAccion =
   | { estado: "invalida"; errores: ErroresCampo }
   | { estado: "cerrada" | "limite" | "verificacion" | "no_encontrada" | "error" };
 
-type Proteccion = { turnstile: string | null; trampa: string };
-
 /** Tras confirmar la transacción, los emails salen enseguida; si fallan, los reintenta el cron. */
 function enviarDespues(ids: string[]) {
   if (ids.length > 0)
@@ -37,6 +43,7 @@ export async function enviarInscripcion(
   entrada: unknown,
   proteccion: Proteccion,
 ): Promise<RespuestaAccion> {
+  if (!valido([zProteccion, proteccion])) return { estado: "verificacion" };
   try {
     // El campo trampa solo lo rellenan los robots: les decimos que sí y no guardamos nada.
     if (proteccion.trampa) return { estado: "ok" };
@@ -90,6 +97,7 @@ export async function cancelar(token: string): Promise<RespuestaAccion> {
 }
 
 export async function pedirEnlace(email: string, proteccion: Proteccion): Promise<RespuestaAccion> {
+  if (!valido([zProteccion, proteccion])) return { estado: "verificacion" };
   try {
     if (proteccion.trampa) return { estado: "ok" };
     if (!valido([zTexto(200), email])) return { estado: "ok" };

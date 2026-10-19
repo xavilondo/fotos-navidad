@@ -8,6 +8,7 @@ import { encolarEmail } from "@/servidor/correo/outbox";
 import * as t from "@/servidor/db/schema";
 import type { BaseDatos } from "@/servidor/db/tipos";
 import { edicionActual } from "@/servidor/edicion/repositorio";
+import { valido, zId } from "@/servidor/validacion";
 import {
   comunEmail,
   crearInscripcion,
@@ -104,7 +105,7 @@ export type Ficha = VistaInscripcion & {
 };
 
 export async function leerFicha(db: BaseDatos, id: string): Promise<Ficha | null> {
-  if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
+  if (!valido([zId, id])) return null;
   return db.transaction(async (tx) => {
     const [ins] = await tx.select().from(t.inscripcion).where(eq(t.inscripcion.id, id));
     if (!ins) return null;

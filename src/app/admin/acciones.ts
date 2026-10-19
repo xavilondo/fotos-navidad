@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { registrarError } from "@/servidor/registro";
-import { valido, zId, zNumeroOnce, zSeccion, zTexto } from "@/servidor/validacion";
+import { valido, zId, zIdioma, zNumeroOnce, zSeccion, zTexto } from "@/servidor/validacion";
 import { z } from "zod";
 import { registrarAuditoria } from "@/servidor/auditoria/registrar";
 import { redirect } from "next/navigation";
@@ -57,16 +57,21 @@ async function proteger<T>(f: () => Promise<T>): Promise<T | { estado: "error" }
   }
 }
 
+const zCredenciales = z.object({ usuario: zTexto(100), contrasena: z.string().max(256) });
+
 export async function entrar(
   _: { error: string | null },
   datos: FormData,
 ): Promise<{ error: string | null }> {
-  const usuario = String(datos.get("usuario") ?? "");
-  const contrasena = String(datos.get("contrasena") ?? "");
   if (!(await consumirLimite(db, claveAnonima("admin-ip", await ipCliente()), 900, 30))) {
     return { error: "Demasiados intentos desde esta conexión. Esperad 15 minutos." };
   }
-  const r = await iniciarSesion(db, usuario, contrasena);
+  const credenciales = zCredenciales.safeParse({
+    usuario: datos.get("usuario"),
+    contrasena: datos.get("contrasena"),
+  });
+  if (!credenciales.success) return { error: "Usuario o contraseña incorrectos." };
+  const r = await iniciarSesion(db, credenciales.data.usuario, credenciales.data.contrasena);
   if (r.estado === "bloqueado") {
     const hora = r.hasta.toLocaleTimeString("es-ES", {
       timeZone: "Europe/Madrid",
@@ -154,7 +159,7 @@ export async function darDeAltaAMano(
   idioma: "es" | "va",
 ): Promise<RespuestaAdmin> {
   const admin = await requerirAdmin();
-  if (!valido([z.enum(["es", "va"]), idioma])) return { estado: "error" };
+  if (!valido([zIdioma, idioma])) return { estado: "error" };
   return proteger(async () => {
     const r = await altaManual(db, admin, entrada, { urlApp: await urlApp(), idioma });
     if (r.estado !== "ok") return r;

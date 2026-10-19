@@ -1,4 +1,5 @@
 import { asc, desc, eq } from "drizzle-orm";
+import { z } from "zod";
 import { calcularTotal } from "@/dominio/inscripcion/precio";
 import { registrarAuditoria } from "@/servidor/auditoria/registrar";
 import * as t from "@/servidor/db/schema";
@@ -48,7 +49,8 @@ export async function filasAgenda(db: BaseDatos, edicionId: string): Promise<Fil
   });
 }
 
-export type Archivo = "agenda.pdf" | "agenda.csv" | "tesoreria.csv";
+export const zArchivo = z.enum(["agenda.pdf", "agenda.csv", "tesoreria.csv"]);
+export type Archivo = z.infer<typeof zArchivo>;
 
 /** Genera una exportación (solo admin, por descarga) y lo deja en la auditoría. */
 export async function exportar(

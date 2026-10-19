@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { eq } from "drizzle-orm";
+import { emailRebotado } from "@/servidor/correo/webhook";
 import { db } from "@/servidor/db";
 import * as t from "@/servidor/db/schema";
 
@@ -12,22 +13,19 @@ export async function POST(request: Request) {
   if (!firmaValida(request.headers, cuerpo))
     return new Response("Firma no válida", { status: 401 });
 
-  const evento = JSON.parse(cuerpo) as { type?: string; data?: { email_id?: string } };
-  const resendId = evento.data?.email_id;
+  const resendId = emailRebotado(cuerpo);
   if (!resendId) return new Response("ok");
 
-  if (evento.type === "email.bounced" || evento.type === "email.complained") {
-    const [fila] = await db
-      .update(t.emailOutbox)
-      .set({ estado: "rebotado" })
-      .where(eq(t.emailOutbox.resendId, resendId))
-      .returning({ inscripcionId: t.emailOutbox.inscripcionId });
-    if (fila?.inscripcionId) {
-      await db
-        .update(t.inscripcion)
-        .set({ emailEstado: "rebotado" })
-        .where(eq(t.inscripcion.id, fila.inscripcionId));
-    }
+  const [fila] = await db
+    .update(t.emailOutbox)
+    .set({ estado: "rebotado" })
+    .where(eq(t.emailOutbox.resendId, resendId))
+    .returning({ inscripcionId: t.emailOutbox.inscripcionId });
+  if (fila?.inscripcionId) {
+    await db
+      .update(t.inscripcion)
+      .set({ emailEstado: "rebotado" })
+      .where(eq(t.inscripcion.id, fila.inscripcionId));
   }
   return new Response("ok");
 }
