@@ -21,6 +21,7 @@
     "db:generar": "drizzle-kit generate",
     "db:migrar": "tsx scripts/migrar.ts",
     "edicion:cargar": "tsx scripts/edicion-cargar.ts",
+    "edicion:retirar-ficticias": "tsx scripts/edicion-retirar-ficticias.ts",
     "emails:vista-previa": "tsx scripts/emails-vista-previa.ts",
     "reparto:verificar": "tsx scripts/reparto-verificar.ts",
     "edicion:ensayo": "tsx scripts/edicion-ensayo.ts",

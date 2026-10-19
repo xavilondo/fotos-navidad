@@ -1,6 +1,15 @@
+import { createHash } from "node:crypto";
 import { sql } from "drizzle-orm";
 import * as t from "@/servidor/db/schema";
 import type { BaseDatos } from "@/servidor/db/tipos";
+
+/** Clave anónima para los límites de uso: nunca se guarda la IP en claro. */
+export function claveAnonima(prefijo: string, valor: string | null): string {
+  return `${prefijo}:${createHash("sha256")
+    .update(valor ?? "desconocida")
+    .digest("hex")
+    .slice(0, 32)}`;
+}
 
 /**
  * Límite de uso por ventana fija guardado en Postgres (sirve con varias funciones a la vez).

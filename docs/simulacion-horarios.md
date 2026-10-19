@@ -28,13 +28,9 @@ En local, preparar el plan (sin insertar):
 pnpm exec tsx scripts/semilla-horarios.ts --edicion ensayo --semilla 20261014 --huecos-libres 10
 ```
 
-Añadir `--aplicar` carga la tanda. Los scripts anteriores `semilla:familias` y `edicion:ensayo` mantienen sus protecciones de producción. Este script tiene una excepción explícita para la instalación de pruebas ya abierta, exige el slug exacto, rechaza una lista congelada o un sorteo y bloquea la edición durante la transacción:
+Añadir `--aplicar` carga la tanda. Los scripts anteriores `semilla:familias` y `edicion:ensayo` mantienen sus protecciones de producción. Este script tiene una excepción explícita, `--produccion-de-pruebas`, para una base remota: exige el slug exacto, rechaza una lista congelada o un sorteo y bloquea la edición durante la transacción. Desde el 19-10-2026 solo la admite una edición de ensayo que aún no haya abierto según su config: el comando con `--edicion navidad-2026` que cargó la tanda el 14-10 ya se niega.
 
-```sh
-node --env-file=.env.vercel.local --import tsx scripts/semilla-horarios.ts \
-  --edicion navidad-2026 --semilla 20261014 --huecos-libres 10 \
-  --produccion-de-pruebas --aplicar
-```
+La tanda se retira con `pnpm edicion:retirar-ficticias` ([procedimiento](despliegue.md#antes-de-la-apertura-real-26-10-2026-0900)).
 
 Los resultados quedan en `.scratch/fotos-navidad/simulacion-local/`, excluido de Git:
 

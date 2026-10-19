@@ -5,3 +5,6 @@ export const EDICIONES: Record<string, () => Promise<{ default: ConfigEdicion }>
   "navidad-2026": () => import("./navidad-2026"),
   ensayo: () => import("./ensayo"),
 };
+
+/** Ediciones de ensayo: las únicas en las que se admiten familias ficticias fuera de local. */
+export const EDICIONES_ENSAYO: ReadonlySet<string> = new Set(["ensayo"]);

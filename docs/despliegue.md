@@ -31,7 +31,48 @@ Prueba de los cinco pasos completada en la web: alta ficticia de `Prueba Codex`,
 
 El 14-10-2026, por petición del usuario, el límite de franjas imposibles pasa de 6 a 10 tanto en la configuración fuente como en la edición activa. Cambio puntual registrado en la auditoría como `edicion.limite_imposibles_actualizado`, actor `admin:afa`. Se conservan las inscripciones existentes y el bloqueo general de configuración después de abrir. La validación compartida admite 10 imposibles y rechaza 11.
 
-El mismo día se cargan de una vez 107 familias ficticias con semilla `20261014`, conservando las 3 inscripciones previas: 110 en total para 120 huecos, con 10 sobrantes. Perfiles de trabajo, extraescolares y un solo día disponible, identificados como `SIM` y `SimulaciónNNN`. Cambio auditado como `inscripciones.semilla_horarios`; no se envía correo ni se guarda el sorteo. También se amplía a 10 el límite de la lista canónica, que todavía era 6. Corrección desplegada en `32dcedf` antes de cargar. [Supuestos, reproducción y resultados](simulacion-horarios.md). Hay que retirar esta tanda y revisar las pruebas previas antes de admitir inscripciones reales.
+El mismo día se cargan de una vez 107 familias ficticias con semilla `20261014`, conservando las 3 inscripciones previas: 110 en total para 120 huecos, con 10 sobrantes. Perfiles de trabajo, extraescolares y un solo día disponible, identificados como `SIM` y `SimulaciónNNN`. Cambio auditado como `inscripciones.semilla_horarios`; no se envía correo ni se guarda el sorteo. También se amplía a 10 el límite de la lista canónica, que todavía era 6. Corrección desplegada en `32dcedf` antes de cargar. [Supuestos, reproducción y resultados](simulacion-horarios.md). Hay que retirar esta tanda y revisar las pruebas previas antes de admitir inscripciones reales: [procedimiento](#antes-de-la-apertura-real-26-10-2026-0900).
+
+## Antes de la apertura real (26-10-2026, 09:00)
+
+Estado de producción comprobado el 19-10-2026 con una consulta de solo lectura: `abreEn` sigue adelantado a `2026-10-14T00:00` (la inscripción está abierta), `cierraEn` y `cambiosHasta` coinciden con la config y no hay huella ni sorteo. Hay 111 inscripciones: las 107 de la tanda, con 130 peques y 1132 preferencias, sin enlaces, asignaciones ni emails; y 4 sin marca de simulación.
+
+De esas 4, tres son pruebas del 14-10:
+
+| Id                                     | Alta                            |
+| -------------------------------------- | ------------------------------- |
+| `23c20aac-775a-49f0-a768-2d66255e86e4` | Prueba Codex (formulario web)   |
+| `b2c4dff7-a1a3-409e-9c79-683232bb48b4` | Ensayo Claude                   |
+| `2eae7a62-151c-4969-b074-479ad6c2401b` | Prueba con un email `@test.com` |
+
+La cuarta, del 14-10 por la tarde, tiene un email y un nombre que parecen de una familia real: se inscribió con la web abierta para ensayar. **No se borra con este procedimiento.** El AFA decide si contactar con ella (su email no llegó a enviarse) y si conservarla o pedirle que se inscriba de nuevo a partir del 26-10.
+
+`pnpm edicion:retirar-ficticias <edición>` retira la tanda y devuelve las fechas a la config, en una transacción:
+
+- Solo cuenta como ficticia una inscripción con las tres marcas de `scripts/semilla-horarios.ts`: email `sim-horarios-<semilla>-<NNN>@example.com`, adulto `SIM …` y observaciones que empiezan por `[SIMULACIÓN`. Otras pruebas solo se borran nombrándolas por su id con `--tambien`.
+- Borra también sus peques, preferencias, enlaces, asignaciones, emails en cola y límites del enlace perdido.
+- Devuelve `abreEn`, `cierraEn` y `cambiosHasta` a `config/ediciones/<edición>.ts`.
+- Vacía la huella si se llegó a calcular. Se niega si el sorteo ya está lanzado o si la huella es posterior al cierre real.
+- Registra `inscripciones.ficticias_retiradas` en la auditoría, con recuentos e ids, sin emails.
+- Por defecto va en seco: abre una transacción de solo lectura, sin bloqueos, e imprime lo que haría. `--aplicar` escribe. Repetirlo no hace nada más.
+
+Procedimiento:
+
+1. En seco, contra producción (la variable del entorno manda sobre `.env.local`):
+
+   ```sh
+   node --env-file=.env.vercel.local --import tsx scripts/edicion-retirar-ficticias.ts navidad-2026 \
+     --tambien 23c20aac-775a-49f0-a768-2d66255e86e4,b2c4dff7-a1a3-409e-9c79-683232bb48b4,2eae7a62-151c-4969-b074-479ad6c2401b
+   ```
+
+   Debe decir `ep-floral-night-…neon.tech`, 110 inscripciones (107 + 3), 133 peques, 1140 preferencias, 3 emails, `abreEn` → `2026-10-26T08:00:00.000Z` y 1 restante.
+
+2. Con la confirmación del usuario, lo mismo con `--aplicar`. La inscripción queda cerrada hasta el 26-10 a las 09:00.
+3. Repetir en seco: tiene que decir «Nada que retirar».
+4. En el panel: queda solo la inscripción no retirada y la edición figura antes de abrir.
+5. Antes del 26-10: sustituir las claves de prueba de Turnstile por las definitivas y configurar el correo.
+
+`semilla-horarios --produccion-de-pruebas` ya no admite `navidad-2026` ni ninguna edición que no sea de ensayo (`EDICIONES_ENSAYO` en `config/ediciones/index.ts`), ni una cuya inscripción haya abierto según su config. Se niega antes de conectar a la base.
 
 ## Pendiente
 

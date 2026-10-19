@@ -6,6 +6,7 @@ import { calcularHuella, construirListaCanonica, diagnosticar, repartir } from "
 import { registrarAuditoria } from "@/servidor/auditoria/registrar";
 import { conectar } from "@/servidor/db/conexion";
 import * as t from "@/servidor/db/schema";
+import { marcaObservaciones, rechazoSemillaRemota } from "@/servidor/edicion/ficticias";
 import { clasesDe, finUltimaSesion, franjasDe } from "@/servidor/edicion/repositorio";
 import { listaActual } from "@/servidor/sorteo/lista";
 import { generarToken, hashToken } from "@/servidor/seguridad/tokens";
@@ -15,7 +16,8 @@ import { generarFamiliasHorarios, PERFILES, VERSION_MODELO } from "./fixtures/fa
 /**
  * Prepara una tanda reproducible y simula sin publicar asignaciones ni enviar correo.
  * Por defecto solo informa. --aplicar inserta la tanda entera en una transacción.
- * La excepción remota requiere --produccion-de-pruebas y nombrar la edición exacta.
+ * La excepción remota requiere --produccion-de-pruebas, nombrar la edición exacta y que sea de
+ * ensayo y aún no haya abierto según su config. La tanda se retira con edicion:retirar-ficticias.
  */
 const args = process.argv.slice(2);
 const valor = (nombre: string, defecto?: string) => {
@@ -37,6 +39,13 @@ if (!slug || !/^[a-z0-9-]+$/.test(slug) || !Number.isInteger(libres) || libres <
 if (!produccionPruebas) {
   cargarEntorno();
   exigirBaseLocal();
+} else {
+  // Nunca en una edición real ni cuando su inscripción ya ha abierto según la config.
+  const motivo = await rechazoSemillaRemota(slug);
+  if (motivo) {
+    console.error(motivo);
+    process.exit(1);
+  }
 }
 const { db, pool } = conectar();
 try {
@@ -146,7 +155,7 @@ try {
             archivoDigital: f.archivoDigital,
             hermanosExternos: f.hermanosExternos,
             idioma: f.idioma,
-            observaciones: `[SIMULACIÓN ${VERSION_MODELO} ${semilla}] ${f.restricciones}${f.actividad ? `. ${f.actividad}` : ""}`,
+            observaciones: `${marcaObservaciones(VERSION_MODELO, semilla)} ${f.restricciones}${f.actividad ? `. ${f.actividad}` : ""}`,
             consentimientoVersion: edicion.versionPrivacidad,
             consentimientoEn: creadoEn,
             compensacionConsentida: false,
