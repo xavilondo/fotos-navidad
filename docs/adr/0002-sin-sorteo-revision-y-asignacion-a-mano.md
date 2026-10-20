@@ -6,7 +6,7 @@ El AFA no quiere sortear. Si al final hay un conflicto de horario, prefiere habl
 
 - Entre repartos igual de buenos decide una regla fija en lugar del azar: las inscripciones eligen en orden de id (un uuid aleatorio desde el alta, así que apuntarse antes sigue sin dar ventaja) y, a igual nivel, gana la franja más temprana. No se anuncia como suerte: el admin revisa el resultado y puede moverlo.
 - Solo cuenta como conflicto caer en una hora imposible. No tener ninguna favorita se enseña al admin, pero no bloquea nada.
-- El reparto ya no es verificable por terceros con datos públicos. La transparencia pasa a ser explicar el método, publicar las cifras y tener el código abierto. A cambio, el AFA tiene la última palabra y puede resolver casos que el algoritmo no ve.
+- El reparto ya no es verificable por terceros con datos públicos. La transparencia pasa a ser explicar el método y publicar las cifras. A cambio, el AFA tiene la última palabra y puede resolver casos que el algoritmo no ve.
 - Volver a calcular empieza de cero y descarta los ajustes a mano. Publicar solo se puede hacer una vez y exige que todas las inscripciones sin excluir tengan hora.
 - Las exclusiones tras el cierre ya no protegen una lista congelada: viven en `inscripcion.excluida_motivo` y la excluida se queda sin hora.
 - Sin huella, el cron ya no tiene nada que calcular al cierre: solo reintenta emails y limpia.

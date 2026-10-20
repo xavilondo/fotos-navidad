@@ -135,8 +135,7 @@ Variante **A** del prototipo, sin huella ni ONCE (ADR 0002):
 1. «Da igual cuándo os apuntéis».
 2. Tres pasos: cerramos la inscripción → buscamos el mejor reparto (con la lista de prioridades) → si alguna familia no cabe, el AFA habla con ella y le busca un hueco más.
 3. Las cifras del año, solo tras publicar: número destacado («117 de 119 familias tienen una de sus favoritas») y barras horizontales de una sola serie por nivel (1ª…6ª, «Nos va bien», «Imposible»), con el valor rotulado y tooltip.
-4. Enlace al código del reparto en el repositorio.
-5. «Nunca publicamos qué familia tiene cada hora».
+4. «Nunca publicamos qué familia tiene cada hora».
 
 ### 4.6 Resultado
 

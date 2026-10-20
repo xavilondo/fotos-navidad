@@ -164,16 +164,6 @@ export default async function PaginaReparto() {
         </Tarjeta>
       </Pegar>
 
-      {process.env.URL_REPOSITORIO && (
-        <a
-          href={process.env.URL_REPOSITORIO}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mx-auto mt-4 block min-h-11 w-fit py-2.5 text-center text-[14.5px] font-extrabold text-green-d underline"
-        >
-          {t("codigo")}
-        </a>
-      )}
       <p className="mt-5 text-center text-[13px] text-muted-ink">{t("nunca")}</p>
     </main>
   );

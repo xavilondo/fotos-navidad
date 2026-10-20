@@ -174,7 +174,7 @@ export const PRIVACIDAD: Record<
         parrafos: [
           "Al cerrar la inscripción, un programa calcula el mejor reparto posible según las " +
             "preferencias de todas las familias. No hay sorteo y da igual cuándo os apuntéis. " +
-            "Todas las familias tienen hora. El código del reparto es público.",
+            "Todas las familias tienen hora.",
           "El AFA revisa el resultado antes de publicarlo. Si una familia solo puede ir a horas que " +
             "ya están llenas, la llama o le escribe para buscarle un hueco en una hora que le vaya " +
             "bien.",
@@ -407,7 +407,7 @@ export const PRIVACIDAD: Record<
         parrafos: [
           "En tancar la inscripció, un programa calcula el millor repartiment possible segons les " +
             "preferències de totes les famílies. No hi ha sorteig i és igual quan us apunteu. " +
-            "Totes les famílies tenen hora. El codi del repartiment és públic.",
+            "Totes les famílies tenen hora.",
           "L'AFA revisa el resultat abans de publicar-lo. Si una família només pot anar a hores que " +
             "ja estan plenes, la crida o li escriu per a buscar-li un lloc en una hora que li vaja " +
             "bé.",

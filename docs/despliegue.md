@@ -38,7 +38,7 @@ Antes de reiniciar o de publicar el reparto: `pnpm copia:cifrada`. Necesita un `
 - Vercel: https://vercel.com/agenciagurumk-5316s-projects/fotos-navidad, equipo `agenciagurumk-5316s-projects` (Pro), importado desde GitHub.
 - Next.js, directorio raíz del repositorio, pnpm según `packageManager` y Node.js 22 según `engines`.
 - Funciones en Frankfurt (`fra1`) y cron diario según `vercel.json`.
-- Variables `URL_APP=https://fotos-navidad.vercel.app` y `URL_REPOSITORIO=https://github.com/xavilondo/fotos-navidad/tree/main/src/dominio/reparto` en Vercel.
+- Variable `URL_APP=https://fotos-navidad.vercel.app` en Vercel.
 - Enlace local de Vercel en `.vercel/project.json` (excluido de Git).
 - Neon, origen histórico antes de la migración al servidor propio: proyecto `fotos-navidad`, ID `autumn-boat-49597453`, región AWS Frankfurt. Se configuró a 0,25 CU, con suspensión tras cinco minutos sin actividad. La conexión actual se describe arriba.
 - Migraciones aplicadas y edición `navidad-2026` cargada: dos días de sesión, 20 franjas y 120 huecos libres. Sin inscripciones ficticias.
