@@ -40,7 +40,7 @@ Hay hasta 119 familias y **todas tienen hueco**. La justicia está en qué hueco
 - Todo se guarda en UTC (`timestamptz`) y se muestra en Europe/Madrid.
 - **Repositorio público** en GitHub, en la cuenta del AFA. Nunca contiene datos ni claves: las claves van en las variables de entorno de Vercel y se documentan en `.env.example`.
 
-URLs: la app en `https://fotos.afalaspalmeras.es`. Remitente: `AFA Las Palmeras <fotos@afalaspalmeras.es>`, con *Reply-To* al email del AFA. Las cuentas y el dominio los prepara el AFA ([Dominio y cuentas del AFA](issues/06-dominio-y-cuentas-del-afa.md)). Hasta entonces, desarrolla con variables de entorno de ejemplo.
+URLs: la app en `https://fotos.escuelainfantillaspalmeras.com` (subdominio del cole). Remitente: la cuenta de Gmail del AFA por SMTP (`AFA Las Palmeras <…@gmail.com>`), con *Reply-To* al email del AFA. Las cuentas y el dominio los prepara el AFA ([Dominio y cuentas del AFA](issues/06-dominio-y-cuentas-del-afa.md)). Hasta entonces, desarrolla con variables de entorno de ejemplo.
 
 ## 3. Configuración de la edición 2026
 

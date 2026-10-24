@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { escaparTexto, generarIcs, plegar } from "./ics";
 
 const base = {
-  uid: "3f2a9c1e-0000-4000-8000-000000000001@fotos.afalaspalmeras.es",
+  uid: "3f2a9c1e-0000-4000-8000-000000000001@fotos.escuelainfantillaspalmeras.com",
   inicio: new Date("2026-11-02T15:35:00Z"),
   fin: new Date("2026-11-02T15:40:00Z"),
   titulo: "Fotos de Navidad",
@@ -48,12 +48,12 @@ describe("generarIcs", () => {
       generarIcs({
         ...base,
         lugar: "CEI Las Palmeras, Valencia",
-        url: "https://fotos.afalaspalmeras.es/i/abc_DEF-123",
+        url: "https://fotos.escuelainfantillaspalmeras.com/i/abc_DEF-123",
         secuencia: 2,
       }),
     );
     expect(lineas).toContain("LOCATION:CEI Las Palmeras\\, Valencia");
-    expect(lineas).toContain("URL:https://fotos.afalaspalmeras.es/i/abc_DEF-123");
+    expect(lineas).toContain("URL:https://fotos.escuelainfantillaspalmeras.com/i/abc_DEF-123");
     expect(lineas).toContain("SEQUENCE:2");
   });
 

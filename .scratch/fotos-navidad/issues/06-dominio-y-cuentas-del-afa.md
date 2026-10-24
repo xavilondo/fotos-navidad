@@ -6,6 +6,8 @@ Status: claimed
 Blocked by: 03
 Map: [map.md](../map.md)
 
+> **Actualización (23-10-2026):** al final no se compró `afalaspalmeras.es`. La app va en el subdominio del cole, `fotos.escuelainfantillaspalmeras.com`, y los emails salen por SMTP desde la cuenta de Gmail del AFA.
+
 ## Question
 
 Con los proveedores elegidos en [Proveedores y límites de la plataforma](03-proveedores-y-limites-de-la-plataforma.md), dejar listos el dominio y las cuentas a nombre del AFA, para que el spec pueda fijar las URLs, el remitente de los emails y las variables de entorno.

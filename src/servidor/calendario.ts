@@ -21,7 +21,7 @@ export function citaIcs(d: {
     namespace: "calendario",
   });
   return generarIcs({
-    uid: `cita-${d.inscripcionId}@fotos.afalaspalmeras.es`,
+    uid: `cita-${d.inscripcionId}@fotos.escuelainfantillaspalmeras.com`,
     inicio: d.inicio,
     fin: d.fin,
     secuencia: Math.floor(d.version.getTime() / 1000) - 1_700_000_000,

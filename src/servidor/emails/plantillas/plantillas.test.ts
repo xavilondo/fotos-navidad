@@ -28,10 +28,10 @@ describe("renderizarEmail: cada tipo en cada idioma", () => {
         }
 
         // Pie: AFA, privacidad, logo y mascotas (versiones ligeras para email).
-        expect(r.html).toContain('href="https://fotos.afalaspalmeras.es/privacidad"');
-        expect(r.texto).toContain("https://fotos.afalaspalmeras.es/privacidad");
-        expect(r.html).toContain("https://fotos.afalaspalmeras.es/marca/logo-email.png");
-        expect(r.html).toContain("https://fotos.afalaspalmeras.es/marca/mascotas-email.png");
+        expect(r.html).toContain('href="https://fotos.escuelainfantillaspalmeras.com/privacidad"');
+        expect(r.texto).toContain("https://fotos.escuelainfantillaspalmeras.com/privacidad");
+        expect(r.html).toContain("https://fotos.escuelainfantillaspalmeras.com/marca/logo-email.png");
+        expect(r.html).toContain("https://fotos.escuelainfantillaspalmeras.com/marca/mascotas-email.png");
         expect(r.texto).toContain("AFA CEI Las Palmeras");
 
         // Solo la primera palabra del nombre del adulto, y ningún hueco sin rellenar.
@@ -152,9 +152,9 @@ describe("contenido según los datos", () => {
   it("acepta urlApp con barra final", async () => {
     const r = await renderizarEmail("es", {
       ...EJEMPLOS.cancelacion,
-      urlApp: "https://fotos.afalaspalmeras.es/",
+      urlApp: "https://fotos.escuelainfantillaspalmeras.com/",
     });
-    expect(r.texto).toContain("https://fotos.afalaspalmeras.es/privacidad");
+    expect(r.texto).toContain("https://fotos.escuelainfantillaspalmeras.com/privacidad");
     expect(r.texto).not.toContain("es//");
   });
 });

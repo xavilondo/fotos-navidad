@@ -6,7 +6,7 @@
  */
 
 export type DatosIcs = {
-  /** Identificador estable de la cita (p. ej. `<id de inscripción>@fotos.afalaspalmeras.es`). */
+  /** Identificador estable de la cita (p. ej. `<id de inscripción>@fotos.escuelainfantillaspalmeras.com`). */
   uid: string;
   inicio: Date;
   fin: Date;

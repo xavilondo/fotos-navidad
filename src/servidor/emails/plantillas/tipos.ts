@@ -1,7 +1,7 @@
 export type Idioma = "es" | "va";
 
 type Comun = {
-  /** URL pública de la app, sin barra final (p. ej. `https://fotos.afalaspalmeras.es`). */
+  /** URL pública de la app, sin barra final (p. ej. `https://fotos.escuelainfantillaspalmeras.com`). */
   urlApp: string;
   /** Zona de la edición (`Europe/Madrid`): las fechas se muestran en ella. */
   zona: string;
