@@ -9,7 +9,7 @@ export default definirEdicion({
   nombre: "Fotos de Navidad 2026",
   zona: "Europe/Madrid",
   abreEn: "2026-10-24T08:28",
-  cierraEn: "2026-10-28T21:00",
+  cierraEn: "2026-10-27T21:00",
   cambiosHasta: "2026-11-01T20:00",
   dias: [
     { fecha: "2026-11-02", inicio: "15:00", fin: "20:00" },

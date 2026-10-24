@@ -66,9 +66,9 @@ El mismo día se cargan de una vez 107 familias ficticias con semilla `20261014`
 El 24-10-2026, por petición del usuario:
 
 1. Se reinicia la edición con `pnpm edicion:reiniciar navidad-2026 --aplicar`. Se borran las 4 inscripciones de prueba del personal del AFA, con su reparto publicado del 23-10 (4 horas y 8 emails), y los límites. Sin copia previa: eran solo pruebas.
-2. La inscripción se abre en ese momento (`abreEn` = 24-10 08:28, Europe/Madrid) y cierra el **miércoles 28-10 a las 21:00** (`20:00Z`, ya en horario de invierno). `cambiosHasta` no cambia. Auditado como `edicion.fechas_cambiadas`. La config de 2026 se actualiza con las mismas fechas.
+2. La inscripción se abre en ese momento (`abreEn` = 24-10 08:28, Europe/Madrid) y cierra el **martes 27-10 a las 21:00** (`20:00Z`, ya en horario de invierno). Primero se puso el miércoles 28 y, el mismo día y aún sin inscripciones, se adelantó un día a petición del usuario. `cambiosHasta` no cambia. Ambos cambios quedan auditados como `edicion.fechas_cambiadas`. La config de 2026 se actualiza con las mismas fechas.
 
-Desde aquí las inscripciones son de familias reales: `edicion:reiniciar` se niega y `edicion:retirar-ficticias` solo toca la tanda ficticia. El reparto se calcula y se publica el jueves 29 desde el panel, después de `pnpm copia:cifrada`.
+Desde aquí las inscripciones son de familias reales: `edicion:reiniciar` se niega y `edicion:retirar-ficticias` solo toca la tanda ficticia. El reparto se calcula y se publica el miércoles 28 desde el panel, después de `pnpm copia:cifrada`.
 
 ## Antes de la apertura real (histórico: prevista el 26-10-2026, 09:00)
 
