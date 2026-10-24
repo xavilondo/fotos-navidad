@@ -40,9 +40,11 @@ export async function moverEdicion(db: BaseDatos, estado: EstadoPrueba) {
   const minuto = Math.floor(Date.now() / 60_000) * 60_000;
   const [a, c, x] = desplazamientos[estado].map((d) => new Date(minuto + d));
   await db.update(schema.edicion).set({ abreEn: a, cierraEn: c, cambiosHasta: x });
-  // Los enlaces valen hasta el final de la última sesión (que en estas pruebas va después).
+  // Los enlaces valen hasta el final de la última sesión (que en estas pruebas va después). Se
+  // alarga en días enteros para que el día siga acabando a su hora (y siendo múltiplo de la franja).
+  const limite = new Date(minuto + 10 * 24 * H);
   await db.update(schema.diaSesion).set({
-    fin: sql`greatest(${schema.diaSesion.fin}, ${new Date(minuto + 10 * 24 * H)}::timestamptz)`,
+    fin: sql`${schema.diaSesion.fin} + greatest(0, ceil(extract(epoch from (${limite}::timestamptz - ${schema.diaSesion.fin})) / 86400)) * interval '1 day'`,
   });
   await db
     .update(schema.inscripcion)

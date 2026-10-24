@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import navidad2026 from "@config/ediciones/navidad-2026";
+import configNavidad2026 from "@config/ediciones/navidad-2026";
+import { definirEdicion } from "@/dominio/edicion/config";
 import * as schema from "@/servidor/db/schema";
 import { cargarEdicion } from "@/servidor/edicion/cargar";
 import {
@@ -8,6 +9,13 @@ import {
   propuestaSiguiente,
 } from "@/servidor/edicion/configuracion";
 import { baseDeDatos, edicionEn } from "./ayuda/bd";
+
+/** La edición 2026, con la inscripción aún por abrir (la real ya abrió el 24-10). */
+const navidad2026 = definirEdicion({
+  ...configNavidad2026,
+  abreEn: "2026-10-30T09:00",
+  cierraEn: "2026-10-31T21:00",
+});
 
 const ADMIN = { id: "x", usuario: "marta", nombre: "Marta" };
 
@@ -55,7 +63,7 @@ describe("configurador", () => {
     expect(p).toMatchObject({
       slug: "navidad-2027",
       nombre: "Fotos de Navidad 2027",
-      abreEn: "2027-10-26T09:00",
+      abreEn: "2027-10-30T09:00",
     });
     expect(p.dias[0].fecha).toBe("2027-11-02");
   });

@@ -16,9 +16,9 @@ Las familias de la escuela infantil se apuntan a la sesión de fotos de Navidad 
 
 | Momento (Europe/Madrid) | Qué pasa |
 |---|---|
-| Lun 26/10/2026 09:00 | Abre la inscripción |
-| Mar 27/10 21:00 | Cierra la inscripción |
-| Mié 28/10 | El admin calcula el reparto, resuelve los conflictos y lo publica (email a cada familia) |
+| Sáb 24/10/2026 08:28 | Abre la inscripción (adelantada el mismo día; antes era el lun 26 a las 09:00) |
+| Mié 28/10 21:00 | Cierra la inscripción (antes, mar 27) |
+| Jue 29/10 | El admin calcula el reparto, resuelve los conflictos y lo publica (email a cada familia) |
 | Hasta dom 1/11 20:00 | Las familias ven su hora definitiva; no pueden cambiarla ni cancelar (cualquier duda, al AFA) |
 | Lun 2 y mar 3/11, 15:00–20:00 | Fotos: huecos de 5 min, 1 inscripción por hueco, 120 huecos |
 
@@ -49,7 +49,7 @@ En 2026 no hay configurador visual: la edición se define en `config/ediciones/n
 ```ts
 {
   slug: 'navidad-2026', nombre: 'Fotos de Navidad 2026', zona: 'Europe/Madrid',
-  abreEn: '2026-10-26T09:00', cierraEn: '2026-10-27T21:00', cambiosHasta: '2026-11-01T20:00',
+  abreEn: '2026-10-24T08:28', cierraEn: '2026-10-28T21:00', cambiosHasta: '2026-11-01T20:00',
   dias: [{ fecha: '2026-11-02', inicio: '15:00', fin: '20:00' }, { fecha: '2026-11-03', inicio: '15:00', fin: '20:00' }],
   minutosHueco: 5, minutosFranja: 30, huecosBloqueados: [],          // p. ej. '2026-11-02T17:30'
   clases: ['patitos','gatitos','ardillas','osos','delfines','tigres','elefantes','pinguinos'], // orden del dossier

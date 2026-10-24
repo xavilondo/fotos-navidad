@@ -11,7 +11,7 @@ describe("configuración de la edición 2026", () => {
   });
 
   it("rechaza fechas desordenadas", () => {
-    expect(() => con({ cierraEn: "2026-10-25T21:00" })).toThrow(/abreEn < cierraEn/);
+    expect(() => con({ cierraEn: "2026-10-23T21:00" })).toThrow(/abreEn < cierraEn/);
   });
 
   it("rechaza franjas que no son múltiplo del hueco", () => {
