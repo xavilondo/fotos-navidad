@@ -151,6 +151,15 @@ Ver [Resultado e intercambios](issues/10-resultado-e-intercambios.md).
 - **Sin cancelar tras el cierre** (decisión del 19-10-2026): las familias solo pueden editar o cancelar mientras la inscripción está abierta. Con las horas dadas, ya no interactúan con la app: cualquier duda o baja la gestionan escribiendo al AFA.
 - Solo el admin puede mover a una familia (también a una hora extra), y eso queda en la auditoría y manda un email.
 
+### 4.7 Inscripción de última hora `/ultima-hora`
+
+Decisión del 28-10-2026, para las familias que no se apuntaron a tiempo.
+- Solo funciona con el reparto **publicado** y hasta el fin de los cambios (`publicada`); antes no se sabe qué horas quedan libres y después ya no hay plazo. La portada lo ofrece («¿No os apuntasteis a tiempo?») mientras quede alguna hora libre.
+- Los mismos 5 pasos y datos que la inscripción, salvo el paso 3: en vez de preferencias, la lista de **horas libres** (no bloqueadas, no extra, sin familia) por día, y la familia toca una.
+- Al enviar, en una transacción: el hueco se bloquea (`FOR UPDATE`); si otra familia lo acaba de coger, se le dice y elige otra con la lista al día. Si no, se crea la inscripción sin preferencias y su asignación (`origen = hueco_libre`, nivel 1), queda en la auditoría (`inscripcion.tardia`) y sale el email de resultado (categoría `elegida`, con el `.ics`).
+- Si el email ya tiene inscripción, no se crea otra (error en el campo email).
+- No entra en las cifras públicas del reparto, que se guardaron al publicar.
+
 ## 5. Reparto
 
 Ver [Reglas de preferencias y del sorteo](issues/05-reglas-de-preferencias-y-del-sorteo.md), el ADR 0001 y el ADR 0002 (sin sorteo). Módulo **puro** en `src/dominio/reparto/`, sin I/O: recibe datos y devuelve datos. Es la pieza con más tests de la app.

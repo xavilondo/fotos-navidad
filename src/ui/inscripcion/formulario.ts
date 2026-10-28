@@ -20,6 +20,8 @@ export type Formulario = {
   archivoDigital: boolean;
   favoritas: string[];
   imposibles: string[];
+  /** Solo en la inscripción de última hora: el hueco libre elegido. */
+  hueco?: string | null;
   nombreAdulto: string;
   email: string;
   telefono: string;
@@ -38,6 +40,8 @@ export type DatosFormulario = {
   franjas: { codigo: string; dia: string; inicio: string; fin: string }[];
   textos: { diaReparto: string; cierre: string };
   turnstile: string | null;
+  /** Inscripción de última hora (con el reparto publicado): las horas libres que se pueden elegir. */
+  tardia?: { huecos: { id: string; dia: string; hora: string; etiqueta: string }[] };
 };
 
 export function formularioVacio(limites: LimitesInscripcion): Formulario {
@@ -49,6 +53,7 @@ export function formularioVacio(limites: LimitesInscripcion): Formulario {
     archivoDigital: false,
     favoritas: [],
     imposibles: [],
+    hueco: null,
     nombreAdulto: "",
     email: "",
     telefono: "",
@@ -83,8 +88,10 @@ export function validarPaso(
   esquemas: ReturnType<typeof crearEsquemas>,
   paso: Paso,
   f: Formulario,
-  opciones: { sinEmail?: boolean } = {},
+  opciones: { sinEmail?: boolean; tardia?: boolean } = {},
 ): ErroresCampo {
+  // En la de última hora no hay preferencias: el paso 3 es elegir una hora libre.
+  if (paso === 3 && opciones.tardia) return f.hueco ? {} : { hueco: "faltaHora" };
   const esquema =
     paso === 4 && opciones.sinEmail
       ? esquemas.pasos[4].omit({ email: true })

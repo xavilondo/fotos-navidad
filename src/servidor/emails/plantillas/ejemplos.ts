@@ -9,7 +9,8 @@ const comun = {
   zona: "Europe/Madrid",
   nombre: "Marta García Ruiz",
 };
-const enlace = "https://fotos.escuelainfantillaspalmeras.com/i/ejemplo-de-enlace-de-acceso_0123456789abcdef";
+const enlace =
+  "https://fotos.escuelainfantillaspalmeras.com/i/ejemplo-de-enlace-de-acceso_0123456789abcdef";
 
 export const EJEMPLOS: { [T in TipoEmail]: Extract<DatosEmail, { tipo: T }> } = {
   alta: {

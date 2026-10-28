@@ -12,6 +12,9 @@ const ACCIONES: Record<string, string> = {
   "admin.entrada": "Entrada al panel",
   "admin.bloqueado": "Cuenta bloqueada por intentos",
   "inscripcion.alta_manual": "Alta manual",
+  "inscripcion.tardia": "Alta de última hora (eligió hora libre)",
+  "inscripcion.fusionada": "Inscripciones fusionadas",
+  "inscripciones.ficticias_retiradas": "Familias ficticias retiradas",
   "inscripcion.editada": "Inscripción editada",
   "inscripcion.borrada": "Inscripción borrada",
   "inscripcion.cancelada": "Cancelada por la familia",
@@ -32,6 +35,15 @@ const ACCIONES: Record<string, string> = {
   exportacion: "Exportación descargada",
   "email.reintento": "Reintento de emails",
   "edicion.purgada": "Edición cerrada y datos purgados",
+  "edicion.creada": "Edición creada",
+  "edicion.configurada": "Configuración de la edición cambiada",
+  "edicion.fechas_cambiadas": "Fechas de la inscripción cambiadas",
+  "edicion.reiniciada": "Edición reiniciada tras los ensayos",
+  "edicion.cierre_de_pruebas": "Cierre de pruebas",
+  "edicion.limite_imposibles_actualizado": "Límite de horas imposibles cambiado",
+  "registro.incidente": "Incidente registrado",
+  "registro.peticion": "Petición de derechos registrada",
+  "registro.peticion_resuelta": "Petición de derechos resuelta",
 };
 
 export default async function PaginaAuditoria() {

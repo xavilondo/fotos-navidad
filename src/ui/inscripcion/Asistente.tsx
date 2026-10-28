@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { enviarInscripcion } from "@/app/acciones/inscripcion";
+import { enviarInscripcion, enviarInscripcionTardia } from "@/app/acciones/inscripcion";
 import { crearEsquemas, type ErroresCampo, type Paso } from "@/dominio/inscripcion/esquema";
 import { Aviso, useAviso } from "@/ui/formulario/Aviso";
 import { BotonCta } from "@/ui/marca/BotonCta";
@@ -29,6 +29,9 @@ import { useTurnstile } from "./turnstile";
 export default function Asistente({ datos }: { datos: DatosFormulario }) {
   const t = useTranslations("inscripcion");
   const router = useRouter();
+  const tardia = !!datos.tardia;
+  // El borrador de última hora va aparte: no lleva preferencias y sí una hora.
+  const claveBorrador = tardia ? `${datos.slug}:tardia` : datos.slug;
   const esquemas = useMemo(
     () =>
       crearEsquemas(
@@ -37,33 +40,34 @@ export default function Asistente({ datos }: { datos: DatosFormulario }) {
       ),
     [datos.limites, datos.franjas],
   );
-  const borrador = useMemo(() => leerBorrador(datos.slug), [datos.slug]);
-  const [f, setF] = useState<Formulario>(
-    () => borrador?.formulario ?? formularioVacio(datos.limites),
-  );
+  const borrador = useMemo(() => leerBorrador(claveBorrador), [claveBorrador]);
+  const [f, setF] = useState<Formulario>(() => ({
+    ...formularioVacio(datos.limites),
+    ...borrador?.formulario,
+  }));
   const [paso, setPaso] = useState<Paso>(() => borrador?.paso ?? 1);
   const [direccion, setDireccion] = useState(1);
   const [intentados, setIntentados] = useState<Set<Paso>>(() => new Set());
   const [erroresServidor, setErroresServidor] = useState<ErroresCampo>({});
   const [enviando, setEnviando] = useState(false);
   const [enviada, setEnviada] = useState<Formulario | null>(null);
+  const [horaReservada, setHoraReservada] = useState<string | null>(null);
   const volverAlResumen = useRef(false);
   const trampa = useRef<HTMLInputElement>(null);
   const aviso = useAviso();
   const { contenedor, obtenerToken } = useTurnstile(datos.turnstile);
 
   useEffect(() => {
-    if (!enviada) guardarBorrador(datos.slug, f, paso);
-  }, [datos.slug, f, paso, enviada]);
+    if (!enviada) guardarBorrador(claveBorrador, f, paso);
+  }, [claveBorrador, f, paso, enviada]);
 
   const cambiar = (parcial: Partial<Formulario>) => {
     setF((actual) => ({ ...actual, ...parcial }));
     if (Object.keys(erroresServidor).length) setErroresServidor({});
   };
 
-  const errores = intentados.has(paso)
-    ? { ...erroresServidor, ...validarPaso(esquemas, paso, f) }
-    : {};
+  const validar = (p: Paso) => validarPaso(esquemas, p, f, { tardia });
+  const errores = intentados.has(paso) ? { ...erroresServidor, ...validar(paso) } : {};
 
   const ir = (destino: Paso) => {
     setDireccion(destino > paso ? 1 : -1);
@@ -80,9 +84,22 @@ export default function Asistente({ datos }: { datos: DatosFormulario }) {
     setEnviando(true);
     try {
       const turnstile = await obtenerToken();
-      const r = await enviarInscripcion(f, { turnstile, trampa: trampa.current?.value ?? "" });
+      const proteccion = { turnstile, trampa: trampa.current?.value ?? "" };
+      const r = tardia
+        ? await enviarInscripcionTardia(f, proteccion)
+        : await enviarInscripcion(f, proteccion);
+      if (r.estado === "ocupada") {
+        // Otra familia la ha cogido un momento antes: a elegir otra, con la lista al día.
+        cambiar({ hueco: null });
+        setErroresServidor({ hueco: "horaOcupada" });
+        setIntentados((s) => new Set(s).add(3));
+        ir(3);
+        router.refresh();
+        return;
+      }
       if (r.estado === "ok") {
-        borrarBorrador(datos.slug);
+        borrarBorrador(claveBorrador);
+        setHoraReservada(datos.tardia?.huecos.find((h) => h.id === f.hueco)?.etiqueta ?? null);
         setEnviada(f);
         window.scrollTo({ top: 0 });
         return;
@@ -116,7 +133,7 @@ export default function Asistente({ datos }: { datos: DatosFormulario }) {
   };
 
   const siguiente = () => {
-    const errs = validarPaso(esquemas, paso, f);
+    const errs = validar(paso);
     if (Object.keys(errs).length > 0) {
       setIntentados((s) => new Set(s).add(paso));
       enfocarPrimerError();
@@ -139,7 +156,7 @@ export default function Asistente({ datos }: { datos: DatosFormulario }) {
   if (enviada) {
     return (
       <>
-        <Celebracion f={enviada} datos={datos} onAviso={aviso.avisar} />
+        <Celebracion f={enviada} datos={datos} onAviso={aviso.avisar} hora={horaReservada} />
         <Aviso texto={aviso.texto} clave={aviso.clave} />
       </>
     );
@@ -149,7 +166,7 @@ export default function Asistente({ datos }: { datos: DatosFormulario }) {
     ? t("cta.enviando")
     : paso === 5
       ? t("cta.enviar")
-      : paso === 3 && f.favoritas.length === 0
+      : paso === 3 && !tardia && f.favoritas.length === 0
         ? t("cta.sinFavoritas")
         : t("cta.siguiente");
 
@@ -161,8 +178,14 @@ export default function Asistente({ datos }: { datos: DatosFormulario }) {
             paso={paso}
             editando={false}
             onAtras={atras}
-            titulo={t(`pasos.${paso}.titulo`)}
-            nota={t(`pasos.${paso}.nota`, { diaReparto: datos.textos.diaReparto })}
+            titulo={tardia && paso === 3 ? t("tardia.titulo") : t(`pasos.${paso}.titulo`)}
+            nota={
+              tardia && paso === 3
+                ? t("tardia.nota")
+                : tardia && paso === 4
+                  ? t("tardia.nota4")
+                  : t(`pasos.${paso}.nota`, { diaReparto: datos.textos.diaReparto })
+            }
           />
           <ContenidoPaso
             paso={paso}

@@ -6,6 +6,7 @@ import { PasoDatos } from "./PasoDatos";
 import { PasoLotes } from "./PasoLotes";
 import { PasoPeques } from "./PasoPeques";
 import { PasoResumen } from "./PasoResumen";
+import { SelectorHoraLibre } from "./SelectorHoraLibre";
 import { SelectorHorario } from "./SelectorHorario";
 
 /** El contenido de un paso: el mismo en el alta y al cambiar una sección con el enlace. */
@@ -27,6 +28,7 @@ export function ContenidoPaso({
     case 2:
       return <PasoLotes {...props} />;
     case 3:
+      if (props.datos.tardia) return <SelectorHoraLibre {...props} />;
       return <SelectorHorario {...props} onAviso={onAviso} explicarAlEntrar={!editando} />;
     case 4:
       return <PasoDatos {...props} editando={editando} />;
@@ -40,7 +42,7 @@ export function pasoDelCampo(ruta: string): Paso {
   const raiz = ruta.split(".")[0];
   if (raiz === "peques" || raiz === "hermanosExternos") return 1;
   if (raiz === "socia" || raiz === "lotes" || raiz === "archivoDigital") return 2;
-  if (raiz === "favoritas" || raiz === "imposibles") return 3;
+  if (raiz === "favoritas" || raiz === "imposibles" || raiz === "hueco") return 3;
   if (raiz === "consentimiento" || raiz === "compensacion") return 5;
   return 4;
 }

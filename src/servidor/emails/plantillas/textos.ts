@@ -194,6 +194,7 @@ const ES: Textos = {
       sin_favoritas: [
         p("Como no marcasteis favoritas, os ha tocado una de las horas que os iban bien."),
       ],
+      elegida: [p("Es la hora libre que elegisteis al apuntaros.")],
     }[d.categoria];
     return {
       asunto: `Vuestra hora para las fotos: ${hora}`,
@@ -398,6 +399,7 @@ const VA: Textos = {
       sin_favoritas: [
         p("Com que no vau marcar favorites, us ha tocat una de les hores que us anaven bé."),
       ],
+      elegida: [p("És l'hora lliure que vau triar en apuntar-vos.")],
     }[d.categoria];
     return {
       asunto: `La vostra hora per a les fotos: ${hora}`,

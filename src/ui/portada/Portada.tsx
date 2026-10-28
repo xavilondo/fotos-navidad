@@ -45,9 +45,12 @@ const UN_DIA = 86_400_000;
 export async function Portada({
   edicion,
   reparto,
+  horasLibres = 0,
 }: {
   edicion: EdicionActual;
   reparto: DatosPublicosReparto | null;
+  /** Horas libres que se pueden elegir en la inscripción de última hora (con el reparto publicado). */
+  horasLibres?: number;
 }) {
   const turnstile = process.env.TURNSTILE_SECRET_KEY
     ? (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? null)
@@ -126,6 +129,17 @@ export async function Portada({
         <Pegar indice={8}>
           <TarjetaEstado edicion={edicion} reparto={reparto} />
         </Pegar>
+        {estado === "publicada" && horasLibres > 0 && (
+          <Pegar indice={9}>
+            <Tarjeta fondo="bg-su-s" cinta="su" giro={-0.8} className="mt-6">
+              <h2 className="text-[21px] leading-[1.1]">{t("tardia.titulo")}</h2>
+              <p className="mt-1.5 mb-3 text-[14.5px] leading-[1.45]">{t("tardia.texto")}</p>
+              <BotonCta asChild>
+                <Link href="/ultima-hora">{t("tardia.cta")}</Link>
+              </BotonCta>
+            </Tarjeta>
+          </Pegar>
+        )}
 
         <Link
           href="/reparto"

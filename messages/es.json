@@ -71,6 +71,11 @@
       "aMedias": "<b>Tenéis una inscripción a medias</b> en este móvil.",
       "empezar": "Empezar de nuevo",
       "seguir": "Seguir donde lo dejamos"
+    },
+    "tardia": {
+      "titulo": "¿No os apuntasteis a tiempo?",
+      "texto": "Todavía quedan horas libres: elegid una y es vuestra al momento.",
+      "cta": "Elegir una hora libre"
     }
   },
   "noEncontrada": {
@@ -257,7 +262,10 @@
       "franjaDesconocida": "Hay una hora que no existe",
       "franjaRepetida": "Hay una hora repetida",
       "generico": "Revisad este dato",
-      "emailYaInscrito": "Ese email ya tiene una inscripción"
+      "emailYaInscrito": "Ese email ya tiene una inscripción",
+      "faltaHora": "Elegid una hora",
+      "horaOcupada": "Otra familia acaba de coger esa hora. Elegid otra.",
+      "yaApuntados": "Ese email ya tiene una inscripción: mirad el email con vuestra hora o pedid el enlace desde la portada"
     },
     "envio": {
       "cerrada": "La inscripción ya está cerrada. Si creéis que es un error, escribid al AFA.",
@@ -279,7 +287,23 @@
       "noLlega": "¿No os llega? Mirad en la carpeta de spam o pedid el enlace otra vez desde la portada.",
       "avisar": "Avisar al grupo de clase",
       "textoCompartir": "Ya nos hemos apuntado a las fotos de Navidad del AFA. No hace falta correr: las horas se reparten según las preferencias de todas las familias. {url}",
-      "copiado": "Enlace copiado para pegarlo en el grupo."
+      "copiado": "Enlace copiado para pegarlo en el grupo.",
+      "tardia": {
+        "titulo": "¡Ya tenéis hora!",
+        "hora": "Vuestra hora: <b>{hora}</b>",
+        "email": "Os hemos enviado un email a <b>{email}</b> con vuestra hora y vuestro enlace",
+        "siguiente": "Es vuestra <b>hora definitiva</b>. Llegad 5 minutos antes. Si tenéis cualquier duda, escribid al AFA."
+      }
+    },
+    "tardia": {
+      "meta": "Elegir una hora libre · Fotos de Navidad",
+      "titulo": "Elegid vuestra hora",
+      "nota": "Estas son las horas que han quedado libres. Tocad una: al enviar la inscripción, es vuestra.",
+      "sinHuecos": "Ya no quedan horas libres. Escribid al AFA y os buscamos un hueco.",
+      "celda": "{dia}, {hora}",
+      "hora": "Vuestra hora",
+      "sinElegir": "Sin elegir",
+      "nota4": "para mandaros vuestra hora y vuestro enlace"
     }
   },
   "enlace": {
@@ -376,7 +400,7 @@
     "imposible": "No ha sido posible evitar una de vuestras horas imposibles: había más familias que huecos posibles. Si no podéis venir, escribid al AFA y lo hablamos.",
     "sin_favoritas": "Os iba bien cualquier hora: esta es la vuestra.",
     "movida": "El AFA ha cambiado vuestra hora.",
-    "cambiada": "Es la hora libre a la que os cambiasteis.",
+    "cambiada": "Es la hora libre que elegisteis al apuntaros.",
     "llegad": "Llegad 5 minutos antes.",
     "calendario": "Añadir al calendario",
     "definitiva": "Esta es vuestra hora definitiva. Si tenéis cualquier duda, escribid al AFA respondiendo al email que os hemos enviado.",

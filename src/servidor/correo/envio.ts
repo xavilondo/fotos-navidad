@@ -63,7 +63,8 @@ async function enviarPorSmtp(m: MensajeSaliente): Promise<{ id: string }> {
 
 async function enviarConResend(m: MensajeSaliente, clave: string): Promise<{ id: string }> {
   resend ??= new Resend(clave);
-  const remitente = process.env.EMAIL_REMITENTE ?? "AFA Las Palmeras <fotos@escuelainfantillaspalmeras.com>";
+  const remitente =
+    process.env.EMAIL_REMITENTE ?? "AFA Las Palmeras <fotos@escuelainfantillaspalmeras.com>";
   const { data, error } = await resend.emails.send(
     {
       from: remitente,

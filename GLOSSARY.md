@@ -52,6 +52,10 @@ _Avoid_: Aula, grupo, curso
 La solicitud de una familia para una edición: sus peques, hermanos externos, lotes deseados y preferencias. Ocupa exactamente un hueco.
 _Avoid_: Reserva, registro, solicitud
 
+**Inscripción de última hora**:
+La de una familia que no se apuntó a tiempo: con el reparto ya publicado, elige ella misma una de las horas que han quedado libres y es suya al momento. No tiene preferencias ni entra en ningún reparto.
+_Avoid_: Inscripción tardía, lista de espera, repesca
+
 **Lote**:
 El conjunto de productos impresos de una foto final de la sesión (1 impresa 20×25, 2 calendarios 10×15 y 6 fotos cartera 7×10). Toda inscripción pide al menos uno.
 _Avoid_: Pack, paquete, foto

@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { db } from "@/servidor/db";
 import { obtenerEdicionActual } from "@/servidor/edicion/consultas";
 import { datosPublicosReparto } from "@/servidor/reparto/reparto";
+import { listarHuecosLibres } from "@/servidor/resultado/horas";
 import { Cabecera } from "@/ui/marca/Cabecera";
 import { Tarjeta } from "@/ui/marca/Tarjeta";
 import { Portada } from "@/ui/portada/Portada";
@@ -29,7 +30,10 @@ export default async function PaginaPortada() {
       edicion.estado === "antes" || edicion.estado === "abierta"
         ? null
         : await datosPublicosReparto(db, edicion.id);
-    return <Portada edicion={edicion} reparto={reparto} />;
+    // Con las horas publicadas, quien no se apuntó puede elegir una de las que quedan libres.
+    const horasLibres =
+      edicion.estado === "publicada" ? (await listarHuecosLibres(db, edicion.id)).length : 0;
+    return <Portada edicion={edicion} reparto={reparto} horasLibres={horasLibres} />;
   }
 
   const t = await getTranslations("portada.sinEdicion");

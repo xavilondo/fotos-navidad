@@ -86,6 +86,7 @@ export default async function PaginaEnlace({ params }: PageProps<"/i/[enlace]">)
       vista={{
         token: enlace,
         estado: vista.estado,
+        horaElegida: vista.asignacion?.origen === "hueco_libre",
         nombreEdicion: vista.edicion.nombre,
         formulario: { ...vista.datos, consentimiento: true, compensacion: vista.compensacion },
       }}

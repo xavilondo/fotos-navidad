@@ -21,6 +21,7 @@ import {
   crearInscripcion,
   pedirEnlaceNuevo,
 } from "@/servidor/inscripciones/operaciones";
+import { crearInscripcionTardia } from "@/servidor/inscripciones/tardia";
 import { urlApp } from "@/servidor/url";
 import { consumirLimite } from "@/servidor/seguridad/limites";
 import { claveAnonima, ipCliente } from "@/servidor/seguridad/peticion";
@@ -29,7 +30,7 @@ import { verificarTurnstile } from "@/servidor/seguridad/turnstile";
 export type RespuestaAccion =
   | { estado: "ok" }
   | { estado: "invalida"; errores: ErroresCampo }
-  | { estado: "cerrada" | "limite" | "verificacion" | "no_encontrada" | "error" };
+  | { estado: "cerrada" | "limite" | "verificacion" | "no_encontrada" | "ocupada" | "error" };
 
 /** Tras confirmar la transacción, los emails salen enseguida; si fallan, los reintenta el cron. */
 function enviarDespues(ids: string[]) {
@@ -62,6 +63,33 @@ export async function enviarInscripcion(
     return { estado: "ok" };
   } catch (e) {
     registrarError("Error al guardar una inscripción", e);
+    return { estado: "error" };
+  }
+}
+
+/** Inscripción de última hora: con el reparto publicado, la familia elige una hora libre. */
+export async function enviarInscripcionTardia(
+  entrada: unknown,
+  proteccion: Proteccion,
+): Promise<RespuestaAccion> {
+  if (!valido([zProteccion, proteccion])) return { estado: "verificacion" };
+  try {
+    if (proteccion.trampa) return { estado: "ok" };
+    const ip = await ipCliente();
+    if (!(await verificarTurnstile(proteccion.turnstile, ip))) return { estado: "verificacion" };
+    const maximo = Number(process.env.LIMITE_ALTAS_POR_HORA) || 30;
+    if (!(await consumirLimite(db, claveAnonima("alta", ip), 3600, maximo)))
+      return { estado: "limite" };
+
+    const r = await crearInscripcionTardia(db, entrada, {
+      urlApp: await urlApp(),
+      idioma: idiomaDeLocale(await getLocale()),
+    });
+    if (r.estado !== "ok") return r;
+    enviarDespues(r.outbox);
+    return { estado: "ok" };
+  } catch (e) {
+    registrarError("Error al guardar una inscripción de última hora", e);
     return { estado: "error" };
   }
 }

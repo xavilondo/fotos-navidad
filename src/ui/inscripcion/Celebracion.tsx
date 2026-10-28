@@ -37,12 +37,17 @@ export function Celebracion({
   f,
   datos,
   onAviso,
+  hora = null,
 }: {
   f: Formulario;
   datos: DatosFormulario;
   onAviso: (t: string) => void;
+  /** Inscripción de última hora: la hora que se ha reservado («lunes 2 a las 15:05»). */
+  hora?: string | null;
 }) {
   const t = useTranslations("inscripcion.hecho");
+  const tardia = !!datos.tardia;
+  const b = (c: React.ReactNode) => <b className="font-extrabold">{c}</b>;
   const primero = f.peques.find((p) => p.nombre.trim())?.nombre.trim();
   const total = calcularTotal(datos.precios, {
     socia: f.socia ?? false,
@@ -68,7 +73,7 @@ export function Celebracion({
       <main className="flex-1 px-5 pt-3.5 pb-2">
         <Pegar>
           <h1 className="mt-6 mb-5 -rotate-[4deg] text-center font-mano text-[46px] leading-[0.95] font-bold text-green-d">
-            {t("titulo")}
+            {tardia ? t("tardia.titulo") : t("titulo")}
           </h1>
         </Pegar>
         <Pegar indice={1}>
@@ -110,18 +115,17 @@ export function Celebracion({
               </li>
               <li className="flex items-start gap-2 text-[15px] leading-[1.35] font-bold">
                 <Visto />
-                {t("preferencias", {
-                  favoritas: f.favoritas.length,
-                  imposibles: f.imposibles.length,
-                })}
+                {tardia
+                  ? t.rich("tardia.hora", { b, hora: hora ?? "" })
+                  : t("preferencias", {
+                      favoritas: f.favoritas.length,
+                      imposibles: f.imposibles.length,
+                    })}
               </li>
               <li className="flex items-start gap-2 text-[15px] leading-[1.35] font-bold">
                 <Visto />
                 <span className="min-w-0 break-words">
-                  {t.rich("email", {
-                    b: (c) => <b className="font-extrabold">{c}</b>,
-                    email: f.email,
-                  })}
+                  {t.rich(tardia ? "tardia.email" : "email", { b, email: f.email })}
                 </span>
               </li>
             </ul>
@@ -131,20 +135,24 @@ export function Celebracion({
           <Tarjeta fondo="bg-su-s" giro={-0.8} className="mt-6">
             <p className="font-mano text-[26px] font-bold text-burg">{t("yAhora")}</p>
             <p className="text-[15px] leading-[1.45]">
-              {t.rich("siguiente", {
-                b: (c) => <b className="font-extrabold">{c}</b>,
-                diaReparto: datos.textos.diaReparto,
-                cierre: datos.textos.cierre,
-              })}
+              {tardia
+                ? t.rich("tardia.siguiente", { b })
+                : t.rich("siguiente", {
+                    b,
+                    diaReparto: datos.textos.diaReparto,
+                    cierre: datos.textos.cierre,
+                  })}
             </p>
             <p className="mt-2 text-[13px] leading-snug text-muted-ink">{t("noLlega")}</p>
           </Tarjeta>
         </Pegar>
       </main>
       <footer className="sticky bottom-0 z-10 bg-linear-to-t from-cream from-70% to-cream/0 px-5 pt-5 pb-[calc(16px+env(safe-area-inset-bottom))]">
-        <BotonCta type="button" onClick={compartir}>
-          {t("avisar")}
-        </BotonCta>
+        {!tardia && (
+          <BotonCta type="button" onClick={compartir}>
+            {t("avisar")}
+          </BotonCta>
+        )}
         <Link
           href="/"
           className="mx-auto mt-2 block min-h-11 w-fit py-2.5 text-[14.5px] font-extrabold text-green-d underline underline-offset-[3px]"

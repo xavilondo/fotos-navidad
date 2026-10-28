@@ -26,6 +26,8 @@ export type DatosVista = {
   estado: "abierta" | "cerrada" | "publicada" | "terminada" | "antes";
   formulario: Formulario;
   nombreEdicion: string;
+  /** Se apuntó tarde y eligió ella misma una hora libre: no tiene preferencias que enseñar. */
+  horaElegida?: boolean;
 };
 
 /**
@@ -314,7 +316,8 @@ export function VistaInscripcion({
           </p>,
           1,
         )}
-        {seccion(3, ti("resumen.horario"), <ResumenHorario f={v} datos={datos} />, 2)}
+        {!vista.horaElegida &&
+          seccion(3, ti("resumen.horario"), <ResumenHorario f={v} datos={datos} />, 2)}
         {seccion(
           4,
           ti("resumen.datos"),

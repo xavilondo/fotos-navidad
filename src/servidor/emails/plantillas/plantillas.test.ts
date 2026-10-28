@@ -30,8 +30,12 @@ describe("renderizarEmail: cada tipo en cada idioma", () => {
         // Pie: AFA, privacidad, logo y mascotas (versiones ligeras para email).
         expect(r.html).toContain('href="https://fotos.escuelainfantillaspalmeras.com/privacidad"');
         expect(r.texto).toContain("https://fotos.escuelainfantillaspalmeras.com/privacidad");
-        expect(r.html).toContain("https://fotos.escuelainfantillaspalmeras.com/marca/logo-email.png");
-        expect(r.html).toContain("https://fotos.escuelainfantillaspalmeras.com/marca/mascotas-email.png");
+        expect(r.html).toContain(
+          "https://fotos.escuelainfantillaspalmeras.com/marca/logo-email.png",
+        );
+        expect(r.html).toContain(
+          "https://fotos.escuelainfantillaspalmeras.com/marca/mascotas-email.png",
+        );
         expect(r.texto).toContain("AFA CEI Las Palmeras");
 
         // Solo la primera palabra del nombre del adulto, y ningún hueco sin rellenar.
@@ -122,6 +126,7 @@ describe("contenido según los datos", () => {
     );
     expect((await r("sin_favoritas", null)).texto).toContain("no marcasteis favoritas");
     expect((await r("nos_va_bien", null)).texto).not.toContain("favorita!");
+    expect((await r("elegida", null)).texto).toContain("Es la hora libre que elegisteis");
 
     const va = await renderizarEmail("va", { ...EJEMPLOS.resultado, posicionFavorita: 1 });
     expect(va.texto).toContain("La vostra 1a favorita!");

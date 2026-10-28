@@ -71,6 +71,11 @@
       "aMedias": "<b>Teniu una inscripció a mitges</b> en aquest mòbil.",
       "empezar": "Començar de nou",
       "seguir": "Continuar on ho vam deixar"
+    },
+    "tardia": {
+      "titulo": "No us vau apuntar a temps?",
+      "texto": "Encara queden hores lliures: trieu-ne una i és vostra al moment.",
+      "cta": "Triar una hora lliure"
     }
   },
   "noEncontrada": {
@@ -257,7 +262,10 @@
       "franjaDesconocida": "Hi ha una hora que no existix",
       "franjaRepetida": "Hi ha una hora repetida",
       "generico": "Reviseu aquesta dada",
-      "emailYaInscrito": "Aquest correu ja té una inscripció"
+      "emailYaInscrito": "Aquest correu ja té una inscripció",
+      "faltaHora": "Trieu una hora",
+      "horaOcupada": "Una altra família acaba d'agafar eixa hora. Trieu-ne una altra.",
+      "yaApuntados": "Aquest correu ja té una inscripció: mireu el correu amb la vostra hora o demaneu l'enllaç des de la portada"
     },
     "envio": {
       "cerrada": "La inscripció ja està tancada. Si creieu que és un error, escriviu a l'AFA.",
@@ -279,7 +287,23 @@
       "noLlega": "No us arriba? Mireu en la carpeta de correu brossa o demaneu l'enllaç una altra vegada des de la portada.",
       "avisar": "Avisar el grup de classe",
       "textoCompartir": "Ja ens hem apuntat a les fotos de Nadal de l'AFA. No cal córrer: les hores es repartixen segons les preferències de totes les famílies. {url}",
-      "copiado": "Enllaç copiat per a enganxar-lo en el grup."
+      "copiado": "Enllaç copiat per a enganxar-lo en el grup.",
+      "tardia": {
+        "titulo": "Ja teniu hora!",
+        "hora": "La vostra hora: <b>{hora}</b>",
+        "email": "Us hem enviat un correu a <b>{email}</b> amb la vostra hora i el vostre enllaç",
+        "siguiente": "És la vostra <b>hora definitiva</b>. Arribeu 5 minuts abans. Si teniu qualsevol dubte, escriviu a l'AFA."
+      }
+    },
+    "tardia": {
+      "meta": "Triar una hora lliure · Fotos de Nadal",
+      "titulo": "Trieu la vostra hora",
+      "nota": "Estes són les hores que han quedat lliures. Toqueu-ne una: en enviar la inscripció, és vostra.",
+      "sinHuecos": "Ja no queden hores lliures. Escriviu a l'AFA i us busquem un lloc.",
+      "celda": "{dia}, {hora}",
+      "hora": "La vostra hora",
+      "sinElegir": "Sense triar",
+      "nota4": "per a enviar-vos la vostra hora i el vostre enllaç"
     }
   },
   "enlace": {
@@ -376,7 +400,7 @@
     "imposible": "No ha estat possible evitar una de les vostres hores impossibles: hi havia més famílies que buits possibles. Si no podeu vindre, escriviu a l'AFA i ho parlem.",
     "sin_favoritas": "Us anava bé qualsevol hora: aquesta és la vostra.",
     "movida": "L'AFA ha canviat la vostra hora.",
-    "cambiada": "És l'hora lliure a la qual us vau canviar.",
+    "cambiada": "És l'hora lliure que vau triar en apuntar-vos.",
     "llegad": "Arribeu 5 minuts abans.",
     "calendario": "Afegir al calendari",
     "definitiva": "Aquesta és la vostra hora definitiva. Si teniu qualsevol dubte, escriviu a l'AFA responent al correu que us hem enviat.",

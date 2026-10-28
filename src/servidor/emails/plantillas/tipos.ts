@@ -34,7 +34,8 @@ export type DatosEmail =
       tipo: "resultado";
       enlace: string;
       inicio: string;
-      categoria: "favorita" | "nos_va_bien" | "imposible" | "sin_favoritas";
+      /** `elegida`: una familia que se apuntó tarde y eligió ella misma una hora libre. */
+      categoria: "favorita" | "nos_va_bien" | "imposible" | "sin_favoritas" | "elegida";
       posicionFavorita: number | null;
       cambiosHasta: string;
     } & Comun)

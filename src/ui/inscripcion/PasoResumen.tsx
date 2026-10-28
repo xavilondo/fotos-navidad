@@ -48,6 +48,7 @@ export function PasoResumen({
   irA,
 }: PropsPaso & { irA: (p: Paso) => void }) {
   const t = useTranslations("inscripcion.resumen");
+  const tTardia = useTranslations("inscripcion.tardia");
   const error = useTextoError();
   const etiqueta = useEtiquetaFranja(datos);
   const idioma = idiomaDeLocale(useLocale());
@@ -80,15 +81,23 @@ export function PasoResumen({
           })}
         </p>
       </Seccion>
-      <Seccion titulo={t("horario")} textoCambiar={t("cambiar")} onCambiar={() => irA(3)}>
-        <p>
-          {t("horarioTexto", {
-            favoritas: f.favoritas.length,
-            primera: f.favoritas[0] ? etiqueta(f.favoritas[0]) : "no",
-            imposibles: f.imposibles.length,
-          })}
-        </p>
-      </Seccion>
+      {datos.tardia ? (
+        <Seccion titulo={tTardia("hora")} textoCambiar={t("cambiar")} onCambiar={() => irA(3)}>
+          <p className="font-extrabold">
+            {datos.tardia.huecos.find((h) => h.id === f.hueco)?.etiqueta ?? tTardia("sinElegir")}
+          </p>
+        </Seccion>
+      ) : (
+        <Seccion titulo={t("horario")} textoCambiar={t("cambiar")} onCambiar={() => irA(3)}>
+          <p>
+            {t("horarioTexto", {
+              favoritas: f.favoritas.length,
+              primera: f.favoritas[0] ? etiqueta(f.favoritas[0]) : "no",
+              imposibles: f.imposibles.length,
+            })}
+          </p>
+        </Seccion>
+      )}
 
       <Seccion titulo={t("datos")} textoCambiar={t("cambiar")} onCambiar={() => irA(4)}>
         <p className="break-words">{[f.nombreAdulto, f.telefono].filter(Boolean).join(" · ")}</p>
@@ -148,13 +157,16 @@ export function PasoResumen({
           {t("consentimiento")}
         </Casilla>
         {errores.consentimiento && <MensajeError>{error(errores.consentimiento)}</MensajeError>}
-        <Casilla
-          marcada={f.compensacion}
-          onCambiar={(v) => cambiar({ compensacion: v })}
-          ayuda={t("compensacionAyuda")}
-        >
-          {t("compensacion")}
-        </Casilla>
+        {/* Quien elige su hora no entra en el reparto: no hay nada que compensar. */}
+        {!datos.tardia && (
+          <Casilla
+            marcada={f.compensacion}
+            onCambiar={(v) => cambiar({ compensacion: v })}
+            ayuda={t("compensacionAyuda")}
+          >
+            {t("compensacion")}
+          </Casilla>
+        )}
       </Tarjeta>
     </>
   );
