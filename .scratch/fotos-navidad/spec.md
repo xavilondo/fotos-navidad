@@ -180,10 +180,10 @@ La entrada del reparto es la **lista canónica**, calculada con los datos de la 
 
 ### 5.3 Algoritmo
 
-1. **Óptimo leximin.** Flujo de coste mínimo en el grafo fuente → inscripción (cap. 1) → franja (cap. = huecos libres) → sumidero, con coste `B^(nivel−1)`, donde `B = nº de inscripciones + 1`, en **BigInt**. Minimizar la suma equivale a minimizar lexicográficamente (nº en nivel 8, nº en nivel 7, …). El resultado es el **coste óptimo C\***.
+1. **Óptimo.** Flujo de coste mínimo en el grafo fuente → inscripción (cap. 1) → franja (cap. = huecos libres) → sumidero, en **BigInt**, con `B = nº de inscripciones + 1`. Coste de una franja para una familia: `B^9` si es una de sus imposibles; si no, `B^(nivel−1)`, más `B^8` si la familia marcó favoritas y esa franja no es ninguna («nos va bien»). Minimizar la suma equivale a minimizar lexicográficamente: (1) nº de familias en una hora imposible, (2) nº de familias con favoritas que se quedan sin ninguna, (3) nº en nivel 7, 6, …, 1 (leximin, que mantiene la regla antitruco entre las que no pueden tener favorita). El resultado es el **coste óptimo C\***. Desde `reparto-v2.1` ([ADR 0003](../../docs/adr/0003-todas-con-favorita.md)); en `v2.0` el criterio (2) no existía y leximin podía dejar sin favorita a una familia que solo marcó una para no bajar a otra a su 3ª.
 2. **Desempate con una regla fija, sin azar.** Para cada inscripción en orden de `id` (un uuid aleatorio desde el alta, así que apuntarse antes no da ventaja), se recorren sus franjas por (nivel ascendente, orden cronológico) y se le fija la primera con la que el problema residual todavía alcanza C\*. El resultado es único y reproducible.
 3. **Huecos.** Dentro de cada franja, los huecos en orden cronológico se dan a sus inscripciones en orden de `id`.
-4. **Salida**: `inscripcion → hueco, nivel` y estadísticas por nivel. Versión `reparto-v2.0`.
+4. **Salida**: `inscripcion → hueco, nivel` y estadísticas por nivel. Versión `reparto-v2.1`.
 
 Con ≤ 120 inscripciones y 20 franjas, esto se resuelve en segundos.
 

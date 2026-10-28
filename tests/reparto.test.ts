@@ -1,6 +1,7 @@
 import { and, count, eq, sql } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import { fechaHoraEnZona } from "@/dominio/edicion/tiempo";
+import { VERSION_REPARTO } from "@/dominio/reparto";
 import { excluir } from "@/servidor/admin/inscripciones";
 import * as schema from "@/servidor/db/schema";
 import { edicionActual } from "@/servidor/edicion/repositorio";
@@ -118,7 +119,7 @@ describe("reparto", () => {
     expect(reparto).toMatchObject({
       calculadoPor: "marta",
       publicadoPor: "marta",
-      version: "reparto-v2.0",
+      version: VERSION_REPARTO,
     });
     const publicos = await datosPublicosReparto(db, reparto.edicionId);
     expect(publicos.estadisticas?.total).toBe(30);

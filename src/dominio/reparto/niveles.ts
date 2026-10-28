@@ -25,6 +25,30 @@ export function costeDeNivel(nivel: Nivel, base: bigint): bigint {
   return base ** BigInt(nivel - 1);
 }
 
+/**
+ * La familia marcó favoritas y en esa franja no tiene ninguna, sin que sea una de sus horas
+ * imposibles (es decir, «nos va bien»).
+ */
+export function sinFavoritaEn(ins: Preferencias, codigo: string): boolean {
+  return (
+    ins.favoritas.length > 0 && !ins.favoritas.includes(codigo) && !ins.imposibles.includes(codigo)
+  );
+}
+
+/**
+ * Coste de una franja para una familia en el flujo (§5.3, `reparto-v2.1`). Con B > nº de
+ * inscripciones, minimizar la suma es minimizar lexicográficamente:
+ * 1. cuántas familias caen en una hora imposible (B^9);
+ * 2. cuántas de las que marcaron favoritas se quedan sin ninguna (B^8);
+ * 3. el vector leximin de niveles 7, 6, …, 1 (B^(nivel − 1)), que mantiene la regla antitruco
+ *    entre las que no pueden tener favorita.
+ */
+export function costeEn(ins: Preferencias, codigo: string, base: bigint): bigint {
+  const nivel = nivelEn(ins, codigo);
+  if (nivel === NIVEL_IMPOSIBLE) return base ** 9n;
+  return (sinFavoritaEn(ins, codigo) ? base ** 8n : 0n) + costeDeNivel(nivel, base);
+}
+
 export function contarPorNivel(niveles: Iterable<Nivel>): Record<Nivel, number> {
   const r = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0 };
   for (const n of niveles) r[n]++;

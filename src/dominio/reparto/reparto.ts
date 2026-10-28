@@ -1,9 +1,9 @@
 import { ListaInvalida, validarListaCanonica, type ListaCanonica } from "./canonico";
-import { contarPorNivel, costeDeNivel, nivelEn, NIVEL_IMPOSIBLE, type Nivel } from "./niveles";
+import { contarPorNivel, costeEn, nivelEn, NIVEL_IMPOSIBLE, type Nivel } from "./niveles";
 import { RepartoOptimo } from "./optimo";
 
 /** Versión del algoritmo. Cambia si cambia cualquier detalle que altere el resultado. */
-export const VERSION_REPARTO = "reparto-v2.0";
+export const VERSION_REPARTO = "reparto-v2.1";
 
 /** `hueco` = `${codigoFranja}.${i}`: el i-ésimo (desde 0) hueco libre de la franja, en orden cronológico. */
 export type Asignacion = { id: string; franja: string; hueco: string; nivel: number };
@@ -40,7 +40,7 @@ export type Diagnostico = {
   total: number;
   huecosLibres: number;
   cabe: boolean;
-  /** Cuentas por nivel del óptimo leximin (paso 1). */
+  /** Cuentas por nivel del óptimo (paso 1). */
   porNivel: Record<Nivel, number>;
   /** Existe un reparto en el que toda familia con favoritas tiene una. */
   todasConFavorita: boolean;
@@ -94,10 +94,15 @@ function plantear(lista: ListaCanonica, exclusiones: readonly string[] = []): Pr
   };
 }
 
-/** Paso 1: un reparto óptimo leximin (coste C*), sin desempatar. */
-function optimoLeximin(p: Problema): RepartoOptimo {
+/**
+ * Paso 1: un reparto óptimo (coste C*), sin desempatar: el mínimo de horas imposibles, después el
+ * mínimo de familias sin ninguna de sus favoritas y después leximin (ver `costeEn`).
+ */
+function optimoLeximin(p: Problema, lista: ListaCanonica): RepartoOptimo {
   const base = BigInt(p.inscripciones.length + 1);
-  const costes = p.niveles.map((fila) => fila.map((n) => costeDeNivel(n, base)));
+  const costes = p.inscripciones.map((ins) =>
+    p.asignables.map((k) => costeEn(ins, lista.franjas[k].codigo, base)),
+  );
   const r = new RepartoOptimo(costes, p.capacidades);
   p.inscripciones.forEach((_, i) => r.incorporar(i));
   return r;
@@ -124,9 +129,9 @@ export function repartir(lista: ListaCanonica, opciones: OpcionesReparto = {}): 
     );
   }
 
-  // Paso 1: óptimo leximin. Paso 2: desempate en orden de id (el de la lista), franjas por
-  // (nivel, orden cronológico).
-  const optimo = optimoLeximin(p);
+  // Paso 1: óptimo (imposibles, sin favorita, leximin). Paso 2: desempate en orden de id (el de la
+  // lista), franjas por (nivel, orden cronológico).
+  const optimo = optimoLeximin(p, lista);
   for (let i = 0; i < n; i++) {
     const candidatas = rango(p.asignables.length).sort(
       (x, y) => p.niveles[i][x] - p.niveles[i][y] || x - y,
@@ -223,12 +228,12 @@ export function diagnosticar(lista: ListaCanonica, opciones: OpcionesReparto = {
       enImposible: 0,
     };
   }
-  const optimo = optimoLeximin(p);
+  const optimo = optimoLeximin(p, lista);
   const porNivel = contarPorNivel(optimo.asignacion.map((g, i) => p.niveles[i][g]));
 
   // ¿Existe un reparto con favorita para todas las que marcaron alguna? Coste 1 por cada familia
-  // con favoritas fuera de ellas; existe si el mínimo es 0. (El óptimo leximin no siempre lo es:
-  // puede preferir dos «nos va bien» de nivel 2 a una 3ª favorita.)
+  // con favoritas fuera de ellas; existe si el mínimo es 0. (Desde `reparto-v2.1` el paso 1 ya lo
+  // busca, pero solo después de evitar las horas imposibles.)
   const costes = p.inscripciones.map((ins, i) =>
     p.niveles[i].map((_, g) =>
       ins.favoritas.length === 0 || ins.favoritas.includes(lista.franjas[p.asignables[g]].codigo)

@@ -50,11 +50,15 @@ function comprobarReparto(l: ListaCanonica, r: ResultadoReparto, exclusiones: st
   expect(e.conFavorita).toBe(pp.favorita.reduce((a, b) => a + b, 0));
 }
 
-const vector = (r: ResultadoReparto) =>
-  [8, 7, 6, 5, 4, 3, 2, 1].map((n) => r.estadisticas.porNivel[n as Nivel]);
+/** Lo que se minimiza: imposibles, familias con favoritas sin ninguna y niveles 7…1. */
+const vector = (r: ResultadoReparto) => [
+  r.estadisticas.porNivel[8],
+  r.estadisticas.porPreferencia.nosVaBien,
+  ...[7, 6, 5, 4, 3, 2, 1].map((n) => r.estadisticas.porNivel[n as Nivel]),
+];
 
 describe("repartir contra fuerza bruta", () => {
-  it("da el mismo reparto (vector leximin y franjas tras el desempate) en instancias pequeñas", () => {
+  it("da el mismo reparto (vector óptimo y franjas tras el desempate) en instancias pequeñas", () => {
     let conEmpates = 0;
     for (let s = 1; s <= 500; s++) {
       const r = generador(s);
@@ -188,6 +192,47 @@ describe("horas imposibles", () => {
     expect(r.estadisticas.porPreferencia.imposible).toBe(1);
     expect(franjaDe(r, "d")).toBe("lun-1500");
     expect(diagnosticar(l).enImposible).toBe(1);
+  });
+});
+
+describe("todas con favorita", () => {
+  it("baja a otra familia a su 3ª antes que dejar a una sin ninguna de sus favoritas", () => {
+    // F1 solo marca X. F6 marca X, A (sin huecos) e Y. Leximin puro daría X a F6 y dejaría a F1 en
+    // «nos va bien» (nivel 2) para no bajar a nadie a un nivel 3; ahora F1 tiene X y F6, su 3ª.
+    const l = lista(
+      [
+        ["X", 1],
+        ["A", 0],
+        ["Y", 1],
+        ["W", 1],
+      ],
+      [
+        ["F1", ["X"]],
+        ["F6", ["X", "A", "Y"]],
+      ],
+    );
+    const r = repartir(l);
+    expect(franjaDe(r, "F1")).toBe("X");
+    expect(franjaDe(r, "F6")).toBe("Y");
+    expect(r.estadisticas.porPreferencia.favorita).toEqual([1, 0, 1, 0, 0, 0]);
+  });
+
+  it("evitar una hora imposible va antes que dar favorita a todas", () => {
+    // F1 solo puede ir a X o Y y marca X. F2 marca X y no puede ir a Y. Hay un hueco en cada una.
+    const l = lista(
+      [
+        ["X", 1],
+        ["Y", 1],
+      ],
+      [
+        ["F1", ["Y"]],
+        ["F2", ["Y"], ["X"]],
+      ],
+    );
+    const r = repartir(l);
+    expect(franjaDe(r, "F2")).toBe("Y");
+    expect(franjaDe(r, "F1")).toBe("X");
+    expect(r.estadisticas.porPreferencia).toMatchObject({ imposible: 0, nosVaBien: 1 });
   });
 });
 
@@ -388,9 +433,10 @@ describe("diagnosticar", () => {
     }
   });
 
-  it("detecta que existe un reparto con favorita para todas aunque el óptimo leximin no lo use", () => {
-    // F1 solo marca Y. F2 marca [A (sin huecos), Y, W]. Leximin prefiere niveles {2, 2}
-    // (F2 en Y, F1 «nos va bien» en Z) a {1, 3} (F1 en Y, F2 en W), pero el segundo da favorita a ambas.
+  it("si existe un reparto con favorita para todas, lo usa aunque leximin puro preferiría otro", () => {
+    // F1 solo marca Y. F2 marca [A (sin huecos), Y, W]. Leximin puro preferiría niveles {2, 2}
+    // (F2 en Y, F1 «nos va bien» en Z) a {1, 3} (F1 en Y, F2 en W), pero el segundo da favorita a
+    // ambas, y desde reparto-v2.1 eso va antes.
     const l = lista(
       [
         ["A", 0],
@@ -405,10 +451,11 @@ describe("diagnosticar", () => {
     );
     const d = diagnosticar(l);
     expect(d.todasConFavorita).toBe(true);
-    expect(d.porNivel[2]).toBe(2);
+    expect(d.porNivel).toMatchObject({ 1: 1, 3: 1 });
     const r = repartir(l);
-    expect(franjaDe(r, "F2")).toBe("Y");
-    expect(franjaDe(r, "F1")).not.toBe("Y");
+    expect(franjaDe(r, "F1")).toBe("Y");
+    expect(franjaDe(r, "F2")).toBe("W");
+    expect(r.estadisticas.conFavorita).toBe(2);
   });
 
   it("dice que no hay favorita para todas cuando no caben en ellas", () => {

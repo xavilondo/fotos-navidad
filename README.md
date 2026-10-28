@@ -1,3 +1,5 @@
+> **Actualización 26/10/2026:** la configuración vigente de las bases migradas está en [base-datos-servidor.md](docs/base-datos-servidor.md). Este documento conserva el procedimiento histórico de Neon; no usar sus URLs para volver a configurar los destinos ya migrados.
+
 # Fotos de Navidad · AFA CEI Las Palmeras
 
 Inscripción y **reparto justo** de las horas de la sesión de fotos de Navidad de la escuela infantil Las Palmeras.
@@ -86,7 +88,7 @@ Decisiones técnicas que conviene saber:
 - Los **enlaces de acceso** son tokens de 32 bytes. En la base de datos solo se guarda su SHA-256, y lo mismo con las sesiones de admin. Valen hasta el final de la última sesión de fotos. El estado de la edición decide qué se puede cambiar. Pedir un enlace nuevo invalida todos los anteriores.
 - Los **emails** se encolan en la misma transacción que la acción (outbox), salen justo después con `after()` y se reintentan desde el cron. Que falle un email nunca hace fallar la acción de la familia. Ningún email lleva nombres de peques ni observaciones.
 - **La hora publicada es definitiva:** las familias no pueden cambiarse de hora; solo el AFA mueve a una familia, con `SELECT … FOR UPDATE` sobre el hueco y `UNIQUE(asignacion.hueco_id)` como garantía final. La capacidad nunca se supera.
-- El **reparto** es un módulo puro (`src/dominio/reparto`), versionado como `reparto-v2.0`, sin azar: la misma lista da siempre el mismo resultado. Se calcula en borrador; las familias solo ven su hora cuando el admin lo publica.
+- El **reparto** es un módulo puro (`src/dominio/reparto`), versionado como `reparto-v2.1`, sin azar: la misma lista da siempre el mismo resultado. Se calcula en borrador; las familias solo ven su hora cuando el admin lo publica.
 
 ## Despliegue (Vercel + Neon + Resend + Turnstile)
 

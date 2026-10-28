@@ -3,13 +3,16 @@
  * comprobar que `repartir` hace exactamente lo que dice el spec. No las uses en la app.
  */
 import type { ListaCanonica } from "./canonico";
-import { costeDeNivel, nivelEn, type Nivel } from "./niveles";
+import { costeEn, nivelEn, sinFavoritaEn, type Nivel } from "./niveles";
 
 type Planteado = {
   inscripciones: ListaCanonica["inscripciones"];
   asignables: number[];
   capacidades: number[];
   niveles: Nivel[][];
+  /** `sinFavorita[i][g]`: la inscripción marcó favoritas y la franja no es ninguna ni imposible. */
+  sinFavorita: boolean[][];
+  costes: bigint[][];
   /** Candidatas de cada inscripción (índices de asignables) por (nivel, orden cronológico). */
   candidatas: number[][];
 };
@@ -22,16 +25,26 @@ function plantear(lista: ListaCanonica, exclusiones: string[]): Planteado {
   const niveles = inscripciones.map((ins) =>
     asignables.map((k) => nivelEn(ins, lista.franjas[k].codigo)),
   );
+  const sinFavorita = inscripciones.map((ins) =>
+    asignables.map((k) => sinFavoritaEn(ins, lista.franjas[k].codigo)),
+  );
+  const base = BigInt(inscripciones.length + 1);
+  const costes = inscripciones.map((ins) =>
+    asignables.map((k) => costeEn(ins, lista.franjas[k].codigo, base)),
+  );
   const candidatas = niveles.map((fila) =>
     asignables.map((_, g) => g).sort((x, y) => fila[x] - fila[y] || x - y),
   );
-  return { inscripciones, asignables, capacidades, niveles, candidatas };
+  return { inscripciones, asignables, capacidades, niveles, sinFavorita, costes, candidatas };
 }
 
 export type ResultadoReferencia = {
   /** Código de franja de cada inscripción efectiva, en orden de id. */
   franjas: string[];
-  /** Vector leximin: nº de familias en nivel 8, 7, …, 1. */
+  /**
+   * Vector que se minimiza lexicográficamente: nº de familias en una hora imposible, nº de las que
+   * marcaron favoritas y se quedan sin ninguna, y nº en nivel 7, 6, …, 1.
+   */
   vector: number[];
 };
 
@@ -40,9 +53,14 @@ export type ResultadoFuerzaBruta = ResultadoReferencia & {
   optimos: number;
 };
 
-function vectorLeximin(niveles: Nivel[]): number[] {
-  const v = [0, 0, 0, 0, 0, 0, 0, 0];
-  for (const n of niveles) v[8 - n]++;
+function vectorObjetivo(p: Planteado, franjas: number[]): number[] {
+  const v = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+  franjas.forEach((g, i) => {
+    const n = p.niveles[i][g];
+    if (n === 8) v[0]++;
+    else v[9 - n]++;
+    if (p.sinFavorita[i][g]) v[1]++;
+  });
   return v;
 }
 
@@ -53,7 +71,7 @@ function compararVectores(a: number[], b: number[]): number {
 
 /**
  * Fuerza bruta: enumera todos los repartos posibles por franjas, se queda con los de mejor vector
- * leximin (comparando vectores, sin costes) y aplica el desempate al pie de la letra: para cada
+ * óptimo (comparando vectores, sin costes) y aplica el desempate al pie de la letra: para cada
  * inscripción en orden de id, la primera candidata que aparece en algún reparto óptimo superviviente.
  */
 export function repartoFuerzaBruta(
@@ -69,7 +87,7 @@ export function repartoFuerzaBruta(
 
   const recorrer = (i: number) => {
     if (i === n) {
-      const v = vectorLeximin(actual.map((g, j) => p.niveles[j][g]));
+      const v = vectorObjetivo(p, actual);
       const c = mejorVector === null ? -1 : compararVectores(v, mejorVector);
       if (c < 0) {
         mejorVector = v;
@@ -183,8 +201,7 @@ export function repartoIngenuo(
   exclusiones: string[] = [],
 ): ResultadoReferencia & { costeOptimo: bigint } {
   const p = plantear(lista, exclusiones);
-  const base = BigInt(p.inscripciones.length + 1);
-  const costes = p.niveles.map((fila) => fila.map((n) => costeDeNivel(n, base)));
+  const costes = p.costes;
   const optimo = costeMinimoIngenuo(costes, p.capacidades);
   if (optimo === null) throw new Error("No caben");
   const forzadas = new Map<number, number>();
@@ -199,7 +216,7 @@ export function repartoIngenuo(
   const franjas = p.inscripciones.map((_, i) => forzadas.get(i)!);
   return {
     franjas: franjas.map((g) => lista.franjas[p.asignables[g]].codigo),
-    vector: vectorLeximin(franjas.map((g, i) => p.niveles[i][g])),
+    vector: vectorObjetivo(p, franjas),
     costeOptimo: optimo,
   };
 }
