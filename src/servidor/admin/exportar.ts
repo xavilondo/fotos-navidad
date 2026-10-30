@@ -6,6 +6,7 @@ import * as t from "@/servidor/db/schema";
 import type { BaseDatos } from "@/servidor/db/tipos";
 import type { FilaEdicion } from "@/servidor/edicion/repositorio";
 import { agendaCsv, agendaPdf, type FilaAgenda } from "@/servidor/exportaciones/agenda";
+import { diaCorto, horaEnZona } from "@/servidor/exportaciones/formato";
 import { lotesXlsx } from "@/servidor/exportaciones/lotes";
 import { esEmailFicticio } from "@/servidor/inscripciones/operaciones";
 import type { Admin } from "./auth";
@@ -69,20 +70,42 @@ export async function exportar(
   if (archivo === "lotes.xlsx") {
     const filas = await db
       .select({
+        id: t.inscripcion.id,
         familia: t.inscripcion.nombreAdulto,
         email: t.inscripcion.email,
         socia: t.inscripcion.socia,
         lotes: t.inscripcion.lotes,
         archivoDigital: t.inscripcion.archivoDigital,
+        inicio: t.hueco.inicio,
       })
       .from(t.inscripcion)
+      .leftJoin(t.asignacion, eq(t.asignacion.inscripcionId, t.inscripcion.id))
+      .leftJoin(t.hueco, eq(t.hueco.id, t.asignacion.huecoId))
       .where(eq(t.inscripcion.edicionId, edicion.id))
       .orderBy(desc(t.inscripcion.creadoEn));
+    const peques = await db
+      .select({
+        inscripcionId: t.peque.inscripcionId,
+        nombre: t.peque.nombre,
+        apellido: t.peque.apellido,
+        clase: t.clase.nombre,
+      })
+      .from(t.peque)
+      .innerJoin(t.inscripcion, eq(t.inscripcion.id, t.peque.inscripcionId))
+      .innerJoin(t.clase, eq(t.clase.id, t.peque.claseId))
+      .where(eq(t.inscripcion.edicionId, edicion.id))
+      .orderBy(asc(t.peque.orden));
     return {
       cuerpo: await lotesXlsx(
-        filas.map((f) => ({
+        filas.map(({ id, ...f }) => ({
           ...f,
           email: esEmailFicticio(f.email) ? "" : f.email,
+          peques: peques
+            .filter((p) => p.inscripcionId === id)
+            .map((p) => ({ nombre: `${p.nombre} ${p.apellido}`.trim(), clase: p.clase })),
+          turno: f.inicio
+            ? `${diaCorto(f.inicio, edicion.zona)} · ${horaEnZona(f.inicio, edicion.zona)}`
+            : "",
           desglose: desglosarImporte(edicion.precios, f),
         })),
         `Lotes · ${edicion.nombre}`,

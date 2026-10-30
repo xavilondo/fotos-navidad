@@ -3,18 +3,14 @@ import { count, eq, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/pglite";
 import { migrate } from "drizzle-orm/pglite/migrator";
 import { beforeEach, describe, expect, it } from "vitest";
-import configNavidad2026 from "@config/ediciones/navidad-2026";
 import { definirEdicion, type ConfigEdicion } from "@/dominio/edicion/config";
 import { fechaHoraEnZona } from "@/dominio/edicion/tiempo";
 import * as schema from "@/servidor/db/schema";
 import { CargaRechazada, cargarEdicion } from "@/servidor/edicion/cargar";
+import { navidadPorAbrir } from "./ayuda/edicion-por-abrir";
 
-/** La edición 2026, con la inscripción aún por abrir (la real ya abrió el 24-10). */
-const navidad2026 = definirEdicion({
-  ...configNavidad2026,
-  abreEn: "2026-10-30T09:00",
-  cierraEn: "2026-10-31T21:00",
-});
+/** La edición 2026 con la inscripción aún por abrir. */
+const navidad2026 = navidadPorAbrir;
 
 /** Base de datos en memoria con las migraciones reales. */
 async function baseDeDatos() {
@@ -59,8 +55,8 @@ describe("cargarEdicion", () => {
     expect(await cuenta()).toEqual({ dias: 2, franjas: 20, huecos: 120, clases: 8 });
 
     const [ed] = await db.select().from(schema.edicion);
-    expect(ed.abreEn.toISOString()).toBe("2026-10-30T08:00:00.000Z");
-    expect(ed.cierraEn.toISOString()).toBe("2026-10-31T20:00:00.000Z");
+    expect(ed.abreEn.toISOString()).toBe("2027-10-31T08:00:00.000Z");
+    expect(ed.cierraEn.toISOString()).toBe("2027-10-31T20:00:00.000Z");
   });
 
   it("es idempotente: cargar dos veces deja los mismos ids", async () => {
@@ -86,7 +82,7 @@ describe("cargarEdicion", () => {
       definirEdicion({
         ...navidad2026,
         dias: [navidad2026.dias[0]],
-        huecosBloqueados: ["2026-11-02T17:30"],
+        huecosBloqueados: ["2027-11-01T17:30"],
       }),
     );
     expect(r.huecosLibres).toBe(59);

@@ -4,9 +4,15 @@ import { desglosarImporte, type Pedido } from "@/dominio/inscripcion/precio";
 import { lotesXlsx, type FilaLotes } from "./lotes";
 
 const PRECIOS = { loteSocia: 22, loteNoSocia: 30, archivoDigitalPorLote: 5 };
-const fila = (familia: string, email: string, p: Pedido): FilaLotes => ({
+const fila = (
+  familia: string,
+  email: string,
+  p: Pedido,
+  extra: Pick<FilaLotes, "peques" | "turno" | "inicio"> = { peques: [], turno: "", inicio: null },
+): FilaLotes => ({
   familia,
   email,
+  ...extra,
   ...p,
   desglose: desglosarImporte(PRECIOS, p),
 });
@@ -21,13 +27,21 @@ async function leer(filas: FilaLotes[]) {
 }
 
 describe("lotesXlsx", () => {
-  it("lleva el email y el importe desglosado como números, ordenado por familia sin tildes", async () => {
+  it("lleva el email, peques, turno e importe desglosado; por hora y, sin hora, por familia sin tildes", async () => {
     const { hoja, valores } = await leer([
-      fila("Vicent Soler Ribes", "vicent@example.com", {
-        socia: true,
-        lotes: 2,
-        archivoDigital: true,
-      }),
+      fila(
+        "Vicent Soler Ribes",
+        "vicent@example.com",
+        { socia: true, lotes: 2, archivoDigital: true },
+        {
+          peques: [
+            { nombre: "Pau Soler", clase: "Osos" },
+            { nombre: "Laia Soler", clase: "Patitos" },
+          ],
+          turno: "lunes 2 · 17:30",
+          inicio: new Date("2026-11-02T16:30:00Z"),
+        },
+      ),
       fila("álvaro Navarro", "alvaro@example.com", {
         socia: false,
         lotes: 1,
@@ -38,6 +52,9 @@ describe("lotesXlsx", () => {
     expect(valores[0]).toEqual([
       "Familia",
       "Email",
+      "Peque",
+      "Clase",
+      "Turno",
       "Socia",
       "Lotes",
       "Precio por lote",
@@ -49,12 +66,39 @@ describe("lotesXlsx", () => {
       "Total",
     ]);
     expect(valores.slice(1)).toEqual([
-      ["álvaro Navarro", "alvaro@example.com", "No", 1, 30, 30, "No", 0, 5, 0, 30],
-      ["Ana García", "", "Sí", 3, 22, 66, "No", 0, 5, 0, 66],
-      ["Vicent Soler Ribes", "vicent@example.com", "Sí", 2, 22, 44, "Sí", 2, 5, 10, 54],
-      ["Total", undefined, undefined, 6, undefined, 140, undefined, 2, undefined, 10, 150],
+      [
+        "Vicent Soler Ribes",
+        "vicent@example.com",
+        "Pau Soler, Laia Soler",
+        "Osos, Patitos",
+        "lunes 2 · 17:30",
+        "Sí",
+        2,
+        22,
+        44,
+        "Sí",
+        2,
+        5,
+        10,
+        54,
+      ],
+      ["álvaro Navarro", "alvaro@example.com", "", "", "", "No", 1, 30, 30, "No", 0, 5, 0, 30],
+      ["Ana García", "", "", "", "", "Sí", 3, 22, 66, "No", 0, 5, 0, 66],
+      [
+        "Total",
+        ...Array(4).fill(undefined),
+        undefined,
+        6,
+        undefined,
+        140,
+        undefined,
+        2,
+        undefined,
+        10,
+        150,
+      ],
     ]);
-    expect(hoja.getCell("K2").numFmt).toContain("€");
+    expect(hoja.getCell("N2").numFmt).toContain("€");
     expect(hoja.getRow(1).font?.bold).toBe(true);
     expect(hoja.views[0]).toMatchObject({ state: "frozen", ySplit: 1 });
   });
@@ -64,6 +108,9 @@ describe("lotesXlsx", () => {
     expect(valores).toHaveLength(2);
     expect(valores[1]).toEqual([
       "Total",
+      undefined,
+      undefined,
+      undefined,
       undefined,
       undefined,
       0,

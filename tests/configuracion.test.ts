@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import configNavidad2026 from "@config/ediciones/navidad-2026";
-import { definirEdicion } from "@/dominio/edicion/config";
 import * as schema from "@/servidor/db/schema";
 import { cargarEdicion } from "@/servidor/edicion/cargar";
 import {
@@ -9,20 +8,17 @@ import {
   propuestaSiguiente,
 } from "@/servidor/edicion/configuracion";
 import { baseDeDatos, edicionEn } from "./ayuda/bd";
+import { navidadPorAbrir } from "./ayuda/edicion-por-abrir";
 
-/** La edición 2026, con la inscripción aún por abrir (la real ya abrió el 24-10). */
-const navidad2026 = definirEdicion({
-  ...configNavidad2026,
-  abreEn: "2026-10-30T09:00",
-  cierraEn: "2026-10-31T21:00",
-});
+/** La edición 2026 con la inscripción aún por abrir. */
+const navidad2026 = navidadPorAbrir;
 
 const ADMIN = { id: "x", usuario: "marta", nombre: "Marta" };
 
 describe("configurador", () => {
   it("lee la configuración de la base de datos tal y como se cargó", async () => {
     const db = await baseDeDatos();
-    const config = { ...navidad2026, huecosBloqueados: ["2026-11-02T17:30"] };
+    const config = { ...navidad2026, huecosBloqueados: ["2027-11-01T17:30"] };
     await cargarEdicion(db, config);
     const [ed] = await db.select().from(schema.edicion);
     expect(await configDesdeBd(db, ed.id)).toEqual(config);
@@ -59,11 +55,11 @@ describe("configurador", () => {
   });
 
   it("propone la edición del año siguiente", () => {
-    const p = propuestaSiguiente(navidad2026);
+    const p = propuestaSiguiente(configNavidad2026);
     expect(p).toMatchObject({
       slug: "navidad-2027",
       nombre: "Fotos de Navidad 2027",
-      abreEn: "2027-10-30T09:00",
+      abreEn: "2027-10-24T08:28",
     });
     expect(p.dias[0].fecha).toBe("2027-11-02");
   });
